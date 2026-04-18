@@ -1,0 +1,14 @@
+# robots.txt for 小说阁
+User-agent: *
+Allow: /
+
+# Disallow admin/private areas
+Disallow: /api/
+Disallow: /_/
+Disallow: /admin/
+
+# Sitemap
+Sitemap: https://your-domain.com/sitemap.xml
+
+# Crawl-delay (optional, not recommended for most bots)
+# Crawl-delay: 1

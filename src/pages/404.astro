@@ -1,0 +1,145 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const title = "页面未找到 | 小说阁";
+const description = "抱歉，您访问的页面不存在。";
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="error-container">
+    <div class="error-card">
+      <div class="error-icon">📭</div>
+      <h1 class="error-title">页面未找到</h1>
+      <p class="error-message">抱歉，您访问的页面不存在或已 moved.</p>
+      
+      <div class="error-actions">
+        <a href="/" class="btn-primary">
+          <span>返回首页</span>
+        </a>
+        <a href="/library" class="btn-secondary">
+          <span>浏览书阁</span>
+        </a>
+      </div>
+      
+      <div class="error-links">
+        <p>或者试试:</p>
+        <ul>
+          <li><a href="/shelf">精选书架</a></li>
+          <li><a href="/search">搜索小说</a></li>
+          <li><a href="/category/healing">疗愈分类</a></li>
+          <li><a href="/category/food">美食分类</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .error-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    padding: var(--spacing-8) var(--page-padding-x);
+  }
+  
+  .error-card {
+    text-align: center;
+    max-width: 400px;
+  }
+  
+  .error-icon {
+    font-size: 64px;
+    margin-bottom: var(--spacing-4);
+  }
+  
+  .error-title {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-3);
+    font-family: var(--font-serif);
+  }
+  
+  .error-message {
+    font-size: var(--text-base);
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-6);
+    line-height: var(--line-height-relaxed);
+  }
+  
+  .error-actions {
+    display: flex;
+    gap: var(--spacing-3);
+    justify-content: center;
+    margin-bottom: var(--spacing-8);
+  }
+  
+  .btn-primary,
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-4) var(--spacing-6);
+    border-radius: var(--radius-lg);
+    font-weight: var(--font-semibold);
+    font-size: var(--text-sm);
+    transition: all var(--t-normal);
+    text-decoration: none;
+    min-height: 44px;
+  }
+  
+  .btn-primary {
+    background: var(--accent);
+    color: var(--color-white);
+  }
+  
+  .btn-primary:hover {
+    background: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .btn-secondary {
+    background: var(--color-bg-inner);
+    color: var(--text-dark);
+    border: 1px solid var(--color-border-default);
+  }
+  
+  .btn-secondary:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+  
+  .error-links {
+    padding-top: var(--spacing-6);
+    border-top: 1px solid var(--color-border-subtle);
+  }
+  
+  .error-links p {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-3);
+  }
+  
+  .error-links ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-3);
+    justify-content: center;
+  }
+  
+  .error-links a {
+    color: var(--accent);
+    font-size: var(--text-sm);
+    padding: var(--spacing-2) var(--spacing-3);
+    background: var(--color-bg-inner);
+    border-radius: var(--radius-md);
+    transition: all var(--t-fast);
+  }
+  
+  .error-links a:hover {
+    background: var(--accent-light);
+  }
+</style>

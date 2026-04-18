@@ -1,0 +1,1311 @@
+---
+import ReaderLayout from '../../../layouts/ReaderLayout.astro';
+
+export function getStaticPaths() {
+  // Novel metadata - MUST be inside getStaticPaths
+  const novelsData: Record<string, { title: string; chapters: number }> = {
+    '佛系廚神': { title: '佛系廚神', chapters: 18 },
+    '一茶一禪-海鮮僧的靜心茶路': { title: '一茶一禪', chapters: 50 },
+    '万界直播系统': { title: '萬界直播系統', chapters: 130 }
+  };
+  
+  // Load all chapter content at build time - MUST be inside getStaticPaths
+  const allChapters = import.meta.glob('../../../content/novels/*/chapters/*.md', { eager: true });
+  
+  const paths = [];
+  
+  for (const [slug, novel] of Object.entries(novelsData)) {
+    for (let i = 1; i <= novel.chapters; i++) {
+      // Get chapter content from glob
+      const chapterPath = `../../../content/novels/${slug}/chapters/${i}.md`;
+      const chapterModule = allChapters[chapterPath] as { 
+        frontmatter?: { title?: string; part?: string };
+        default?: () => unknown;
+      } | undefined;
+      
+      // Get the content component by calling the default export
+      const ChapterContent = chapterModule?.default;
+      
+      paths.push({
+        params: { novel: slug, chapter: String(i) },
+        props: { 
+          novel: { slug, ...novel }, 
+          chapter: i,
+          chapterTitle: chapterModule?.frontmatter?.title || `第 ${i} 章`,
+          chapterPart: chapterModule?.frontmatter?.part || '',
+          ChapterContent
+        }
+      });
+    }
+  }
+  
+  return paths;
+}
+
+const { novel, chapter: chapterNum, chapterTitle, chapterPart, ChapterContent } = Astro.props;
+const chaptersList = Array.from({ length: novel.chapters }, (_, i) => i + 1);
+const hasPrev = chapterNum > 1;
+const hasNext = chapterNum < chaptersList.length;
+---
+
+<ReaderLayout title={`${novel.title} - ${chapterTitle}`}>
+  <div class="reader-page">
+    <!-- Reading Progress Bar -->
+    <div class="reader-progress" id="readerProgress">
+      <div class="reader-progress-bar" id="readerProgressBar"></div>
+    </div>
+
+    <!-- Top Bar -->
+    <header class="reader-topbar" id="readerTopbar">
+      <div class="reader-topbar-inner">
+        <a href={`/book/${novel.slug}`} class="reader-topbar-back btn-press">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 18l-7-7 7-7"/>
+          </svg>
+        </a>
+        <span class="reader-topbar-title">{novel.title}</span>
+        <span class="reader-topbar-breadcrumb">
+          <a href={`/book/${novel.slug}`}>{novel.title}</a>
+          <span> › </span>
+          <span>{chapterTitle}</span>
+        </span>
+      </div>
+    </header>
+
+    <!-- Reading Content -->
+    <main class="reader-immersive" id="readerEl">
+      <article class="reader-content" id="readerContent">
+        <h1 class="chapter-heading">{chapterPart && <span class="chapter-part">{chapterPart}</span>}{chapterTitle}</h1>
+        {ChapterContent && <ChapterContent />}
+      </article>
+    </main>
+
+    <!-- Bottom Bar -->
+    <footer class="reader-bottombar" id="readerBottombar">
+      <div class="reader-bottombar-inner">
+        <button class="nav-btn btn-press" id="prevChapterBtn" disabled={!hasPrev}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 18l-7-7 7-7"/>
+          </svg>
+          <span class="nav-label">上一章</span>
+        </button>
+        
+        <div class="reader-bottombar-tools">
+          <button class="tool-btn btn-press" id="toolBtnToc" aria-label="目錄">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 6h16M4 10h16M4 14h16M4 18h16"/>
+            </svg>
+            <span>目錄</span>
+          </button>
+          <button class="tool-btn btn-press" id="toolBtnSettings" aria-label="設定">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 12h.01M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+            </svg>
+            <span>設定</span>
+          </button>
+          <button class="tool-btn btn-press" id="toolBtnTts" aria-label="朗讀">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M12 12h.01"/>
+            </svg>
+            <span>朗讀</span>
+          </button>
+        </div>
+        
+        <button class="nav-btn btn-press" id="nextChapterBtn" disabled={!hasNext}>
+          <span class="nav-label">下一章</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 5l7 7-7 7"/>
+          </svg>
+        </button>
+      </div>
+    </footer>
+
+    <!-- TOC Sheet -->
+    <div class="sheet-overlay" id="tocSheet">
+      <div class="sheet-content" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <h3>章節目錄</h3>
+          <button class="btn-press sheet-close" onclick="closeSheet('tocSheet')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        <div class="sheet-body">
+          {chaptersList.map((num) => (
+            <a href={`/book/${novel.slug}/${num}`} class={`toc-item btn-press ${num === chapterNum ? 'active' : ''}`}>
+              <span>第 {num} 章</span>
+              {num === chapterNum && <span class="toc-current">進行中</span>}
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Sheet -->
+    <div class="sheet-overlay" id="settingsSheet">
+      <div class="sheet-content" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <h3>閱讀設定</h3>
+          <button class="btn-press sheet-close" onclick="closeSheet('settingsSheet')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        <div class="sheet-body">
+          <div class="setting-group">
+            <div class="setting-label">外觀模式</div>
+            <div class="setting-row">
+              <button class="setting-btn" id="themeLight" onclick="setTheme('light')">白底</button>
+              <button class="setting-btn" id="themeNight" onclick="setTheme('night')">夜間</button>
+              <button class="setting-btn" id="themeSepia" onclick="setTheme('sepia')">護眼</button>
+            </div>
+          </div>
+          <div class="setting-group">
+            <div class="setting-label">字體大小 <span id="fontSizeVal">18px</span></div>
+            <div class="setting-range">
+              <span class="range-label">A</span>
+              <input type="range" min="14" max="28" value="18" id="fontSizeRange" oninput="setFontSize(this.value)">
+              <span class="range-label large">A</span>
+            </div>
+          </div>
+          <div class="setting-group">
+            <div class="setting-label">字體</div>
+            <div class="setting-row">
+              <button class="setting-btn" id="fontSans" onclick="setFont('sans')">無襯線</button>
+              <button class="setting-btn" id="fontSerif" onclick="setFont('serif')">襯線</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TTS Sheet -->
+    <div class="sheet-overlay" id="ttsSheet">
+      <div class="sheet-content" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <h3>發聲朗讀</h3>
+          <button class="btn-press sheet-close" onclick="closeSheet('ttsSheet')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        <div class="sheet-body tts-body">
+          <button class="tts-play-btn btn-press" id="ttsPlayBtn">
+            <svg id="ttsPlayIcon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M8 5v14l11-7z"/>
+            </svg>
+            <svg id="ttsPauseIcon" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" class="hidden">
+              <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>
+            </svg>
+          </button>
+          <div class="tts-progress-wrap">
+            <input type="range" min="0" max="100" value="0" step="1" id="ttsRange" class="tts-range-slider" oninput="seekTTS(this.value)">
+            <div class="tts-progress-label">
+              <span id="ttsCurrentPara">0</span> / <span id="ttsTotalPara">0</span>
+            </div>
+          </div>
+          <div class="tts-control">
+            <div class="tts-label">
+              <span>語速</span>
+              <span id="ttsRateVal">1.0x</span>
+            </div>
+            <input type="range" min="0.5" max="2" step="0.1" value="1" id="ttsRate" oninput="setTTSRate(this.value)">
+            <div class="tts-label">
+              <span>音高</span>
+              <span id="ttsPitchVal">1.0</span>
+            </div>
+            <input type="range" min="0.5" max="2" step="0.1" value="1" id="ttsPitch" oninput="setTTSPitch(this.value)">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</ReaderLayout>
+
+<style>
+  /* Reader Page Layout */
+  .reader-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .reader-immersive {
+    background: var(--bg-reading);
+    color: var(--text-dark);
+    min-height: 100vh;
+    width: 100%;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+    position: relative;
+    transition: background var(--t-slow), color var(--t-slow);
+  }
+
+  /* Progress Bar */
+  .reader-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--color-border-light);
+    z-index: 101;
+  }
+
+  .reader-progress-bar {
+    height: 100%;
+    background: var(--accent);
+    transition: width 0.3s ease;
+    width: 0%;
+  }
+
+  /* Top Bar */
+  .reader-topbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: linear-gradient(to bottom, var(--bg-base) 0%, transparent 100%);
+    padding: var(--spacing-2) var(--spacing-3);
+    padding-top: calc(var(--spacing-2) + env(safe-area-inset-top));
+    transition: transform var(--t-normal);
+  }
+
+  .reader-topbar.hidden {
+    transform: translateY(-100%);
+  }
+
+  .reader-topbar-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    max-width: 900px;
+    margin: 0 auto;
+    min-height: 44px;
+  }
+
+  .reader-topbar-back {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: var(--radius-md);
+    background: rgba(255, 255, 255, 0.6);
+    color: var(--text-dark);
+    flex-shrink: 0;
+    transition: all var(--t-normal);
+    text-decoration: none;
+    touch-action: manipulation;
+  }
+
+  .reader-topbar-back:active {
+    transform: scale(0.98);
+  }
+
+  .reader-topbar-title {
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--text-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex: 1;
+    min-width: 0;
+    font-family: var(--font-sans);
+  }
+
+  .reader-topbar-breadcrumb {
+    display: none;
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .reader-topbar-breadcrumb a {
+    color: var(--text-muted);
+    text-decoration: none;
+  }
+
+  /* Bottom Bar */
+  .reader-bottombar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    background: linear-gradient(to top, var(--bg-base) 0%, transparent 100%);
+    padding: var(--spacing-2) var(--spacing-3);
+    padding-bottom: calc(var(--spacing-2) + env(safe-area-inset-bottom));
+    transition: transform var(--t-normal);
+  }
+
+  .reader-bottombar.hidden {
+    transform: translateY(100%);
+  }
+
+  .reader-bottombar-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--spacing-2);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .reader-bottombar-tools {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+
+  /* Navigation Buttons */
+  .nav-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding: var(--spacing-2);
+    min-width: 40px;
+    min-height: 40px;
+    justify-content: center;
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+    background: var(--bg-base);
+    color: var(--text-dark);
+    font-size: 0;
+    font-weight: var(--font-medium);
+    text-decoration: none;
+    transition: all var(--t-normal);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .nav-btn svg {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+  }
+
+  .nav-btn .nav-label {
+    display: none;
+  }
+
+  .nav-btn:active {
+    transform: scale(0.98);
+  }
+
+  .nav-btn:disabled {
+    opacity: 0.3;
+    pointer-events: none;
+  }
+
+  /* Tool Buttons */
+  .tool-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+    background: var(--bg-base);
+    color: var(--text-dark);
+    font-size: 0;
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    transition: all var(--t-normal);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .tool-btn svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .tool-btn span {
+    display: none;
+  }
+
+  .tool-btn:active {
+    transform: scale(0.98);
+  }
+
+  /* Reader Content */
+  .reader-content {
+    padding: var(--space-8) var(--space-6);
+    padding-top: 80px;
+    padding-bottom: 160px;
+    font-family: var(--font-serif);
+    font-size: var(--reader-font-size, var(--text-reading));
+    line-height: var(--reader-line-height, var(--line-height-relaxed));
+    letter-spacing: var(--reader-letter-spacing, 0.5px);
+    max-width: var(--reading-max-width);
+    margin: 0 auto;
+    text-align: justify;
+  }
+
+  .chapter-heading {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-semibold);
+    margin-bottom: var(--spacing-6);
+    color: var(--text-dark);
+    letter-spacing: 0.05em;
+    text-align: center;
+    font-family: var(--font-serif);
+  }
+
+  .chapter-part {
+    display: block;
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-2);
+    font-weight: var(--font-normal);
+  }
+
+  .reader-content p {
+    margin-bottom: var(--reading-paragraph-space);
+    text-indent: var(--reading-text-indent);
+  }
+
+  /* Hide author's notes (blockquotes at end) - use is:global to apply to markdown content */
+  :global(.reader-content blockquote) {
+    display: none !important;
+  }
+
+  /* Sheet Overlay */
+  .sheet-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 200;
+    background: rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--t-fast);
+  }
+
+  .sheet-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  .sheet-content {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-base);
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(100%);
+    transition: transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  .sheet-overlay.active .sheet-content {
+    transform: translateY(0);
+  }
+
+  .sheet-handle {
+    width: 36px;
+    height: 4px;
+    background: var(--border-medium);
+    border-radius: var(--radius-full);
+    margin: var(--spacing-3) auto;
+    opacity: 0.3;
+  }
+
+  .sheet-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-3) var(--spacing-4);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .sheet-header h3 {
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--text-dark);
+  }
+
+  .sheet-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border: none;
+    border-radius: var(--radius-md);
+    background: transparent;
+    color: var(--text-dark);
+    cursor: pointer;
+    touch-action: manipulation;
+  }
+
+  .sheet-body {
+    padding: var(--spacing-4);
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  /* TOC Items */
+  .sheet-body .toc-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-3) 0;
+    border-bottom: 1px solid var(--color-border-light);
+    text-decoration: none;
+    color: var(--text-dark);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    transition: all var(--t-fast);
+  }
+
+  .sheet-body .toc-item:active {
+    transform: translate(2px, 2px);
+  }
+
+  .sheet-body .toc-item.active {
+    color: var(--accent);
+  }
+
+  .toc-current {
+    font-size: var(--text-xs);
+    color: var(--accent);
+  }
+
+  /* Settings */
+  .setting-group {
+    margin-bottom: var(--spacing-4);
+  }
+
+  .setting-label {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-2);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .setting-row {
+    display: flex;
+    gap: var(--spacing-2);
+  }
+
+  .setting-btn {
+    flex: 1;
+    padding: var(--spacing-3);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    transition: all var(--t-fast);
+    text-align: center;
+    background: var(--bg-base);
+    color: var(--text-dark);
+  }
+
+  .setting-btn:active {
+    transform: translate(2px, 2px);
+  }
+
+  .setting-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
+  .setting-range {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+  }
+
+  .range-label {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  .range-label.large {
+    font-size: var(--text-lg);
+  }
+
+  input[type="range"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 8px;
+    background: var(--color-border-light);
+    border-radius: var(--radius-full);
+    outline: none;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    background: var(--accent);
+    border-radius: 50%;
+    cursor: grab;
+    transition: transform var(--t-fast);
+  }
+
+  input[type="range"]::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.1);
+  }
+
+  /* TTS */
+  .tts-body {
+    text-align: center;
+  }
+
+  .tts-play-btn {
+    width: 64px;
+    height: 64px;
+    border: 2px solid var(--color-border-light);
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    margin: 0 auto var(--spacing-4);
+    background: var(--accent);
+    color: white;
+    transition: all var(--t-fast);
+  }
+
+  .tts-play-btn:active {
+    transform: scale(0.98);
+  }
+
+  .tts-progress-wrap {
+    margin-bottom: var(--spacing-4);
+    padding: 0 var(--spacing-2);
+  }
+
+  .tts-range-slider {
+    width: 100%;
+  }
+
+  .tts-progress-label {
+    display: flex;
+    justify-content: center;
+    gap: var(--spacing-1);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    margin-top: var(--spacing-2);
+    font-weight: var(--font-medium);
+  }
+
+  .tts-control {
+    max-width: 300px;
+    margin: 0 auto;
+    text-align: left;
+  }
+
+  .tts-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--text-muted);
+    margin-top: var(--spacing-3);
+  }
+
+  /* TTS paragraph highlight */
+  .reader-content p[data-tts-idx].tts-active {
+    background: rgba(207, 185, 151, 0.15);
+    border-left: 3px solid var(--accent);
+    padding-left: var(--spacing-3);
+    margin-left: calc(-1 * var(--spacing-3));
+    transition: all var(--t-fast);
+  }
+
+  /* Hidden utility */
+  .hidden {
+    display: none !important;
+  }
+
+  /* Responsive - Tablet and Desktop */
+  @media (min-width: 768px) {
+    .reader-topbar {
+      padding: var(--spacing-3) var(--spacing-6);
+    }
+
+    .reader-bottombar {
+      padding: var(--spacing-3) var(--spacing-6);
+    }
+
+    .reader-topbar-title {
+      display: none;
+    }
+
+    .reader-topbar-breadcrumb {
+      display: block;
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .reader-topbar-back {
+      width: 48px;
+      height: 48px;
+    }
+
+    .nav-btn {
+      padding: var(--spacing-2) var(--spacing-3);
+      font-size: var(--text-sm);
+      min-width: auto;
+      gap: var(--spacing-1);
+    }
+
+    .nav-btn .nav-label {
+      display: inline;
+    }
+
+    .nav-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .tool-btn {
+      width: auto;
+      height: auto;
+      padding: var(--spacing-2) var(--spacing-3);
+      font-size: var(--text-xs);
+      gap: var(--spacing-1);
+    }
+
+    .tool-btn span {
+      display: inline;
+    }
+
+    .tool-btn svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .reader-content {
+      max-width: var(--content-max-width);
+      padding-left: var(--space-8);
+      padding-right: var(--space-8);
+      padding-top: 100px;
+      padding-bottom: 160px;
+      font-size: var(--text-2xl);
+    }
+
+    .reader-page {
+      display: block;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .reader-content {
+      max-width: 72ch;
+      font-size: var(--text-2xl);
+      line-height: var(--line-height-relaxed);
+    }
+
+    .reader-topbar-inner {
+      max-width: 820px;
+    }
+
+    .reader-bottombar-inner {
+      max-width: 820px;
+    }
+  }
+
+  /* Theme: Night */
+  :global([data-theme="night"]) {
+    --bg-reading: #1e1e1c;
+    --text-dark: #e8e6e0;
+    --text-muted: #a8a49c;
+    --color-border-light: rgba(255, 255, 255, 0.08);
+    --color-border: rgba(255, 255, 255, 0.12);
+    --bg-base: #242420;
+    --accent: #d4a574;
+  }
+
+  :global([data-theme="night"]) .reader-topbar-back,
+  :global([data-theme="night"]) .nav-btn,
+  :global([data-theme="night"]) .tool-btn {
+    background: rgba(36, 36, 32, 0.8);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: var(--text-dark);
+  }
+
+  /* Theme: Sepia */
+  :global([data-theme="sepia"]) {
+    --bg-reading: #f5f0e8;
+    --text-dark: #4a4538;
+    --text-muted: #6b5f4f;
+    --color-border-light: rgba(74, 69, 56, 0.08);
+    --color-border: rgba(74, 69, 56, 0.15);
+    --bg-base: #faf6ef;
+    --accent: #8b7355;
+  }
+</style>
+
+<script>
+  // ========== Reader State ==========
+  const state = {
+    uiVisible: true,
+    ttsPlaying: false,
+    ttsUtterance: null as SpeechSynthesisUtterance | null,
+    ttsCurrentIdx: 0,
+    scrollStartY: 0,
+    touchStartX: 0
+  };
+
+  // ========== Save to Reading History ==========
+  console.log('=== Chapter page loaded ===');
+  
+  (function saveHistory() {
+    const pathParts = window.location.pathname.split('/').filter(p => p);
+    const bookIndex = pathParts.indexOf('book');
+    if (bookIndex === -1) {
+      console.log('ERROR: No book in path!');
+      return;
+    }
+    
+    const rawSlug = pathParts[bookIndex + 1] || '';
+    const novelSlug = decodeURIComponent(rawSlug);
+    let currentChapter = 1;
+    
+    if (pathParts[bookIndex + 2]) {
+      currentChapter = parseInt(pathParts[bookIndex + 2], 10) || 1;
+    }
+    
+    console.log('Slug:', novelSlug, 'Chapter:', currentChapter);
+    
+    if (!novelSlug) {
+      console.log('ERROR: No novel slug found');
+      return;
+    }
+    
+    let history = [];
+    try {
+      const stored = localStorage.getItem('history');
+      history = stored ? JSON.parse(stored) : [];
+    } catch (e) {
+      history = [];
+    }
+    
+    const entry = { id: novelSlug, chapter: currentChapter, timestamp: Date.now() };
+    history = history.filter((h: { id: string }) => h.id !== novelSlug);
+    history.unshift(entry);
+    if (history.length > 20) history = history.slice(0, 20);
+    
+    localStorage.setItem('history', JSON.stringify(history));
+    console.log('✓ HISTORY SAVED! Total:', history.length);
+  })();
+
+  // Get novel slug for navigation
+  const pathParts = window.location.pathname.split('/').filter(p => p);
+  const bookIndex = pathParts.indexOf('book');
+  const novelSlug = bookIndex > -1 ? decodeURIComponent(pathParts[bookIndex + 1] || '') : '';
+
+  // ========== DOM Elements ==========
+  const readerProgress = document.getElementById('readerProgress');
+  const readerProgressBar = document.getElementById('readerProgressBar');
+  const readerTopbar = document.getElementById('readerTopbar');
+  const readerBottombar = document.getElementById('readerBottombar');
+  const readerEl = document.getElementById('readerEl');
+  const readerContent = document.getElementById('readerContent');
+
+  // ========== Progress Bar ==========
+  function updateProgress() {
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+    if (readerProgressBar) {
+      readerProgressBar.style.width = `${progress}%`;
+    }
+  }
+
+  // ========== UI Visibility Toggle ==========
+  let hideTimeout: ReturnType<typeof setTimeout>;
+
+  function showUI() {
+    state.uiVisible = true;
+    readerTopbar?.classList.remove('hidden');
+    readerBottombar?.classList.remove('hidden');
+    clearTimeout(hideTimeout);
+    hideTimeout = setTimeout(() => {
+      if (state.uiVisible && !document.querySelector('.sheet-overlay.active')) {
+        hideUI();
+      }
+    }, 3000);
+  }
+
+  function hideUI() {
+    state.uiVisible = false;
+    readerTopbar?.classList.add('hidden');
+    readerBottombar?.classList.add('hidden');
+  }
+
+  function toggleUI() {
+    if (state.uiVisible) {
+      hideUI();
+    } else {
+      showUI();
+    }
+  }
+
+  // Tap content to toggle UI
+  readerEl?.addEventListener('click', (e) => {
+    const target = e.target as HTMLElement;
+    if (target.closest('.tool-btn') || target.closest('.nav-btn') || target.closest('.sheet-overlay')) {
+      return;
+    }
+    toggleUI();
+  });
+
+  // ========== Scroll Handling ==========
+  let lastScrollY = 0;
+
+  window.addEventListener('scroll', () => {
+    updateProgress();
+    
+    const currentScrollY = window.scrollY;
+    if (currentScrollY > lastScrollY && currentScrollY > 50) {
+      // Scrolling down - hide UI
+      if (state.uiVisible) {
+        hideUI();
+      }
+    } else if (currentScrollY < lastScrollY) {
+      // Scrolling up - show UI
+      if (!state.uiVisible && currentScrollY < 100) {
+        showUI();
+      }
+    }
+    lastScrollY = currentScrollY;
+  });
+
+  // ========== Sheet Functions ==========
+  (window as any).openSheet = function(id: string) {
+    document.getElementById(id)?.classList.add('active');
+    showUI();
+  };
+
+  (window as any).closeSheet = function(id: string) {
+    document.getElementById(id)?.classList.remove('active');
+  };
+
+  // Close sheets when clicking overlay
+  document.querySelectorAll('.sheet-overlay').forEach(overlay => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) {
+        overlay.classList.remove('active');
+      }
+    });
+  });
+
+  // ========== Toolbar Buttons ==========
+  const toolBtnToc = document.getElementById('toolBtnToc');
+  const toolBtnSettings = document.getElementById('toolBtnSettings');
+  const toolBtnTts = document.getElementById('toolBtnTts');
+  const prevChapterBtn = document.getElementById('prevChapterBtn');
+  const nextChapterBtn = document.getElementById('nextChapterBtn');
+
+  toolBtnToc?.addEventListener('click', () => (window as any).openSheet('tocSheet'));
+  toolBtnSettings?.addEventListener('click', () => (window as any).openSheet('settingsSheet'));
+  toolBtnTts?.addEventListener('click', () => {
+    initTTS();
+    (window as any).openSheet('ttsSheet');
+  });
+
+  prevChapterBtn?.addEventListener('click', () => {
+    const current = parseInt(window.location.pathname.split('/').pop() || '1');
+    if (current > 1) window.location.href = `/book/${novelSlug}/${current - 1}`;
+  });
+
+  nextChapterBtn?.addEventListener('click', () => {
+    const current = parseInt(window.location.pathname.split('/').pop() || '1');
+    window.location.href = `/book/${novelSlug}/${current + 1}`;
+  });
+
+  // ========== Touch Swipe Gestures ==========
+  document.addEventListener('touchstart', (e) => {
+    state.touchStartX = e.touches[0].clientX;
+    state.scrollStartY = window.scrollY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', (e) => {
+    const touchEndX = e.changedTouches[0].clientX;
+    const deltaX = touchEndX - state.touchStartX;
+    const scrollDelta = Math.abs(window.scrollY - state.scrollStartY);
+    
+    // Only trigger swipe if scroll was minimal
+    if (Math.abs(deltaX) > 50 && scrollDelta < 10) {
+      if (deltaX > 0 && prevChapterBtn && !prevChapterBtn.hasAttribute('disabled')) {
+        // Swipe right - previous chapter
+        prevChapterBtn.click();
+      } else if (deltaX < 0 && nextChapterBtn && !nextChapterBtn.hasAttribute('disabled')) {
+        // Swipe left - next chapter
+        nextChapterBtn.click();
+      }
+    }
+  }, { passive: true });
+
+  // ========== Keyboard Navigation ==========
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowLeft' && prevChapterBtn && !prevChapterBtn.hasAttribute('disabled')) {
+      prevChapterBtn.click();
+    } else if (e.key === 'ArrowRight' && nextChapterBtn && !nextChapterBtn.hasAttribute('disabled')) {
+      nextChapterBtn.click();
+    } else if (e.key === 'Escape') {
+      document.querySelectorAll('.sheet-overlay.active').forEach(sheet => {
+        sheet.classList.remove('active');
+      });
+    }
+  });
+
+  // ========== Reading Settings ==========
+  function loadSettings() {
+    try {
+      const theme = localStorage.getItem('dn_theme');
+      if (theme) (window as any).setTheme(theme);
+      
+      const fontSize = localStorage.getItem('dn_fontsize');
+      if (fontSize) (window as any).setFontSize(fontSize);
+      
+      const font = localStorage.getItem('dn_font');
+      if (font) (window as any).setFont(font);
+    } catch (e) {}
+  }
+
+  (window as any).setTheme = function(t: string) {
+    if (t === 'light') {
+      document.documentElement.removeAttribute('data-theme');
+    } else {
+      document.documentElement.setAttribute('data-theme', t);
+    }
+    try {
+      localStorage.setItem('dn_theme', t);
+    } catch (e) {}
+    
+    // Update active state
+    document.getElementById('themeLight')?.classList.toggle('active', t === 'light');
+    document.getElementById('themeNight')?.classList.toggle('active', t === 'night');
+    document.getElementById('themeSepia')?.classList.toggle('active', t === 'sepia');
+  };
+
+  (window as any).setFontSize = function(v: string) {
+    if (readerContent) {
+      readerContent.style.fontSize = v + 'px';
+    }
+    const fontSizeVal = document.getElementById('fontSizeVal');
+    if (fontSizeVal) fontSizeVal.textContent = v + 'px';
+    try {
+      localStorage.setItem('dn_fontsize', v);
+    } catch (e) {}
+  };
+
+  (window as any).setFont = function(t: string) {
+    if (readerContent) {
+      readerContent.style.fontFamily = t === 'serif' 
+        ? '"Noto Serif TC", "Songti TC", "PMingLiU", Georgia, serif'
+        : '"Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif';
+    }
+    document.getElementById('fontSans')?.classList.toggle('active', t === 'sans');
+    document.getElementById('fontSerif')?.classList.toggle('active', t === 'serif');
+    try {
+      localStorage.setItem('dn_font', t);
+    } catch (e) {}
+  };
+
+  // ========== TTS (Text-to-Speech) ==========
+  let ttsParagraphs: NodeListOf<HTMLParagraphElement> | null = null;
+
+  function initTTS() {
+    ttsParagraphs = document.querySelectorAll('#readerContent p');
+    const totalPara = document.getElementById('ttsTotalPara');
+    if (totalPara) totalPara.textContent = String(ttsParagraphs?.length || 0);
+  }
+
+  (window as any).toggleTTS = function() {
+    if (state.ttsPlaying) {
+      speechSynthesis.cancel();
+      state.ttsPlaying = false;
+      state.ttsCurrentIdx = 0;
+      (window as any).updateTTSIcon();
+      (window as any).updateTTSProgress(0);
+    } else {
+      if (!ttsParagraphs || ttsParagraphs.length === 0) {
+        initTTS();
+      }
+      if (ttsParagraphs && ttsParagraphs.length > 0) {
+        speakFrom(state.ttsCurrentIdx);
+      }
+    }
+  };
+
+  (window as any).updateTTSIcon = function() {
+    const playIcon = document.getElementById('ttsPlayIcon');
+    const pauseIcon = document.getElementById('ttsPauseIcon');
+    playIcon?.classList.toggle('hidden', state.ttsPlaying);
+    pauseIcon?.classList.toggle('hidden', !state.ttsPlaying);
+  };
+
+  (window as any).updateTTSProgress = function(pct: number) {
+    const ttsRange = document.getElementById('ttsRange') as HTMLInputElement;
+    const currentPara = document.getElementById('ttsCurrentPara');
+    const totalPara = document.getElementById('ttsTotalPara');
+    
+    if (ttsRange) ttsRange.value = String(Math.round(pct * 100));
+    if (currentPara) currentPara.textContent = String(state.ttsCurrentIdx + 1);
+    if (totalPara && ttsParagraphs) totalPara.textContent = String(ttsParagraphs.length);
+  };
+
+  (window as any).setTTSRate = function(v: string) {
+    const rateVal = document.getElementById('ttsRateVal');
+    if (rateVal) rateVal.textContent = parseFloat(v).toFixed(1) + 'x';
+    if (state.ttsUtterance) state.ttsUtterance.rate = parseFloat(v);
+  };
+
+  (window as any).setTTSPitch = function(v: string) {
+    const pitchVal = document.getElementById('ttsPitchVal');
+    if (pitchVal) pitchVal.textContent = parseFloat(v).toFixed(1);
+    if (state.ttsUtterance) state.ttsUtterance.pitch = parseFloat(v);
+  };
+
+  (window as any).seekTTS = function(val: string) {
+    if (!ttsParagraphs || ttsParagraphs.length === 0) return;
+    
+    const pct = parseInt(val) / 100;
+    const targetIdx = Math.min(Math.floor(pct * ttsParagraphs.length), ttsParagraphs.length - 1);
+    
+    if (state.ttsPlaying) {
+      speakFrom(targetIdx);
+    } else {
+      state.ttsCurrentIdx = targetIdx;
+      (window as any).updateTTSProgress(pct);
+      highlightParagraph(targetIdx);
+    }
+  };
+
+  function speakFrom(idx: number) {
+    speechSynthesis.cancel();
+    
+    if (!ttsParagraphs || idx < 0 || idx >= ttsParagraphs.length) {
+      state.ttsPlaying = false;
+      state.ttsCurrentIdx = 0;
+      (window as any).updateTTSIcon();
+      (window as any).updateTTSProgress(0);
+      clearTTSHighlight();
+      return;
+    }
+    
+    state.ttsCurrentIdx = idx;
+    
+    let txt = '';
+    for (let i = idx; i < ttsParagraphs.length; i++) {
+      txt += ttsParagraphs[i].textContent + ' ';
+    }
+    
+    state.ttsUtterance = new SpeechSynthesisUtterance(txt);
+    state.ttsUtterance.lang = 'zh-TW';
+    
+    const rateEl = document.getElementById('ttsRate') as HTMLInputElement;
+    const pitchEl = document.getElementById('ttsPitch') as HTMLInputElement;
+    if (rateEl) state.ttsUtterance.rate = parseFloat(rateEl.value);
+    if (pitchEl) state.ttsUtterance.pitch = parseFloat(pitchEl.value);
+    
+    state.ttsUtterance.onend = () => {
+      state.ttsPlaying = false;
+      state.ttsCurrentIdx = 0;
+      (window as any).updateTTSIcon();
+      (window as any).updateTTSProgress(0);
+      clearTTSHighlight();
+      const ttsRange = document.getElementById('ttsRange') as HTMLInputElement;
+      if (ttsRange) ttsRange.value = '0';
+    };
+    
+    state.ttsUtterance.onboundary = (ev) => {
+      if (ev.name === 'word' || ev.name === 'sentence') {
+        const charPos = ev.charIndex;
+        let before = 0;
+        let done = idx;
+        
+        for (let j = idx; j < ttsParagraphs!.length; j++) {
+          const plen = ttsParagraphs![j].textContent!.length;
+          if (charPos < before + plen + 1) {
+            done = j;
+            break;
+          }
+          before += plen + 1;
+        }
+        
+        if (done !== state.ttsCurrentIdx) {
+          state.ttsCurrentIdx = done;
+          highlightParagraph(done);
+        }
+        
+        if (ttsParagraphs && ttsParagraphs.length > 1) {
+          const pct = (done - idx) / (ttsParagraphs.length - 1);
+          (window as any).updateTTSProgress(pct);
+          const ttsRange = document.getElementById('ttsRange') as HTMLInputElement;
+          if (ttsRange) ttsRange.value = String(Math.round(pct * 100));
+        }
+      }
+    };
+    
+    speechSynthesis.speak(state.ttsUtterance);
+    state.ttsPlaying = true;
+    (window as any).updateTTSIcon();
+    (window as any).updateTTSProgress(0);
+    highlightParagraph(idx);
+  }
+
+  function highlightParagraph(idx: number) {
+    if (!ttsParagraphs) return;
+    
+    clearTTSHighlight();
+    if (idx >= 0 && idx < ttsParagraphs.length) {
+      const el = ttsParagraphs[idx];
+      el.classList.add('tts-active');
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }
+
+  function clearTTSHighlight() {
+    ttsParagraphs?.forEach(p => p.classList.remove('tts-active'));
+  }
+
+  // TTS play button
+  const ttsPlayBtn = document.getElementById('ttsPlayBtn');
+  ttsPlayBtn?.addEventListener('click', () => (window as any).toggleTTS());
+
+  // ========== Initialize ==========
+  loadSettings();
+  updateProgress();
+
+  // Add data-tts-idx to paragraphs
+  document.querySelectorAll('#readerContent p').forEach((p, i) => {
+    p.setAttribute('data-tts-idx', String(i));
+  });
+</script>

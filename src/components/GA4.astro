@@ -1,0 +1,36 @@
+---
+// Google Analytics 4 Component
+// Usage: Import and add to your layout: <GA4 />
+
+interface Props {
+  measurementId?: string;
+}
+
+const { measurementId = 'G-XXXXXXXXXX' } = Astro.props;
+---
+
+{measurementId !== 'G-XXXXXXXXXX' && (
+  <script is:inline async defer data-domain={Astro.url.hostname} src="https://plausible.io/js/script.js"></script>
+)}
+
+<!-- Google Analytics 4 -->
+<script is:inline define:vars={{ measurementId }}>
+  // Only load in production
+  if (import.meta.env.PROD && measurementId !== 'G-XXXXXXXXXX') {
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', measurementId);
+    
+    // Load GA4 script
+    const script = document.createElement('script');
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${measurementId}`;
+    script.async = true;
+    document.head.appendChild(script);
+  }
+</script>
+
+<!-- Alternative: Plausible Analytics (privacy-focused) -->
+<!-- 
+<script defer data-domain="your-domain.com" src="https://plausible.io/js/script.js"></script>
+-->

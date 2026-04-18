@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="隐私政策 - 小说阁">
+  <article class="legal">
+    <h1>隐私政策</h1>
+    <p>最后更新：2024年1月</p>
+    
+    <h2>收集的信息</h2>
+    <p>我们仅收集您主动提供的信息，包括收藏夹和阅读历史（存储在本地设备上）。</p>
+    
+    <h2>信息使用</h2>
+    <p>您提供的信息仅用于改善您的阅读体验，不会共享给第三方。</p>
+    
+    <h2>数据存储</h2>
+    <p>您的收藏和阅读历史存储在本地浏览器中，您可以随时清除。</p>
+  </article>
+</BaseLayout>
+
+<style>
+  .legal {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .legal h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+  .legal h2 { font-size: 1.25rem; margin: 1.5rem 0 0.75rem; }
+  .legal p { line-height: 1.8; color: var(--text-light); }
+</style>

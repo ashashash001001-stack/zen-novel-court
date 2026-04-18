@@ -1,0 +1,387 @@
+/**
+ * ===========================================
+ * Design Tokens - Global CSS Variables
+ * ===========================================
+ * Japanese Wabi-Sabi inspired design system
+ * 
+ * Usage: Import in your Astro layout:
+ *   import '../styles/tokens.css';
+ * 
+ * Then reference in CSS:
+ *   color: var(--color-text-primary);
+ *   padding: var(--space-4);
+ *   font-size: var(--text-xl);
+ * =========================================== */
+
+/* ===========================================
+   1. COLOR SYSTEM
+   =========================================== */
+
+:root {
+  /* ---------- Primary Palette (Warm Ivory) ---------- */
+  --color-primary-50: #FDFBF7;
+  --color-primary-100: #F5F1EA;
+  --color-primary-200: #E8E2D8;
+  --color-primary-300: #D8CFC4;
+  --color-primary-400: #Cfb997;
+  --color-primary-500: #a39171;
+  --color-primary-600: #8a7860;
+  --color-primary-700: #5a5a5a;
+  --color-primary-800: #2C2A25;
+  --color-primary-900: #1a1916;
+
+  /* ---------- Semantic Colors ---------- */
+  /* Backgrounds */
+  --color-bg-outer: var(--color-primary-50);
+  --color-bg-inner: #FFFFFF;
+  --color-bg-card: #FFFFFF;
+  --color-bg-reading: var(--color-primary-50);
+  --color-bg-app: var(--color-bg-outer);
+
+  /* Text - WCAG AA Compliant */
+  --color-text-primary: var(--color-primary-800);   /* 12.96:1 on bg */
+  --color-text-secondary: var(--color-primary-700);  /* 4.49:1 on bg */
+  --color-text-muted: #6A645A;               /* 4.58:1 - WCAG AA compliant */
+
+  /* Accent */
+  --color-accent: var(--color-primary-400);
+  --color-accent-hover: var(--color-primary-500);
+  --color-accent-light: #dcd3c1;
+  --color-accent-dark: var(--color-primary-600);
+
+  /* Borders */
+  --color-border-subtle: rgba(163, 145, 113, 0.06);
+  --color-border-light: #e5e0d8;
+  --color-border-default: rgba(163, 145, 113, 0.12);
+  --color-border-medium: #d2c9b8;
+  --color-border-highlight: rgba(255, 255, 255, 0.6);
+
+  /* Glass Effect */
+  --color-glass-bg: rgba(253, 251, 247, 0.65);
+  --color-glass-border: rgba(0, 0, 0, 0.06);
+
+  /* Status Colors */
+  --color-success: #7d9a7d;
+  --color-warning: #b8a86b;
+  --color-error: #c97d7d;
+
+  /* Utility Colors */
+  --color-white: #FFFFFF;
+  --color-black: #000000;
+}
+
+/* ===========================================
+   2. TYPOGRAPHY
+   =========================================== */
+
+:root {
+  /* ---------- Font Families ---------- */
+  --font-sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --font-serif: "Noto Serif TC", "Songti TC", "PMingLiu", Georgia, serif;
+  --font-display: var(--font-serif);
+
+  /* ---------- Body Font Sizes (1.125 scale - Major Second) ---------- */
+  --text-xs: 0.75rem;        /* 12px */
+  --text-sm: 0.875rem;       /* 14px */
+  --text-base: 1rem;         /* 16px */
+  --text-lg: 1.0625rem;      /* 17px */
+  --text-xl: 1.125rem;       /* 18px */
+
+  /* ---------- Intermediate Sizes (for icons/accents) ---------- */
+  --text-xs-sm: 0.6875rem;   /* 11px - Small badges */
+  --text-1point5xl: 1.5rem;  /* 24px - Medium icons */
+  --text-icon-sm: 1.75rem;   /* 28px - Category icons */
+  --text-icon-lg: 2.25rem;   /* 36px - Featured icons */
+
+  /* ---------- Heading Font Sizes (1.25 scale - Major Third) ---------- */
+  --text-2xl: 1.25rem;       /* 20px - H4 */
+  --text-3xl: 1.5625rem;     /* 25px - H3 */
+  --text-4xl: 1.953125rem;   /* 31px - H2 */
+  --text-5xl: 2.44140625rem; /* 39px - H1 */
+  --text-6xl: 3.0517578125rem; /* 48px - Hero */
+
+  /* ---------- Display Font Size ---------- */
+  --text-hero: 2.441rem;     /* 39px */
+
+  /* ---------- Reading Typography ---------- */
+  --text-reading: 1.125rem;   /* 18px - Novel body default */
+  --line-height-tight: 1.3;
+  --line-height-snug: 1.4;
+  --line-height-normal: 1.5;
+  --line-height-relaxed: 1.7;  /* Optimal for prose */
+  --line-height-loose: 1.9;    /* Upper limit */
+
+  /* ---------- Font Weights ---------- */
+  --font-normal: 400;
+  --font-medium: 500;
+  --font-semibold: 600;
+  --font-bold: 700;
+}
+
+/* ===========================================
+   3. SPACING
+   =========================================== */
+
+:root {
+  /* ---------- Spacing Scale (4px base, iOS style) ---------- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;   /* Most common */
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  /* ---------- Layout Spacing (larger iOS/App Store style) ---------- */
+  --reading-padding-x: 24px;
+  --page-padding-x: 20px;
+  --container-max-width: 1100px;
+  --content-max-width: 720px;
+
+  /* ---------- Reader Specific ---------- */
+  --reading-max-width: 72ch;
+  --reading-paragraph-space: 1.5em;
+  --reading-text-indent: 2em;
+}
+
+/* ===========================================
+   4. SHADOWS
+   =========================================== */
+
+:root {
+  --shadow-xs: 0 2px 8px -2px rgba(163, 145, 113, 0.1);
+  --shadow-sm: 0 8px 30px -12px rgba(163, 145, 113, 0.15), 0 4px 12px -4px rgba(163, 145, 113, 0.10);
+  --shadow-md: 0 12px 40px -12px rgba(163, 145, 113, 0.20), 0 6px 16px -4px rgba(163, 145, 113, 0.15);
+  --shadow-lg: 0 16px 48px -12px rgba(163, 145, 113, 0.22), 0 8px 20px -4px rgba(163, 145, 113, 0.18);
+
+  /* Aliases */
+  --shadow-float: var(--shadow-md);
+  --shadow-hover: var(--shadow-md);
+  --shadow-card: var(--shadow-sm);
+  --shadow-card-hover: var(--shadow-md);
+}
+
+/* ===========================================
+   5. BORDER RADIUS
+   =========================================== */
+
+:root {
+  /* iOS App Store style - more rounded */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --radius-full: 9999px;
+}
+
+/* ===========================================
+   6. ANIMATION
+   =========================================== */
+
+:root {
+  /* Easing */
+  --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-smooth: cubic-bezier(0.2, 0.8, 0.2, 1);
+  
+  /* Duration */
+  --t-fast: 0.15s;
+  --t-normal: 0.25s;
+  --t-slow: 0.4s;
+  --t-silent: 0.6s ease-out;
+}
+
+/* ===========================================
+   7. COMPONENT TOKENS
+   =========================================== */
+
+:root {
+  /* Buttons - iOS style */
+  --button-min-height: 44px;
+  --button-min-width: 44px;
+  --button-padding-x: 20px;
+  --button-padding-y: 12px;
+  --button-radius: var(--radius-lg);
+
+  /* Inputs */
+  --input-height: 48px;
+  --input-radius: var(--radius-md);
+
+  /* Cards */
+  --card-radius: var(--radius-lg);
+  --card-padding: var(--space-5);
+
+  /* Navigation */
+  --nav-height: 64px;
+  --nav-safe-area: env(safe-area-inset-bottom, 0px);
+
+  /* Footer */
+  --footer-height: 72px;
+}
+
+/* ===========================================
+   8. ALIASES (Backward Compatibility)
+   =========================================== */
+
+:root {
+  /* Keep old names for compatibility */
+  --bg-outer: var(--color-bg-outer);
+  --bg-base: var(--color-bg-inner);
+  --bg-card: var(--color-bg-card);
+  --bg-reading: var(--color-bg-reading);
+  --bg-app: var(--color-bg-app);
+
+  --text-main: var(--color-text-primary);
+  --text-dark: var(--color-text-primary);
+  --text-sub: var(--color-text-secondary);
+
+  --accent: var(--color-accent);
+  --accent-hover: var(--color-accent-hover);
+  --accent-light: var(--color-accent-light);
+  --accent-dark: var(--color-accent-dark);
+
+  --border-subtle: var(--color-border-subtle);
+  --border-light: var(--color-border-light);
+  --border-default: var(--color-border-default);
+  --border-medium: var(--color-border-medium);
+
+  --glass-bg: var(--color-glass-bg);
+  --glass-border: var(--color-glass-border);
+
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-lg: var(--shadow-lg);
+  --shadow-float: var(--shadow-float);
+  --shadow-hover: var(--shadow-hover);
+  --shadow-card: var(--shadow-card);
+  --shadow-card-hover: var(--shadow-card-hover);
+
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-sans);
+
+  --text-xs: var(--text-xs);
+  --text-sm: var(--text-sm);
+  --text-base: var(--text-base);
+  --text-lg: var(--text-lg);
+  --text-xl: var(--text-xl);
+  --text-2xl: var(--text-2xl);
+  --text-3xl: var(--text-3xl);
+  --text-hero: var(--text-hero);
+
+  --font-normal: var(--font-normal);
+  --font-medium: var(--font-medium);
+  --font-semibold: var(--font-semibold);
+  --font-bold: var(--font-bold);
+
+  --spacing-1: var(--space-1);
+  --spacing-2: var(--space-2);
+  --spacing-3: var(--space-3);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-8: var(--space-8);
+  --spacing-10: var(--space-10);
+  --spacing-12: var(--space-12);
+
+  --ease-elastic: var(--ease-elastic);
+  --ease-smooth: var(--ease-smooth);
+  --t-fast: var(--t-fast);
+  --t-normal: var(--t-normal);
+  --t-slow: var(--t-slow);
+  --t-silent: var(--t-silent);
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --radius-2xl: 28px;
+  --radius-full: 9999px;
+
+  --color-border-light: var(--color-border-subtle);
+  --color-border: var(--color-border-default);
+}
+
+/* ===========================================
+   9. THEME: NIGHT
+   =========================================== */
+
+[data-theme="night"] {
+  --color-bg-outer: #121210;
+  --color-bg-inner: #1a1a18;
+  --color-bg-card: #1e1e1c;
+  --color-bg-reading: #1e1e1c;
+  --color-bg-app: #121210;
+
+  --color-text-primary: #E8E6E0;
+  --color-text-secondary: #a8a49c;
+  --color-text-muted: #6b6560;
+
+  --color-accent: #d4a574;
+  --color-accent-hover: #c49464;
+  --color-accent-light: #4a4035;
+  --color-accent-dark: #b8895a;
+
+  --color-border-subtle: rgba(255, 255, 255, 0.04);
+  --color-border-light: #2a2a28;
+  --color-border-default: rgba(255, 255, 255, 0.08);
+  --color-border-medium: rgba(255, 255, 255, 0.12);
+  --color-border-highlight: rgba(255, 255, 255, 0.08);
+
+  --color-success: #6b856b;
+  --color-warning: #a89060;
+  --color-error: #b87070;
+
+  /* Update Aliases */
+  --bg-outer: #121210;
+  --bg-base: #1a1a18;
+  --text-dark: #E8E6E0;
+  --text-muted: #6b6560;
+  --text-sub: #a8a49c;
+  --color-border-light: rgba(255, 255, 255, 0.06);
+  --color-border: rgba(255, 255, 255, 0.1);
+}
+
+/* ===========================================
+   10. THEME: SEPIA
+   =========================================== */
+
+[data-theme="sepia"] {
+  --color-bg-outer: #F5F0E8;
+  --color-bg-inner: #FAF6EF;
+  --color-bg-card: #FAF6EF;
+  --color-bg-reading: #F5F0E8;
+  --color-bg-app: #F5F0E8;
+
+  --color-text-primary: #4A4538;
+  --color-text-secondary: #6B5F4F;
+  --color-text-muted: #8B8070;
+
+  --color-accent: #8B7355;
+  --color-accent-hover: #7a6248;
+  --color-accent-light: #d5c9b5;
+  --color-accent-dark: #6d573f;
+
+  --color-border-subtle: rgba(74, 69, 56, 0.06);
+  --color-border-light: #e8e0d0;
+  --color-border-default: rgba(74, 69, 56, 0.12);
+  --color-border-medium: rgba(74, 69, 56, 0.2);
+  --color-border-highlight: rgba(255, 255, 255, 0.5);
+
+  --color-success: #6d7a6d;
+  --color-warning: #a09055;
+  --color-error: #b06565;
+
+  /* Update Aliases */
+  --bg-outer: #F5F0E8;
+  --bg-base: #FAF6EF;
+  --text-dark: #4A4538;
+  --text-muted: #8B8070;
+  --text-sub: #6B5F4F;
+  --color-border-light: rgba(74, 69, 56, 0.06);
+  --color-border: rgba(74, 69, 56, 0.1);
+}

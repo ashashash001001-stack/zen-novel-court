@@ -1,0 +1,532 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+
+export function getStaticPaths() {
+  const novels = [
+    {
+      slug: '佛系廚神',
+      title: '佛系廚神',
+      author: 'AI 生成',
+      genre: '都市/料理/成長',
+      category: 'food',
+      chapters: 18,
+      status: '連載中',
+      synopsis: '在喧鬧的香港深水埗舊城區，隱藏著一座帶有昭和時代木造建築與枯山水庭園的破舊小佛寺。年輕的伙頭僧小步，將「動禪」融入「精進料理」，做出的素菜帶有撫慰人心的侘寂之美。為了守護寺廟不被財團拆除，並帶青梅竹馬靜子去北海道參拜大佛，他帶著一隻黃色胖貓下山參賽。',
+      tags: ['禪意', '素食', '成長', '美食']
+    },
+    {
+      slug: '一茶一禪-海鮮僧的靜心茶路',
+      title: '一茶一禪',
+      author: 'AI 生成',
+      genre: '都市/禪意/美食',
+      category: 'healing',
+      chapters: 50,
+      status: '已完結',
+      synopsis: '一個關於茶道與禪意的故事。海鮮僧在修行中領悟茶的真理，將禪意融入每一杯茶中。',
+      tags: ['禪意', '美食', '素食', '成長']
+    },
+    {
+      slug: '万界直播系统',
+      title: '萬界直播系統',
+      author: 'AI 生成',
+      genre: '都市/系統/直播',
+      category: 'system',
+      chapters: 130,
+      status: '連載中',
+      synopsis: '主角在異世界進行直播，獲得各種能力，從此走上人生巔峰。',
+      tags: ['直播', '系統', '都市', '爽文']
+    }
+  ];
+  
+  return novels.map((novel) => ({
+    params: { novel: novel.slug },
+    props: { novel }
+  }));
+}
+
+const { novel } = Astro.props;
+---
+
+<BaseLayout title={`${novel.title} - 小说阁`} activeTab="library">
+  <div class="book-detail">
+    <!-- Hero Section -->
+    <div class="detail-hero">
+      <div class="detail-cover">
+        <div class="css-book-cover" style="width: 120px; height: 170px;">
+          <div class="cover-content">
+            <span class="cover-title">{novel.title}</span>
+            <span class="cover-author">{novel.author}</span>
+          </div>
+        </div>
+      </div>
+      <div class="detail-info">
+        <div class="detail-info-row">
+          <h1 class="detail-title">{novel.title}</h1>
+          <button class="fav-btn-top" id="favBtnTop" title="收藏">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+          </button>
+        </div>
+        <p class="detail-author">{novel.author}</p>
+        <div class="detail-meta">
+          <span>{novel.genre || '都市'}</span>
+          <span>{novel.chapters}章</span>
+          <span class={`status-tag ${novel.status === '已完結' ? 'done' : 'ongoing'}`}>
+            {novel.status || '連載中'}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Synopsis -->
+    <div class="synopsis">
+      <h3 class="synopsis-title">簡介</h3>
+      <p class="synopsis-text">{novel.synopsis || '暂无简介'}</p>
+    </div>
+
+    <!-- Tags -->
+    {novel.tags && (
+      <div class="detail-tags">
+        {novel.tags.map((tag) => (
+          <span class="tag">{tag}</span>
+        ))}
+      </div>
+    )}
+
+    <!-- Chapter List -->
+    <div class="chapters-section">
+      <h3 class="section-title">目錄</h3>
+      <ul class="toc-list">
+        {Array.from({ length: novel.chapters }, (_, i) => i + 1).map((num) => (
+          <li>
+            <a href={`/book/${novel.slug}/${num}`} class="toc-item">
+              <span class="toc-chapter">{num}</span>
+              <span class="toc-title">第 {num} 章</span>
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  </div>
+
+  <!-- Sticky CTA -->
+  <div class="sticky-cta">
+    <a href={`/book/${novel.slug}/1`} class="btn-primary">
+      開始閱讀
+    </a>
+    <button class="btn-secondary" id="favBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+      </svg>
+    </button>
+  </div>
+</BaseLayout>
+
+<style>
+  .book-detail {
+    padding-top: var(--spacing-4);
+  }
+
+  .detail-hero {
+    display: flex;
+    gap: var(--spacing-lg);
+    padding: var(--spacing-lg);
+    background: var(--bg-base);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .detail-cover {
+    flex-shrink: 0;
+  }
+
+  .css-book-cover {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary-300);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    font-family: var(--font-serif);
+    box-shadow: var(--shadow-md);
+  }
+
+  .css-book-cover::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 1;
+  }
+
+  .css-book-cover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, transparent 40%, rgba(0,0,0,0.05) 100%);
+    pointer-events: none;
+  }
+
+  .cover-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: var(--spacing-3);
+    color: var(--color-white);
+  }
+
+  .cover-title {
+    font-size: 18px;
+    font-weight: var(--font-semibold);
+    color: var(--color-white);
+    line-height: 1.4;
+  }
+
+  .cover-author {
+    font-size: 12px;
+    color: rgba(255, 255, 255, 0.85);
+    margin-top: var(--spacing-1);
+  }
+
+  .detail-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: var(--spacing-2);
+  }
+
+  .detail-info-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--spacing-3);
+  }
+
+  .detail-info-row .detail-title {
+    flex: 1;
+  }
+
+  .fav-btn-top {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-md);
+    transition: all var(--t-fast);
+  }
+
+  .fav-btn-top:hover {
+    background: rgba(163, 145, 113, 0.1);
+    color: var(--color-accent);
+  }
+
+  .fav-btn-top svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .fav-btn-top.favorited {
+    color: var(--color-accent);
+  }
+
+  .fav-btn-top.favorited svg[fill="currentColor"] {
+    fill: var(--color-accent);
+  }
+
+  .detail-title {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-semibold);
+    color: var(--text-dark);
+    letter-spacing: 0.02em;
+    font-family: var(--font-serif);
+  }
+
+  .detail-author {
+    font-size: var(--text-base);
+    color: var(--text-muted);
+    font-weight: var(--font-normal);
+  }
+
+  .detail-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-3);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+
+  .status-tag {
+    padding: 2px 8px;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+  }
+
+  .status-tag.ongoing {
+    background: var(--accent);
+    color: var(--color-white);
+  }
+
+  .status-tag.done {
+    background: var(--color-success);
+    color: var(--color-white);
+  }
+
+  .synopsis {
+    padding: var(--spacing-lg);
+    background: var(--bg-base);
+    margin-top: var(--spacing-4);
+  }
+
+  .synopsis-title {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-3);
+  }
+
+  .synopsis-text {
+    font-size: var(--text-base);
+    color: var(--text-muted);
+    line-height: 1.8;
+  }
+
+  .detail-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+    padding: var(--spacing-lg);
+    background: var(--bg-base);
+    margin-top: var(--spacing-4);
+  }
+
+  .tag {
+    padding: var(--spacing-2) var(--spacing-4);
+    background: var(--bg-outer);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  .chapters-section {
+    padding: var(--spacing-lg);
+    background: var(--bg-base);
+    margin-top: var(--spacing-4);
+    padding-bottom: 100px;
+  }
+
+  .chapters-section .section-title {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: var(--text-dark);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .toc-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-2);
+  }
+
+  .toc-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3);
+    background: var(--bg-outer);
+    border-radius: var(--radius-sm);
+    transition: all var(--t-normal);
+    text-decoration: none;
+    color: inherit;
+  }
+
+  .toc-item:hover {
+    background: rgba(163, 145, 113, 0.08);
+    transform: translateX(4px);
+  }
+
+  .toc-item:active {
+    transform: scale(0.98);
+  }
+
+  .toc-chapter {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-inner);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+    touch-action: manipulation;
+  }
+
+  .toc-title {
+    font-size: var(--text-sm);
+    color: var(--text-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Sticky CTA */
+  .sticky-cta {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 25;
+    background: linear-gradient(to top, var(--bg-base) 0%, transparent 100%);
+    padding: var(--spacing-md) var(--spacing-lg);
+    padding-bottom: calc(var(--spacing-md) + env(safe-area-inset-bottom));
+    display: flex;
+    gap: var(--spacing-md);
+  }
+
+  /* Desktop: constrain to content width */
+  @media (min-width: 768px) {
+    .sticky-cta {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+  }
+
+  .btn-primary {
+    flex: 1;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-lg);
+    color: var(--color-white);
+    text-align: center;
+    font-weight: var(--font-medium);
+    font-size: var(--text-base);
+    min-height: 48px;
+    background: var(--accent);
+    border: none;
+    transition: all var(--t-normal);
+    cursor: pointer;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-primary:hover {
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+  }
+
+  .btn-primary:active {
+    transform: scale(0.98);
+  }
+
+  .btn-secondary {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border-light);
+    color: var(--text-dark);
+    background: var(--bg-base);
+    font-weight: var(--font-medium);
+    transition: all var(--t-normal);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .btn-secondary:hover {
+    box-shadow: var(--shadow-sm);
+    transform: translateY(-2px);
+    border-color: var(--accent);
+  }
+
+  .btn-secondary:active {
+    transform: scale(0.98);
+  }
+</style>
+
+<script>
+  console.log('=== Book detail page loaded ===');
+  
+  // Get novel slug from URL - decode if URL-encoded
+  const pathSlug = window.location.pathname.split('/book/')[1]?.split('/')[0] || '';
+  const novelSlug = decodeURIComponent(pathSlug);
+  
+  console.log('Raw slug:', pathSlug, 'Decoded:', novelSlug);
+  
+  // Favorite functionality - check both top and bottom buttons
+  const favBtnTop = document.getElementById('favBtnTop') as HTMLButtonElement | null;
+  const favBtnBottom = document.getElementById('favBtn') as HTMLButtonElement | null;
+  
+  console.log('favBtnTop:', favBtnTop, 'favBtnBottom:', favBtnBottom);
+  
+  const handleFavorite = () => {
+    if (!novelSlug) return;
+    
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    
+    // Decode all favorites for comparison
+    const decodedFavorites = favorites.map((f: string) => decodeURIComponent(f));
+    const index = decodedFavorites.indexOf(novelSlug);
+    const isFav = index > -1;
+    
+    if (isFav) {
+      // Remove the encoded version
+      favorites.splice(index, 1);
+      favBtnTop?.querySelector('svg')?.setAttribute('fill', 'none');
+      favBtnBottom?.querySelector('svg')?.setAttribute('fill', 'none');
+      console.log('✓ Removed from favorites');
+    } else {
+      // Add decoded version
+      favorites.push(novelSlug);
+      favBtnTop?.querySelector('svg')?.setAttribute('fill', 'currentColor');
+      favBtnBottom?.querySelector('svg')?.setAttribute('fill', 'currentColor');
+      console.log('✓ Added to favorites');
+    }
+    
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    console.log('Favorites now:', favorites);
+  };
+  
+  // Initialize: check if already favorited
+  if (novelSlug) {
+    const favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+    const decodedFavorites = favorites.map((f: string) => decodeURIComponent(f));
+    const isFav = decodedFavorites.includes(novelSlug);
+    if (isFav) {
+      favBtnTop?.querySelector('svg')?.setAttribute('fill', 'currentColor');
+      favBtnBottom?.querySelector('svg')?.setAttribute('fill', 'currentColor');
+    }
+  }
+  
+  // Add click handlers
+  favBtnTop?.addEventListener('click', handleFavorite);
+  favBtnBottom?.addEventListener('click', handleFavorite);
+</script>
+
+<style is:global>
+  @keyframes fav-bounce {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.08); }
+    60% { transform: scale(0.98); }
+    100% { transform: scale(1); }
+  }
+</style>

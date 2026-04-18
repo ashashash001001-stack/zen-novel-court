@@ -1,0 +1,530 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+// Novel data - shared across pages
+const novels = [
+  {
+    slug: '佛系廚神',
+    title: '佛系廚神',
+    author: 'AI 生成',
+    genre: '美食/禪意/成長',
+    category: 'food',
+    chapters: 18,
+    status: '連載中'
+  },
+  {
+    slug: '一茶一禪-海鮮僧的靜心茶路',
+    title: '一茶一禪',
+    author: 'AI 生成',
+    genre: '療癒/禪意/美食',
+    category: 'healing',
+    chapters: 50,
+    status: '已完結'
+  },
+  {
+    slug: '万界直播系统',
+    title: '萬界直播系統',
+    author: 'AI 生成',
+    genre: '都市/系統/直播',
+    category: 'urban',
+    chapters: 130,
+    status: '連載中'
+  }
+];
+
+const categories = [
+  { name: '全部', slug: 'all', icon: '📚' },
+  { name: '療癒', slug: 'healing', icon: '🌿' },
+  { name: '美食', slug: 'food', icon: '🍜' },
+  { name: '都市', slug: 'urban', icon: '🏙️' },
+  { name: '系統', slug: 'system', icon: '⚡' },
+  { name: '成長', slug: 'growth', icon: '📈' }
+];
+
+// Get URL params for filtering
+const searchQuery = Astro.url.searchParams.get('q') || '';
+const activeCategory = Astro.url.searchParams.get('category') || 'all';
+---
+
+<BaseLayout title="书阁 - 小说阁" activeTab="library">
+  <!-- Search Header -->
+  <div class="search-header">
+    <form method="get" action="/library" class="search-form">
+      <input 
+        type="text" 
+        name="q" 
+        value={searchQuery}
+        placeholder="搜尋小說、作者..." 
+        class="search-input"
+        id="searchInput"
+      >
+      <input type="hidden" name="category" value={activeCategory} id="categoryInput">
+      <button type="submit" class="search-btn">搜尋</button>
+    </form>
+  </div>
+
+  <!-- Category Tabs -->
+  <div class="category-tabs">
+    {categories.map((cat) => (
+      <button 
+        class={`category-tab ${activeCategory === cat.slug ? 'active' : ''}`}
+        data-category={cat.slug}
+      >
+        <span class="cat-icon">{cat.icon}</span>
+        <span class="cat-name">{cat.name}</span>
+      </button>
+    ))}
+  </div>
+
+  <!-- Results Info -->
+  <div class="results-info">
+    <span id="resultsCount">{novels.length}</span> 本書籍
+    {searchQuery && <span class="search-term">「{searchQuery}」</span>}
+  </div>
+
+  <!-- Book Grid -->
+  <div class="book-grid" id="bookGrid">
+    {novels.map((novel) => (
+      <a href={`/book/${novel.slug}`} class="book-card" data-category={novel.category} data-title={novel.title.toLowerCase()} data-author={novel.author.toLowerCase()}>
+        <div class="book-cover">
+          <div class="css-book-cover" style="width: 100%; height: 100%;" role="img" aria-label={`${novel.title}封面`}>
+            <div class="cover-content">
+              <span class="cover-title">{novel.title}</span>
+            </div>
+          </div>
+          <span class={`status-badge ${novel.status === '已完結' ? 'status-done' : 'status-ongoing'}`}>
+            {novel.status}
+          </span>
+        </div>
+        <div class="book-info">
+          <h3>{novel.title}</h3>
+          <p>{novel.genre}</p>
+          <p class="chapter-num">{novel.chapters} 章</p>
+        </div>
+      </a>
+    ))}
+  </div>
+
+  <!-- No Results Message -->
+  <div class="no-results" id="noResults" style="display: none;">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.35-4.35"></path>
+    </svg>
+    <p>未找到相關書籍</p>
+    <button class="btn-reset" onclick="resetFilters()">清除篩選</button>
+  </div>
+</BaseLayout>
+
+<style>
+  /* Search Header */
+  .search-header {
+    padding: var(--spacing-4);
+    background: var(--bg-base);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
+
+  .search-form {
+    display: flex;
+    gap: var(--spacing-3);
+    align-items: center;
+  }
+
+  .search-input {
+    flex: 1;
+    padding: var(--spacing-3) var(--spacing-4);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-lg);
+    font-size: var(--text-base);
+    background: var(--bg-outer);
+    transition: all var(--t-normal);
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(207, 185, 151, 0.15);
+  }
+
+  .search-btn {
+    padding: var(--spacing-3) var(--spacing-5);
+    background: var(--accent);
+    color: var(--color-white);
+    border: none;
+    border-radius: var(--radius-lg);
+    font-size: var(--text-base);
+    font-weight: var(--font-medium);
+    cursor: pointer;
+    transition: all var(--t-normal);
+  }
+
+  .search-btn:hover {
+    background: var(--accent-hover);
+  }
+
+  /* Category Tabs */
+  .category-tabs {
+    display: flex;
+    gap: var(--spacing-2);
+    padding: var(--spacing-3) var(--spacing-4);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    background: var(--bg-base);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .category-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-tab {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding: var(--spacing-2) var(--spacing-3);
+    background: var(--bg-outer);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-full);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--t-normal);
+    white-space: nowrap;
+    min-height: 40px;
+  }
+
+  .category-tab:active {
+    transform: scale(0.98);
+  }
+
+  .category-tab.active {
+    background: var(--accent);
+    color: var(--color-white);
+    border-color: var(--accent);
+  }
+
+  .category-tab .cat-icon {
+    font-size: var(--text-base);
+  }
+
+  /* Results Info */
+  .results-info {
+    padding: var(--spacing-3) var(--spacing-4);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+  }
+
+  .search-term {
+    color: var(--accent);
+    font-weight: var(--font-medium);
+  }
+
+  /* Book Grid */
+  .book-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: var(--spacing-3);
+    padding: var(--spacing-4);
+    padding-bottom: var(--spacing-8);
+  }
+
+  .book-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform var(--t-fast) var(--ease-elastic);
+  }
+
+  .book-card:active {
+    transform: scale(0.98);
+  }
+
+  .book-card.hidden {
+    display: none;
+  }
+
+  @media (hover: hover) {
+    .book-card:hover {
+      transform: translateY(-2px);
+    }
+  }
+
+  .book-cover {
+    aspect-ratio: 3/4;
+    position: relative;
+    margin-bottom: var(--spacing-2);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .css-book-cover {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary-300);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    font-family: var(--font-serif);
+    box-shadow: var(--shadow-md);
+  }
+
+  .css-book-cover::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: rgba(0, 0, 0, 0.15);
+    z-index: 1;
+  }
+
+  .cover-content {
+    position: relative;
+    z-index: 1;
+    text-align: center;
+    padding: var(--spacing-2);
+    color: var(--color-white);
+  }
+
+  .cover-title {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--color-white);
+    line-height: var(--line-height-snug);
+  }
+
+  .status-badge {
+    position: absolute;
+    top: var(--spacing-2);
+    right: var(--spacing-2);
+    padding: var(--spacing-1) var(--spacing-2);
+    min-height: 28px;
+    min-width: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: var(--font-medium);
+    color: var(--color-white);
+    border-radius: var(--radius-sm);
+    z-index: 2;
+  }
+
+  .status-badge.status-ongoing {
+    background: var(--accent);
+  }
+
+  .status-badge.status-done {
+    background: var(--color-success);
+  }
+
+  .book-info {
+    padding: var(--spacing-1) 0;
+  }
+
+  .book-info h3 {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    margin-bottom: 2px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .book-info p {
+    font-size: 10px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .chapter-num {
+    color: var(--accent-dark) !important;
+    margin-top: 2px;
+  }
+
+  /* No Results */
+  .no-results {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  .no-results svg {
+    margin-bottom: var(--spacing-3);
+    opacity: 0.5;
+  }
+
+  .no-results p {
+    font-size: var(--text-base);
+    margin-bottom: var(--spacing-4);
+  }
+
+  .btn-reset {
+    padding: var(--spacing-2) var(--spacing-4);
+    background: var(--accent);
+    color: var(--color-white);
+    border: none;
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    cursor: pointer;
+  }
+
+  /* Responsive */
+  @media (min-width: 640px) {
+    .book-grid {
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: var(--spacing-4);
+      padding: var(--spacing-6);
+    }
+
+    .search-header,
+    .category-tabs,
+    .results-info {
+      padding: var(--spacing-4) var(--spacing-6);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .book-grid {
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: var(--spacing-5);
+      padding: var(--spacing-6) var(--spacing-8);
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .search-form {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+  }
+</style>
+
+<script>
+  // Client-side filtering
+  const categoryTabs = document.querySelectorAll<HTMLElement>('.category-tab');
+  const bookCards = document.querySelectorAll<HTMLElement>('.book-card');
+  const searchInput = document.getElementById('searchInput') as HTMLInputElement | null;
+  const categoryInput = document.getElementById('categoryInput') as HTMLInputElement | null;
+  const resultsCount = document.getElementById('resultsCount');
+  const noResults = document.getElementById('noResults');
+  const searchTermSpan = document.querySelector<HTMLElement>('.search-term');
+
+  function filterBooks() {
+    const searchTerm = (searchInput?.value || '').toLowerCase().trim();
+    const activeCategory = categoryInput?.value || 'all';
+    
+    let visibleCount = 0;
+    
+    bookCards.forEach((card) => {
+      const el = card as HTMLElement;
+      const category = el.dataset.category;
+      const title = (el.dataset.title || '').toLowerCase();
+      const author = (el.dataset.author || '').toLowerCase();
+      
+      const matchesSearch = !searchTerm || 
+        title.includes(searchTerm) || 
+        author.includes(searchTerm);
+      
+      const matchesCategory = activeCategory === 'all' || 
+        category === activeCategory;
+      
+      if (matchesSearch && matchesCategory) {
+        el.classList.remove('hidden');
+        visibleCount++;
+      } else {
+        el.classList.add('hidden');
+      }
+    });
+    
+    // Update results count
+    if (resultsCount) {
+      resultsCount.textContent = String(visibleCount);
+    }
+    
+    // Show/hide no results
+    if (noResults) {
+      noResults.style.display = visibleCount === 0 ? 'flex' : 'none';
+    }
+   
+    // Update search term display
+    if (searchTermSpan) {
+      searchTermSpan.textContent = searchTerm ? `「${searchTerm}」` : '';
+    }
+  }
+
+  // Category tab click handlers
+  categoryTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const cat = tab.dataset.category || 'all';
+      
+      // Update active state
+      categoryTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      
+      // Update hidden input
+      if (categoryInput) {
+        categoryInput.value = cat;
+      }
+      
+      // Filter books
+      filterBooks();
+      
+      // Update URL without reload
+      const url = new URL(window.location.href);
+      url.searchParams.set('category', cat);
+      window.history.pushState({}, '', url);
+    });
+  });
+
+  // Reset filters function (global for onclick)
+  function resetFilters() {
+    if (searchInput) searchInput.value = '';
+    if (categoryInput) categoryInput.value = 'all';
+    
+    categoryTabs.forEach(t => t.classList.remove('active'));
+    categoryTabs[0].classList.add('active');
+    
+    const url = new URL(window.location.href);
+    url.searchParams.delete('q');
+    url.searchParams.delete('category');
+    window.history.pushState({}, '', url);
+    
+    filterBooks();
+  }
+  
+  // Make resetFilters available globally for onclick handler
+  // @ts-ignore - inline onclick requires global function
+  (window as any).resetFilters = resetFilters;
+
+  // Initial filter on page load
+  filterBooks();
+
+  // Handle browser back/forward
+  window.addEventListener('popstate', () => {
+    const url = new URL(window.location.href);
+    const q = url.searchParams.get('q') || '';
+    const category = url.searchParams.get('category') || 'all';
+    
+    if (searchInput) searchInput.value = q;
+    if (categoryInput) categoryInput.value = category;
+    
+    categoryTabs.forEach(t => {
+      const cat = t.dataset.category;
+      t.classList.toggle('active', cat === category);
+    });
+    
+    filterBooks();
+  });
+</script>

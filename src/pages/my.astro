@@ -1,0 +1,906 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="我的 - 小说阁" activeTab="my">
+  <div class="my-page">
+    <!-- Profile Header -->
+    <div class="profile-header">
+      <div class="profile-avatar">
+        <span>讀</span>
+      </div>
+      <div class="profile-info">
+        <div class="profile-name">Reader</div>
+        <div class="profile-stats" id="profileStats">0 本收藏 · 0 章閱讀</div>
+      </div>
+    </div>
+
+    <!-- Quick Resume Section -->
+    <div id="quick-resume" class="my-section quick-resume-section" style="display: none;">
+      <div class="section-header">
+        <h2>繼續閱讀</h2>
+      </div>
+      <div class="quick-resume-card">
+        <div class="qr-cover" id="qrCover"></div>
+        <div class="qr-info">
+          <div class="qr-title" id="qrTitle"></div>
+          <div class="qr-chapter" id="qrChapter"></div>
+          <div class="qr-progress">
+            <div class="qr-progress-bar"><div class="qr-progress-fill" id="qrProgressFill"></div></div>
+            <span class="qr-progress-text" id="qrProgressText"></span>
+          </div>
+        </div>
+        <a href="#" class="qr-continue-btn" id="qrContinue">繼續閱讀</a>
+      </div>
+    </div>
+
+    <!-- Favorites Section -->
+    <div class="my-section">
+      <div class="section-header">
+        <h2>我的收藏</h2>
+      </div>
+      <div id="favorites" class="list-container">
+        <div class="empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
+          <p>尚未收藏任何小說</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- History Section -->
+    <div class="my-section">
+      <div class="section-header">
+        <h2>閱讀記錄</h2>
+      </div>
+      <div id="history" class="list-container">
+        <div class="empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"></circle>
+            <polyline points="12 6 12 12 16 14"></polyline>
+          </svg>
+          <p>尚無閱讀記錄</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Settings Section -->
+    <div class="my-section">
+      <div class="section-header">
+        <h2>設定</h2>
+      </div>
+      <div class="settings-list">
+        <!-- Theme Toggle -->
+        <div class="setting-row">
+          <div class="setting-label">主題</div>
+          <div class="theme-toggle">
+            <button class="theme-btn active" data-theme="light">浅色</button>
+            <button class="theme-btn" data-theme="sepia">護眼</button>
+            <button class="theme-btn" data-theme="night">夜間</button>
+          </div>
+        </div>
+        <button class="settings-item" id="clear-favorites">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          <span>清空收藏</span>
+        </button>
+        <button class="settings-item" id="clear-history">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+          </svg>
+          <span>清空歷史記錄</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- About Section -->
+    <div class="my-section">
+      <div class="about-section">
+        <span>小說閣 v1.0</span>
+      </div>
+    </div>
+
+    <!-- Legal Links -->
+    <div class="legal-links">
+      <a href="/legal/privacy" class="legal-link">隱私政策</a>
+      <span class="legal-divider">|</span>
+      <a href="/legal/terms" class="legal-link">服務條款</a>
+    </div>
+  </div>
+</BaseLayout>
+
+<style>
+  .my-page {
+    min-height: 100vh;
+    padding-bottom: var(--spacing-xl);
+  }
+
+  .page-header {
+    padding: var(--spacing-5) var(--spacing-4);
+    padding-top: var(--spacing-6);
+  }
+
+  .page-header h1 {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    font-family: var(--font-serif);
+  }
+
+  /* Profile Header */
+  .profile-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    padding: var(--spacing-5) var(--spacing-4);
+    padding-top: var(--spacing-6);
+  }
+
+  .profile-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: var(--color-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .profile-avatar span {
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: var(--color-white);
+    font-family: var(--font-serif);
+  }
+
+  .profile-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .profile-name {
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    font-family: var(--font-serif);
+    color: var(--text-dark);
+  }
+
+  .profile-stats {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+
+  @media (min-width: 640px) {
+    .profile-header {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: var(--spacing-6) var(--spacing-4);
+    }
+  }
+
+  /* User Stats */
+  .user-stats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background: var(--bg-base);
+    margin: 0 var(--spacing-lg);
+    margin-top: var(--spacing-4);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border-light);
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-1);
+  }
+
+  .stat-num {
+    font-size: var(--text-2xl);
+    font-weight: var(--font-bold);
+    color: var(--text-dark);
+    font-family: var(--font-serif);
+  }
+
+  .stat-label {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  .stat-divider {
+    width: 1px;
+    height: var(--spacing-10);
+    background: var(--color-border-light);
+  }
+
+  /* Quick Resume Section */
+  .quick-resume-section {
+    padding: 0 var(--spacing-4);
+  }
+
+  .quick-resume-card {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-4);
+    padding: var(--spacing-4);
+    background: linear-gradient(135deg, var(--color-accent) 0%, var(--color-accent-hover) 100%);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+  }
+
+  .qr-cover {
+    width: 50px;
+    height: 70px;
+    background: rgba(255,255,255,0.2);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .qr-cover span {
+    font-size: var(--text-xs);
+    color: var(--color-white);
+    font-family: var(--font-serif);
+  }
+
+  .qr-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .qr-title {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: var(--color-white);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .qr-chapter {
+    font-size: var(--text-sm);
+    color: rgba(255,255,255,0.8);
+    margin-top: 2px;
+  }
+
+  .qr-progress {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    margin-top: var(--spacing-2);
+  }
+
+  .qr-progress-bar {
+    flex: 1;
+    height: 4px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .qr-progress-fill {
+    height: 100%;
+    background: var(--color-white);
+    border-radius: 2px;
+    transition: width var(--t-normal);
+  }
+
+  .qr-progress-text {
+    font-size: var(--text-xs);
+    color: rgba(255,255,255,0.8);
+    min-width: 32px;
+  }
+
+  .qr-continue-btn {
+    padding: var(--spacing-2) var(--spacing-4);
+    background: var(--color-white);
+    color: var(--color-accent);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    white-space: nowrap;
+    transition: all var(--t-fast);
+  }
+
+  .qr-continue-btn:hover {
+    transform: scale(1.02);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .qr-continue-btn:active {
+    transform: scale(0.98);
+  }
+
+  /* Section */
+  .my-section {
+    margin-top: var(--spacing-lg);
+  }
+
+  .section-header {
+    padding: 0 var(--spacing-4);
+    padding-top: var(--spacing-5);
+    margin-bottom: var(--spacing-md);
+  }
+
+  .section-header h2 {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: var(--text-dark);
+  }
+
+  /* List Container */
+  .list-container {
+    padding: 0 var(--spacing-4);
+  }
+
+  .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: var(--spacing-xl);
+    color: var(--text-muted);
+    text-align: center;
+  }
+
+  .empty-state svg {
+    margin-bottom: var(--spacing-3);
+    opacity: 0.5;
+  }
+
+  .empty-state p {
+    font-size: var(--text-sm);
+  }
+
+  .empty-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    margin-top: var(--spacing-4);
+    padding: var(--spacing-3) var(--spacing-5);
+    background: var(--color-accent);
+    color: var(--color-white);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    border-radius: var(--radius-md);
+    text-decoration: none;
+    transition: all var(--t-normal);
+  }
+
+  .empty-cta:hover {
+    background: var(--color-accent-hover);
+    transform: translateY(-2px);
+  }
+
+  .empty-cta:active {
+    transform: scale(0.98);
+  }
+
+  /* Settings List */
+  .settings-list {
+    background: var(--bg-base);
+    margin: 0 var(--spacing-4);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    border: 1px solid var(--color-border-light);
+  }
+
+  .settings-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    width: 100%;
+    padding: var(--spacing-4);
+    min-height: 44px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--color-border-light);
+    font-size: var(--text-base);
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all var(--t-normal);
+    text-align: left;
+  }
+
+  .settings-item:last-child {
+    border-bottom: none;
+  }
+
+  .settings-item:hover {
+    background: rgba(163, 145, 113, 0.08);
+  }
+
+  .settings-item:active {
+    transform: scale(0.98);
+    background: rgba(163, 145, 113, 0.12);
+  }
+
+  .settings-item svg {
+    color: var(--text-muted);
+  }
+
+  /* Setting Row */
+  .setting-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--spacing-4);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .setting-label {
+    font-size: var(--text-base);
+    color: var(--text-dark);
+  }
+
+  /* Theme Toggle */
+  .theme-toggle {
+    display: flex;
+    background: var(--color-bg-outer);
+    border-radius: var(--radius-md);
+    padding: 2px;
+    border: 1px solid var(--color-border-light);
+  }
+
+  .theme-btn {
+    padding: var(--spacing-2) var(--spacing-3);
+    border: none;
+    background: transparent;
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    transition: all var(--t-fast);
+  }
+
+  .theme-btn.active {
+    background: var(--color-accent);
+    color: var(--color-white);
+  }
+
+  .theme-btn:not(.active):hover {
+    background: rgba(163, 145, 113, 0.08);
+  }
+
+  /* Legal Links */
+  .legal-links {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-xl);
+    color: var(--text-muted);
+  }
+
+  /* About Section */
+  .about-section {
+    text-align: center;
+    padding: var(--spacing-xl);
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    opacity: 0.6;
+  }
+
+  .legal-link {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    text-decoration: none;
+    transition: color var(--t-fast);
+  }
+
+  .legal-link:hover {
+    color: var(--accent);
+  }
+
+  .legal-divider {
+    opacity: 0.5;
+  }
+
+  /* History Item */
+  :global(.history-item) {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3);
+    background: var(--bg-base);
+    border-radius: var(--radius-sm);
+    margin-bottom: var(--spacing-2);
+    text-decoration: none;
+    color: var(--text-dark);
+    transition: all var(--t-normal);
+    border: 1px solid var(--color-border-light);
+  }
+
+  :global(.history-item:hover) {
+    border-color: var(--accent);
+    transform: translateX(var(--spacing-1));
+  }
+
+  :global(.history-item .mini-cover) {
+    width: var(--spacing-10);
+    height: var(--spacing-7);
+    background: var(--color-primary-300);
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  :global(.history-item .item-info) {
+    flex: 1;
+    min-width: 0;
+  }
+
+  :global(.history-item .item-title) {
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  :global(.history-item .item-chapter) {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    margin-top: var(--spacing-1);
+  }
+
+  :global(.history-item .item-progress) {
+    height: 3px;
+    background: var(--color-border-light);
+    border-radius: 2px;
+    margin-top: var(--spacing-1);
+    overflow: hidden;
+  }
+
+  :global(.history-item .item-progress-fill) {
+    height: 100%;
+    background: var(--color-accent);
+    border-radius: 2px;
+  }
+
+  :global(.history-item .item-time) {
+    font-size: var(--text-xs-sm);
+    color: var(--text-muted);
+    margin-top: 2px;
+    opacity: 0.7;
+  }
+
+  :global(.history-item .item-remove) {
+    padding: var(--spacing-2);
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    opacity: 0;
+    transition: all var(--t-fast);
+  }
+
+  :global(.history-item:hover .item-remove) {
+    opacity: 1;
+  }
+
+  :global(.history-item .item-remove:hover) {
+    background: rgba(163, 145, 113, 0.1);
+    color: var(--color-error);
+  }
+
+  /* Responsive - Tablet (640px+) */
+  @media (min-width: 640px) {
+    .user-stats {
+      max-width: 600px;
+      margin: 0 auto var(--spacing-xl);
+    }
+
+    .list-container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .settings-list {
+      max-width: 600px;
+      margin: 0 auto;
+    }
+
+    .page-header {
+      text-align: center;
+      padding: var(--spacing-xl) var(--spacing-6);
+    }
+
+    .section-header {
+      max-width: 800px;
+      margin: 0 auto var(--spacing-md);
+    }
+  }
+
+  /* Responsive - Desktop (1024px+) */
+  @media (min-width: 1024px) {
+    .user-stats {
+      max-width: 500px;
+      padding: var(--spacing-xl);
+    }
+
+    .settings-list {
+      max-width: 500px;
+    }
+
+    .page-header h1 {
+      font-size: var(--text-4xl);
+    }
+  }
+</style>
+
+<script>
+  const novelsData: Record<string, { title: string; chapters: number }> = {
+    '佛系廚神': { title: '佛系廚神', chapters: 18 },
+    '一茶一禪-海鮮僧的靜心茶路': { title: '一茶一禪', chapters: 50 },
+    '万界直播系统': { title: '萬界直播系統', chapters: 130 },
+    '一茶一禪': { title: '一茶一禪', chapters: 50 },
+    '萬界直播系統': { title: '萬界直播系統', chapters: 130 }
+  };
+
+  function createMiniCover(title: string) {
+    return `<div class="mini-cover"><span style="font-size: var(--text-xs-sm); color: var(--color-white);">${title.slice(0, 2)}</span></div>`;
+  }
+
+  function getRelativeTime(timestamp: number) {
+    const now = Date.now();
+    const diff = now - timestamp;
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+    if (minutes < 1) return '剛剛';
+    if (minutes < 60) return `${minutes} 分鐘前`;
+    if (hours < 24) return `${hours} 小時前`;
+    if (days < 2) return '昨天';
+    return `${days} 天前`;
+  }
+
+function removeFromHistory(id: string) {
+    const h = JSON.parse(localStorage.getItem('history') || '[]');
+    const filtered = h.filter((item: { id: string }) => decodeURIComponent(item.id) !== decodeURIComponent(id));
+    localStorage.setItem('history', JSON.stringify(filtered));
+    loadHistory();
+    loadQuickResume();
+  }
+
+  function removeFromFavorites(id: string) {
+    const fav = JSON.parse(localStorage.getItem('favorites') || '[]');
+    const filtered = fav.filter((i: string) => decodeURIComponent(i) !== decodeURIComponent(id));
+    localStorage.setItem('favorites', JSON.stringify(filtered));
+    loadFavorites();
+  }
+
+  function loadQuickResume() {
+    const section = document.getElementById('quick-resume');
+    if (!section) return;
+    try {
+      const h = JSON.parse(localStorage.getItem('history') || '[]');
+      if (h.length === 0) {
+        section.style.display = 'none';
+        return;
+      }
+      const last = h[0];
+      const data = novelsData[last.id] || { title: last.id, chapters: 0 };
+      const progress = last.chapter ? Math.round((last.chapter / data.chapters) * 100) : 0;
+      
+      const cover = document.getElementById('qrCover');
+      const title = document.getElementById('qrTitle');
+      const chapter = document.getElementById('qrChapter');
+      const fill = document.getElementById('qrProgressFill');
+      const text = document.getElementById('qrProgressText');
+      const btn = document.getElementById('qrContinue');
+      
+      if (cover) cover.innerHTML = `<span>${data.title.slice(0, 2)}</span>`;
+      if (title) title.textContent = data.title;
+      if (chapter) chapter.textContent = last.chapter ? `第 ${last.chapter} 章 / ${data.chapters} 章` : '未開始閱讀';
+      if (fill) fill.style.width = `${progress}%`;
+      if (text) text.textContent = `${progress}%`;
+      if (btn) (btn as HTMLAnchorElement).href = `/book/${last.id}${last.chapter ? '/' + last.chapter : ''}`;
+      
+      section.style.display = 'block';
+    } catch (e) {
+      if (section) section.style.display = 'none';
+    }
+  }
+
+  function loadFavorites() {
+    console.log('>>> loadFavorites called');
+    try {
+      const raw = localStorage.getItem('favorites');
+      console.log('Raw favorites from storage:', raw);
+      let favData = JSON.parse(raw || '[]');
+      
+      // Clean up: decode IDs
+      favData = favData.map((item: string) => decodeURIComponent(item));
+      
+      // Remove duplicates
+      const seen = new Set();
+      favData = favData.filter((item: string) => {
+        if (seen.has(item)) return false;
+        seen.add(item);
+        return true;
+      });
+      
+      console.log('Cleaned favorites:', favData);
+      const container = document.getElementById('favorites');
+      const countEl = document.getElementById('favCount');
+      
+      if (countEl) countEl.textContent = String(favData.length);
+      
+      if (!container) return;
+      
+      if (favData.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+            </svg>
+            <p>尚未收藏任何小說</p>
+            <a href="/library" class="empty-cta">探索書庫</a>
+          </div>`;
+      } else {
+        container.innerHTML = favData.map((id: string) => {
+          const data = novelsData[id] || { title: id, chapters: 0 };
+          return `
+            <a href="/book/${id}" class="history-item">
+              ${createMiniCover(data.title)}
+              <div class="item-info">
+                <div class="item-title">${data.title}</div>
+                <div class="item-chapter">${data.chapters} 章</div>
+              </div>
+              <button class="item-remove" onclick="removeFromFavorites('${id}')" title="移除收藏">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 6L6 18M6 6l12 12"></path>
+                </svg>
+              </button>
+            </a>`;
+        }).join('');
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  function loadHistory() {
+    console.log('>>> loadHistory called');
+    try {
+      const raw = localStorage.getItem('history');
+      console.log('Raw history from storage:', raw);
+      let historyData = JSON.parse(raw || '[]');
+      
+      // Clean up: decode IDs and filter malformed entries
+      historyData = historyData.map((item: any) => {
+        if (typeof item === 'string') {
+          return { id: decodeURIComponent(item), chapter: 1, timestamp: Date.now() };
+        }
+        if (item && item.id) {
+          return { 
+            id: decodeURIComponent(item.id), 
+            chapter: item.chapter || 1, 
+            timestamp: item.timestamp || Date.now() 
+          };
+        }
+        return null;
+      }).filter((item: any) => item && item.id);
+      
+      // Remove duplicates
+      const seen = new Set();
+      historyData = historyData.filter((item: any) => {
+        if (seen.has(item.id)) return false;
+        seen.add(item.id);
+        return true;
+      });
+      
+      console.log('Cleaned history:', historyData);
+      const container = document.getElementById('history');
+      console.log('Container element:', container);
+      
+      // Update profile stats
+      const fav = JSON.parse(localStorage.getItem('favorites') || '[]');
+      const totalChapters = historyData.reduce((sum: number, item: { chapter?: number }) => sum + (item.chapter || 0), 0);
+      const statsEl = document.getElementById('profileStats');
+      if (statsEl) {
+        statsEl.textContent = `${fav.length} 本收藏 · ${totalChapters} 章閱讀`;
+      }
+      
+      if (!container) return;
+      
+      if (historyData.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"></circle>
+              <polyline points="12 6 12 12 16 14"></polyline>
+            </svg>
+            <p>尚無閱讀記錄</p>
+            <a href="/library" class="empty-cta">開始閱讀</a>
+          </div>`;
+      } else {
+        container.innerHTML = historyData.slice(0, 10).map((item: { id: string; chapter?: number; timestamp?: number }) => {
+          const data = novelsData[item.id] || { title: item.id, chapters: 0 };
+          const progress = item.chapter && data.chapters ? Math.round((item.chapter / data.chapters) * 100) : 0;
+          const timeAgo = item.timestamp ? getRelativeTime(item.timestamp) : '';
+          return `
+            <a href="/book/${item.id}${item.chapter ? '/' + item.chapter : ''}" class="history-item">
+              ${createMiniCover(data.title)}
+              <div class="item-info">
+                <div class="item-title">${data.title}</div>
+                <div class="item-chapter">${item.chapter ? '第 ' + item.chapter + ' 章 · ' + progress + '%' : '未開始閱讀'}</div>
+                ${item.chapter ? `<div class="item-progress"><div class="item-progress-fill" style="width:${progress}%"></div></div>` : ''}
+                ${timeAgo ? `<div class="item-time">${timeAgo}</div>` : ''}
+              </div>
+              <button class="item-remove" onclick="removeFromHistory('${item.id}')" title="移除">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M18 6L6 18M6 6l12 12"></path>
+                </svg>
+              </button>
+            </a>`;
+        }).join('');
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  document.getElementById('clear-favorites')?.addEventListener('click', () => {
+    if (confirm('確定要清空所有收藏嗎？')) {
+      localStorage.removeItem('favorites');
+      loadFavorites();
+      loadQuickResume();
+    }
+  });
+
+  document.getElementById('clear-history')?.addEventListener('click', () => {
+    if (confirm('確定要清空所有閱讀記錄嗎？')) {
+      localStorage.removeItem('history');
+      loadHistory();
+      loadQuickResume();
+    }
+  });
+
+  // Load on page init
+  console.log('=== My page loaded ===');
+  console.log('All localStorage keys:', Object.keys(localStorage));
+  console.log('history from localStorage:', localStorage.getItem('history'));
+  console.log('favorites from localStorage:', localStorage.getItem('favorites'));
+  
+  // Force reload
+  loadFavorites();
+  loadHistory();
+  loadQuickResume();
+
+  // Theme Toggle
+  (function initTheme() {
+    const saved = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', saved);
+    document.querySelectorAll('.theme-btn').forEach((btn: Element) => {
+      btn.classList.toggle('active', btn.getAttribute('data-theme') === saved);
+    });
+  })();
+
+  document.querySelectorAll('.theme-btn').forEach((btn: Element) => {
+    btn.addEventListener('click', () => {
+      const theme = btn.getAttribute('data-theme') || 'light';
+      document.documentElement.setAttribute('data-theme', theme);
+      localStorage.setItem('theme', theme);
+      document.querySelectorAll('.theme-btn').forEach((b: Element) => {
+        b.classList.toggle('active', b.getAttribute('data-theme') === theme);
+      });
+    });
+  });
+</script>

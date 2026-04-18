@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="服务条款 - 小说阁">
+  <article class="legal">
+    <h1>服务条款</h1>
+    <p>最后更新：2024年1月</p>
+    
+    <h2>使用条款</h2>
+    <p>使用小说阁即表示您同意这些条款。</p>
+    
+    <h2>内容版权</h2>
+    <p>小说内容版权归原作者所有，仅供个人阅读使用。</p>
+    
+    <h2>禁止行为</h2>
+    <p>禁止复制、传播或用于商业目的。</p>
+  </article>
+</BaseLayout>
+
+<style>
+  .legal {
+    max-width: 700px;
+    margin: 0 auto;
+  }
+  .legal h1 { font-size: 1.75rem; margin-bottom: 0.5rem; }
+  .legal h2 { font-size: 1.25rem; margin: 1.5rem 0 0.75rem; }
+  .legal p { line-height: 1.8; color: var(--text-light); }
+</style>

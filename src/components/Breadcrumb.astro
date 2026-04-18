@@ -1,0 +1,74 @@
+---
+// Breadcrumb Navigation Component
+// Usage: <Breadcrumb items={[{label: '首页', href: '/'}, {label: '书阁', href: '/library'}]} />
+
+interface BreadcrumbItem {
+  label: string;
+  href: string;
+}
+
+interface Props {
+  items: BreadcrumbItem[];
+}
+
+const { items } = Astro.props;
+---
+
+<nav aria-label="面包屑导航" class="breadcrumb">
+  <ol class="breadcrumb-list">
+    {items.map((item, index) => (
+      <li class="breadcrumb-item">
+        {index > 0 && <span class="breadcrumb-separator" aria-hidden="true">/</span>}
+        {index === items.length - 1 ? (
+          <span aria-current="page">{item.label}</span>
+        ) : (
+          <a href={item.href}>{item.label}</a>
+        )}
+      </li>
+    ))}
+  </ol>
+</nav>
+
+<style>
+  .breadcrumb {
+    padding: var(--spacing-2) 0;
+    margin-bottom: var(--spacing-2);
+  }
+  
+  .breadcrumb-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--spacing-1);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--text-sm);
+  }
+  
+  .breadcrumb-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+  }
+  
+  .breadcrumb-separator {
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+  }
+  
+  .breadcrumb a {
+    color: var(--text-muted);
+    transition: color var(--t-fast);
+    text-decoration: none;
+  }
+  
+  .breadcrumb a:hover {
+    color: var(--accent);
+  }
+  
+  .breadcrumb span[aria-current="page"] {
+    color: var(--text-dark);
+    font-weight: var(--font-medium);
+  }
+</style>

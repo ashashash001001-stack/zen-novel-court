@@ -1,0 +1,363 @@
+---
+import GA4 from '../components/GA4.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonicalURL?: string;
+  ogImage?: string;
+  activeTab?: 'home' | 'library' | 'search' | 'my';
+  gaMeasurementId?: string;
+}
+
+const { 
+  title = "小说阁 - 沉浸阅读，从这里开始", 
+  description = "小说阁 - 发现精彩中文网络小说，沉浸式阅读体验。涵盖都市、玄幻、仙侠、科幻等多种题材。",
+  canonicalURL = Astro.url.href,
+  ogImage = "/og-image.png",
+  activeTab = 'home',
+  gaMeasurementId = 'G-XXXXXXXXXX'  // Replace with your actual GA4 Measurement ID
+} = Astro.props;
+
+const siteName = "小说阁";
+const siteURL = "https://your-domain.com";
+---
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#F8F9FA">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  
+  <!-- SEO Meta Tags -->
+  <meta name="description" content={description}>
+  <link rel="canonical" href={canonicalURL}>
+  
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content={canonicalURL}>
+  <meta property="og:title" content={title}>
+  <meta property="og:description" content={description}>
+  <meta property="og:image" content={ogImage}>
+  <meta property="og:site_name" content={siteName}>
+  
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:url" content={canonicalURL}>
+  <meta name="twitter:title" content={title}>
+  <meta name="twitter:description" content={description}>
+  <meta name="twitter:image" content={ogImage}>
+  
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="manifest" href="/manifest.json">
+  
+  <title>{title}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Google Analytics 4 -->
+  <GA4 measurementId={gaMeasurementId} />
+  
+  <!-- JSON-LD Structured Data -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": siteName,
+    "url": siteURL,
+    "description": description,
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": {
+        "@type": "EntryPoint",
+        "urlTemplate": `${siteURL}/search?q={search_term_string}`
+      },
+      "query-input": "required name=search_term_string"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": siteName,
+      "logo": {
+        "@type": "ImageObject",
+        "url": `${siteURL}/favicon.svg`
+      }
+    }
+  })} />
+</head>
+<body>
+  <!-- Skip to main content link for accessibility -->
+  <a href="#main-content" class="skip-link">跳到主要内容</a>
+  
+  <main id="main-content" class="main">
+    <div class="content-wrapper">
+      <slot />
+    </div>
+  </main>
+
+  <nav class="footer-nav" aria-label="主导航">
+      <div class="footer-nav-inner">
+        <a href="/" class={`footer-tab ${activeTab === 'home' ? 'active' : ''}`} aria-current={activeTab === 'home' ? 'page' : undefined}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+            <polyline points="9 22 9 12 15 12 15 22"></polyline>
+          </svg>
+          <span>首页</span>
+        </a>
+        <a href="/library" class={`footer-tab ${activeTab === 'library' ? 'active' : ''}`} aria-current={activeTab === 'library' ? 'page' : undefined}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          <span>书阁</span>
+        </a>
+        <a href="/my" class={`footer-tab ${activeTab === 'my' ? 'active' : ''}`} aria-current={activeTab === 'my' ? 'page' : undefined}>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+            <circle cx="12" cy="7" r="4"></circle>
+          </svg>
+          <span>我的</span>
+        </a>
+      </div>
+    </nav>
+  </body>
+</html>
+
+<style is:global>
+  @import '../styles/tokens.css';
+
+  :root {
+    --page-padding-x: 20px;
+  }
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+
+  html {
+    font-size: 16px;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg-outer);
+    color: var(--text-dark);
+    line-height: 1.6;
+    font-weight: 400;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    padding: 0;
+    overflow-x: hidden;
+    position: relative;
+    min-height: 100vh;
+  }
+
+  /* Content wrapper with max-width for readability */
+  .content-wrapper {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 var(--page-padding-x);
+  }
+
+  /* Tablet */
+  @media (min-width: 640px) {
+    .content-wrapper {
+      padding: 0 var(--spacing-8);
+    }
+  }
+
+  /* Desktop */
+  @media (min-width: 1024px) {
+    .content-wrapper {
+      padding: 0 var(--spacing-10);
+    }
+  }
+
+  .main {
+    flex: 1;
+    padding-bottom: 80px;
+  }
+
+  /* Desktop: add padding for fixed footer */
+  @media (min-width: 1024px) {
+    .main {
+      padding-bottom: 100px;
+    }
+  }
+
+  /* Hide scrollbar utility */
+  .hide-scrollbar::-webkit-scrollbar { display: none; }
+  .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+  /* Bottom Navigation - Responsive */
+  .footer-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    padding: 8px 16px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .footer-nav-inner {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    max-width: 1100px;
+  }
+
+  /* Desktop: keep bottom nav fixed, make it more spacious */
+  @media (min-width: 1024px) {
+    .footer-nav {
+      position: fixed;
+      bottom: 0;
+      padding: 12px 32px;
+      background: rgba(255, 255, 255, 0.95);
+    }
+
+    .footer-nav-inner {
+      max-width: 800px;
+    }
+
+    .footer-tab {
+      flex-direction: row;
+      gap: 8px;
+      padding: 12px 20px;
+    }
+
+    .footer-tab svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .footer-tab span {
+      font-size: 14px;
+    }
+  }
+
+  .footer-tab {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    padding: 8px 12px;
+    background: transparent;
+    border: none;
+    border-radius: 12px;
+    color: var(--text-muted);
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+    min-width: 60px;
+    min-height: 52px;
+    text-decoration: none;
+  }
+
+  .footer-tab svg {
+    width: 24px;
+    height: 24px;
+    transition: transform 0.2s;
+  }
+
+  .footer-tab span {
+    font-size: 10px;
+    letter-spacing: 0.3px;
+  }
+
+  .footer-tab:active {
+    transform: scale(0.92);
+    background: rgba(163, 145, 113, 0.12);
+  }
+
+  .footer-tab.active {
+    color: var(--accent);
+  }
+
+  .footer-tab.active svg {
+    transform: scale(1.1);
+  }
+
+  /* Skip Link for Accessibility */
+  .skip-link {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    background: var(--accent);
+    color: var(--color-white);
+    padding: 8px 16px;
+    z-index: 1000;
+    transition: top 0.2s;
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 0 0 8px 0;
+  }
+  
+  .skip-link:focus {
+    top: 0;
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  /* Utility classes */
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .btn-press {
+    transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .btn-press:active {
+    transform: scale(0.98);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+
+  .scroll-snap {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .scroll-snap > * {
+    scroll-snap-align: start;
+  }
+
+  @keyframes page-enter {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .page-enter {
+    animation: page-enter var(--t-silent) forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+</style>
