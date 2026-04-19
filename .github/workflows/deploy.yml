@@ -40,7 +40,12 @@ jobs:
           BASE_PATH: ${{ vars.BASE_PATH }}
 
       - name: Cleanup
-        run: find dist -name "Icon*" -type f -delete 2>/dev/null || true
+        run: |
+          cd dist
+          find . -type f -exec sed -i 's/\r//g' {} \; 2>/dev/null || true
+          find . -type l -delete 2>/dev/null || true
+          find . -name "Icon*" -type f -delete 2>/dev/null || true
+          rm -rf .git 2>/dev/null || true
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
