@@ -90,6 +90,57 @@ const siteURL = "https://your-domain.com";
   })} />
 </head>
 <body>
+  <script is:inline>
+    // GitHub Pages SPA Router - Fix for links without base path
+    (function() {
+      const basePath = '/zen-novel-court';
+      const validRoutes = ['/library', '/search', '/shelf', '/my', '/book/', '/category/', '/legal/', '/404'];
+      
+      // Check if current path needs redirect to base path
+      const currentPath = window.location.pathname;
+      
+      // Skip if at correct base path already or is root
+      if (currentPath === basePath || currentPath === basePath + '/' || currentPath === '/') {
+        return;
+      }
+      
+      // Check if we're at a route without base path - redirect immediately
+      for (const route of validRoutes) {
+        // Direct match like /library
+        if (currentPath === route || currentPath === route + '/') {
+          window.location.href = basePath + route;
+          return;
+        }
+        // Nested paths like /library/search
+        if (currentPath.startsWith(route) && currentPath !== basePath + route) {
+          window.location.href = basePath + currentPath;
+          return;
+        }
+      }
+      
+      // Intercept clicks on links
+      document.addEventListener('click', function(e) {
+        const link = e.target.closest('a');
+        if (!link) return;
+        
+        const href = link.getAttribute('href');
+        if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('//')) return;
+        
+        // Check if this is a valid route that needs base path
+        for (const route of validRoutes) {
+          if (href === route || href.startsWith(route)) {
+            // Needs base path - redirect
+            const correctHref = basePath + href;
+            if (href !== correctHref && href !== correctHref + '/') {
+              e.preventDefault();
+              window.location.href = correctHref;
+              return;
+            }
+          }
+        }
+      });
+    })();
+  </script>
   <!-- Skip to main content link for accessibility -->
   <a href="#main-content" class="skip-link">跳到主要内容</a>
   

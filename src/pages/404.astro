@@ -6,6 +6,33 @@ const description = "抱歉，您访问的页面不存在。";
 ---
 
 <BaseLayout title={title} description={description}>
+  <script is:inline>
+    // GitHub Pages SPA Routing Fix
+    // When a 404 occurs, check if the URL matches a valid route and redirect
+    (function() {
+      const basePath = '/zen-novel-court';
+      const path = window.location.pathname;
+      
+      // Skip if already at correct location or is a file with extension
+      if (path === '/' || path === basePath + '/' || path.endsWith('.html') || path.endsWith('.json')) {
+        return;
+      }
+      
+      // Check valid routes - if found, redirect with base path
+      const routes = [
+        '/library', '/search', '/shelf', '/my',
+        '/book/', '/category/', '/legal/'
+      ];
+      
+      for (const route of routes) {
+        if (path.includes(route)) {
+          // Redirect to correct path with base path
+          window.location.href = basePath + path;
+          return;
+        }
+      }
+    })();
+  </script>
   <div class="error-container">
     <div class="error-card">
       <div class="error-icon">📭</div>
