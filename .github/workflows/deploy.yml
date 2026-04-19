@@ -40,8 +40,9 @@ jobs:
           BASE_PATH: ${{ vars.BASE_PATH }}
 
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
+          name: github-pages
           path: dist
 
   deploy:
@@ -51,11 +52,6 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Download artifact
-        uses: actions/download-pages-artifact@v3
-        with:
-          path: dist
-
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
