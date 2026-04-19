@@ -1,6 +1,7 @@
 ---
 import GA4 from '../components/GA4.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
+import { config } from '../config';
 
 interface Props {
   title?: string;
@@ -91,54 +92,19 @@ const siteURL = "https://your-domain.com";
 </head>
 <body>
   <script is:inline>
-    // GitHub Pages SPA Router - Fix for links without base path
+    // Fallback: redirect legacy URLs without base path (for bookmarks/bookmarks)
     (function() {
       const basePath = '/zen-novel-court';
-      const validRoutes = ['/library', '/search', '/shelf', '/my', '/book/', '/category/', '/legal/', '/404'];
-      
-      // Check if current path needs redirect to base path
-      const currentPath = window.location.pathname;
-      
-      // Skip if at correct base path already or is root
-      if (currentPath === basePath || currentPath === basePath + '/' || currentPath === '/') {
-        return;
-      }
-      
-      // Check if we're at a route without base path - redirect immediately
-      for (const route of validRoutes) {
-        // Direct match like /library
-        if (currentPath === route || currentPath === route + '/') {
-          window.location.href = basePath + route;
-          return;
-        }
-        // Nested paths like /library/search
-        if (currentPath.startsWith(route) && currentPath !== basePath + route) {
-          window.location.href = basePath + currentPath;
-          return;
-        }
-      }
-      
-      // Intercept clicks on links
-      document.addEventListener('click', function(e) {
-        const link = e.target.closest('a');
-        if (!link) return;
-        
-        const href = link.getAttribute('href');
-        if (!href || href.startsWith('#') || href.startsWith('http') || href.startsWith('//')) return;
-        
-        // Check if this is a valid route that needs base path
-        for (const route of validRoutes) {
-          if (href === route || href.startsWith(route)) {
-            // Needs base path - redirect
-            const correctHref = basePath + href;
-            if (href !== correctHref && href !== correctHref + '/') {
-              e.preventDefault();
-              window.location.href = correctHref;
-              return;
-            }
+      const path = window.location.pathname;
+      if (path !== basePath && path !== basePath + '/' && path !== '/') {
+        const routes = ['/library', '/search', '/shelf', '/my', '/book/', '/category/', '/legal/'];
+        for (const r of routes) {
+          if (path === r || path === r + '/' || path.startsWith(r)) {
+            window.location.href = basePath + path;
+            return;
           }
         }
-      });
+      }
     })();
   </script>
   <!-- Skip to main content link for accessibility -->
@@ -152,21 +118,21 @@ const siteURL = "https://your-domain.com";
 
   <nav class="footer-nav" aria-label="主导航">
       <div class="footer-nav-inner">
-        <a href="/" class={`footer-tab ${activeTab === 'home' ? 'active' : ''}`} aria-current={activeTab === 'home' ? 'page' : undefined}>
+        <a href={config.base} class={`footer-tab ${activeTab === 'home' ? 'active' : ''}`} aria-current={activeTab === 'home' ? 'page' : undefined}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
             <polyline points="9 22 9 12 15 12 15 22"></polyline>
           </svg>
           <span>首页</span>
         </a>
-        <a href="/library" class={`footer-tab ${activeTab === 'library' ? 'active' : ''}`} aria-current={activeTab === 'library' ? 'page' : undefined}>
+        <a href={`${config.base}/library`} class={`footer-tab ${activeTab === 'library' ? 'active' : ''}`} aria-current={activeTab === 'library' ? 'page' : undefined}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
           </svg>
           <span>书阁</span>
         </a>
-        <a href="/my" class={`footer-tab ${activeTab === 'my' ? 'active' : ''}`} aria-current={activeTab === 'my' ? 'page' : undefined}>
+        <a href={`${config.base}/my`} class={`footer-tab ${activeTab === 'my' ? 'active' : ''}`} aria-current={activeTab === 'my' ? 'page' : undefined}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             <circle cx="12" cy="7" r="4"></circle>
