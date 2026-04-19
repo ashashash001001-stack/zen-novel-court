@@ -21,10 +21,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v5
 
-      - name: Install, build, and upload
-        uses: withastro/action@v5
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          package-manager: pnpm@latest
+          node-version: 22
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Build
+        run: pnpm build
+        env:
+          SITE_URL: ${{ vars.SITE_URL }}
+          BASE_PATH: ${{ vars.BASE_PATH }}
 
       - name: Cleanup Icon files
         run: find dist -name "Icon*" -type f -delete || true
