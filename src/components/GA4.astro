@@ -15,8 +15,8 @@ const { measurementId = 'G-XXXXXXXXXX' } = Astro.props;
 
 <!-- Google Analytics 4 -->
 <script is:inline define:vars={{ measurementId }}>
-  // Only load in production
-  if (import.meta.env.PROD && measurementId !== 'G-XXXXXXXXXX') {
+  // Only load GA4 when measurementId is valid (not the placeholder)
+  if (measurementId && measurementId !== 'G-XXXXXXXXXX') {
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());

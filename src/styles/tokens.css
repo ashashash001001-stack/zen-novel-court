@@ -44,7 +44,7 @@
   --color-text-muted: #6A645A;               /* 4.58:1 - WCAG AA compliant */
 
   /* Accent */
-  --color-accent: var(--color-primary-400);
+  --color-accent: var(--color-primary-500);
   --color-accent-hover: var(--color-primary-500);
   --color-accent-light: #dcd3c1;
   --color-accent-dark: var(--color-primary-600);
