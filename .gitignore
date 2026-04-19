@@ -23,3 +23,6 @@ Icon
 
 # jetbrains setting folder
 .idea/
+
+# editor
+.vscode/
