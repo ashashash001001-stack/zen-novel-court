@@ -76,7 +76,7 @@
 
 :root {
   /* ---------- Font Families ---------- */
-  --font-sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif;
   --font-serif: "Noto Serif TC", "Songti TC", "PMingLiu", Georgia, serif;
   --font-display: var(--font-serif);
 
