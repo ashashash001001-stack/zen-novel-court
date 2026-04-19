@@ -76,8 +76,8 @@
 
 :root {
   /* ---------- Font Families ---------- */
-  --font-sans: -apple-system, BlinkMacSystemFont, "PingFang TC", "Microsoft JhengHei", "Noto Sans TC", system-ui, sans-serif;
-  --font-serif: "Noto Serif TC", "Songti TC", "PMingLiu", Georgia, serif;
+  --font-sans: -apple-system, BlinkMacSystemFont, "PingFang TC", "Microsoft JhengHei", "Heiti TC", "PMingLiu", system-ui, sans-serif;
+  --font-serif: "Songti TC", "PMingLiu", "BiauKai", "Kaiti TC", Georgia, serif;
   --font-display: var(--font-serif);
 
   /* ---------- Body Font Sizes (1.125 scale - Major Second) ---------- */

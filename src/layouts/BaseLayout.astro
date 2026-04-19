@@ -58,11 +58,7 @@ const siteURL = "https://your-domain.com";
   <link rel="manifest" href="/manifest.json">
   
   <title>{title}</title>
-  <!-- Optimized: only load essential weights (400, 700) with display=swap -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@400;700&display=swap">
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+  <!-- System fonts only: instant rendering on all devices -->
   
   <!-- Google Analytics 4 -->
   <GA4 measurementId={gaMeasurementId} />
