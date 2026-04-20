@@ -1,9 +1,11 @@
 ---
 import ReaderLayout from '../../../layouts/ReaderLayout.astro';
+import { config } from '../../../config';
 
 export function getStaticPaths() {
   // Novel metadata - MUST be inside getStaticPaths
   const novelsData: Record<string, { title: string; chapters: number }> = {
+    '維港深淵的引擎聲': { title: '維港深淵', chapters: 20 },
     '佛系廚神': { title: '佛系廚神', chapters: 18 },
     '一茶一禪-海鮮僧的靜心茶路': { title: '一茶一禪', chapters: 50 },
     '万界直播系统': { title: '萬界直播系統', chapters: 130 }
@@ -43,6 +45,8 @@ export function getStaticPaths() {
 }
 
 const { novel, chapter: chapterNum, chapterTitle, chapterPart, ChapterContent } = Astro.props;
+// Get config.base for links - safe access
+const basePath = (config as { base?: string }).base || '';
 const chaptersList = Array.from({ length: novel.chapters }, (_, i) => i + 1);
 const hasPrev = chapterNum > 1;
 const hasNext = chapterNum < chaptersList.length;
@@ -58,14 +62,14 @@ const hasNext = chapterNum < chaptersList.length;
     <!-- Top Bar -->
     <header class="reader-topbar" id="readerTopbar">
       <div class="reader-topbar-inner">
-        <a href={`/book/${novel.slug}`} class="reader-topbar-back btn-press">
+        <a href={`${basePath}/book/${novel.slug}`} class="reader-topbar-back btn-press">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M15 18l-7-7 7-7"/>
           </svg>
         </a>
         <span class="reader-topbar-title">{novel.title}</span>
         <span class="reader-topbar-breadcrumb">
-          <a href={`/book/${novel.slug}`}>{novel.title}</a>
+          <a href={`${basePath}/book/${novel.slug}`}>{novel.title}</a>
           <span> › </span>
           <span>{chapterTitle}</span>
         </span>
@@ -134,7 +138,7 @@ const hasNext = chapterNum < chaptersList.length;
         </div>
         <div class="sheet-body">
           {chaptersList.map((num) => (
-            <a href={`/book/${novel.slug}/${num}`} class={`toc-item btn-press ${num === chapterNum ? 'active' : ''}`}>
+            <a href={`${basePath}/book/${novel.slug}/${num}`} class={`toc-item btn-press ${num === chapterNum ? 'active' : ''}`}>
               <span>第 {num} 章</span>
               {num === chapterNum && <span class="toc-current">進行中</span>}
             </a>
@@ -870,6 +874,9 @@ const hasNext = chapterNum < chaptersList.length;
 </style>
 
 <script>
+  // Expose config base for client-side navigation
+  (window as any).__configBase__ = '/zen-novel-court';
+
   // ========== Reader State ==========
   const state = {
     uiVisible: true,
@@ -1038,14 +1045,17 @@ const hasNext = chapterNum < chaptersList.length;
     (window as any).openSheet('ttsSheet');
   });
 
+  // Get base path from config at runtime
+  const basePath = (window as any).__configBase__ || '';
+
   prevChapterBtn?.addEventListener('click', () => {
     const current = parseInt(window.location.pathname.split('/').pop() || '1');
-    if (current > 1) window.location.href = `/book/${novelSlug}/${current - 1}`;
+    if (current > 1) window.location.href = `${basePath}/book/${novelSlug}/${current - 1}`;
   });
 
   nextChapterBtn?.addEventListener('click', () => {
     const current = parseInt(window.location.pathname.split('/').pop() || '1');
-    window.location.href = `/book/${novelSlug}/${current + 1}`;
+    window.location.href = `${basePath}/book/${novelSlug}/${current + 1}`;
   });
 
   // ========== Touch Swipe Gestures ==========
