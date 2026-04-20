@@ -1,0 +1,7 @@
+/book/:slug /book/:slug/
+/library /library/
+/my /my/
+/search /search/
+/shelf /shelf/
+/category/:slug /category/:slug/
+/legal/:slug /legal/:slug/
