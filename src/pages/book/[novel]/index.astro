@@ -111,7 +111,7 @@ const { novel } = Astro.props;
       <ul class="toc-list">
         {Array.from({ length: novel.chapters }, (_, i) => i + 1).map((num) => (
           <li>
-            <a href={`${config.base}/book/${novel.slug}/${num}`} class="toc-item">
+            <a href={config.path('/book/' + novel.slug + '/' + num)} class="toc-item">
               <span class="toc-chapter">{num}</span>
               <span class="toc-title">第 {num} 章</span>
             </a>
@@ -123,7 +123,7 @@ const { novel } = Astro.props;
 
   <!-- Sticky CTA -->
   <div class="sticky-cta">
-    <a href={`${config.base}/book/${novel.slug}/1`} class="btn-primary">
+    <a href={config.path('/book/' + novel.slug + '/1')} class="btn-primary">
       開始閱讀
     </a>
     <button class="btn-secondary" id="favBtn">

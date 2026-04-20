@@ -60,7 +60,7 @@ const categories = [
   <section class="home-hero">
     <div class="hero-content">
       <span class="hero-badge">精選推薦</span>
-      <a href={`${config.base}/library`} class="hero-search-btn">
+      <a href={config.path('/library')} class="hero-search-btn">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="11" cy="11" r="8"></circle>
           <path d="m21 21-4.35-4.35"></path>
@@ -87,7 +87,7 @@ const categories = [
     </div>
     <div class="featured-scroll hide-scrollbar">
       {novels.map((novel, index) => (
-        <a href={`${config.base}/book/${novel.slug}`} class="featured-card" style={`animation-delay: ${index * 0.05}s`}>
+        <a href={config.path('/book/' + novel.slug)} class="featured-card" style={`animation-delay: ${index * 0.05}s`}>
           <div class="book-cover-wrapper">
             <div class="css-book-cover" style="width: 140px; height: 200px;">
               <div class="cover-content">
@@ -116,11 +116,11 @@ const categories = [
   <section class="home-section">
     <div class="section-header">
       <h2 class="section-title">分類</h2>
-      <a href={`${config.base}/shelf`} class="section-more">查看全部</a>
+      <a href={config.path('/shelf')} class="section-more">查看全部</a>
     </div>
     <div class="cat-grid">
       {categories.map((cat, index) => (
-        <a href={`${config.base}/category/${cat.slug}`} class={`cat-item ${index === 0 ? 'featured' : ''}`}>
+        <a href={config.path('/category/' + cat.slug)} class={`cat-item ${index === 0 ? 'featured' : ''}`}>
           <span class="cat-icon">{cat.icon}</span>
           <span class="cat-name">{cat.name}</span>
         </a>
@@ -140,7 +140,7 @@ const categories = [
     </div>
     <div class="rank-list">
       {novels.map((novel, index) => (
-        <a href={`${config.base}/book/${novel.slug}`} class="rank-item" style={`animation-delay: ${index * 0.02}s`}>
+        <a href={config.path('/book/' + novel.slug)} class="rank-item" style={`animation-delay: ${index * 0.02}s`}>
           <span class={`rank-num ${index < 3 ? 'rank-top' : ''}`}>{index + 1}</span>
           <div class="css-book-cover-mini" style="width: 50px; height: 70px;">
             <div class="cover-content">
@@ -164,7 +164,7 @@ const categories = [
     </div>
     <div class="latest-list">
       {novels.map((novel) => (
-        <a href={`${config.base}/book/${novel.slug}`} class="latest-item">
+        <a href={config.path('/book/' + novel.slug)} class="latest-item">
           <div class="css-book-cover-mini" style="width: 40px; height: 56px; flex-shrink: 0;">
             <div class="cover-content">
               <span class="cover-title" style="font-size: 10px;">{novel.title.slice(0, 2)}</span>

@@ -107,9 +107,9 @@ import { config } from '../config';
 
     <!-- Legal Links -->
     <div class="legal-links">
-      <a href={`${config.base}/legal/privacy`} class="legal-link">隱私政策</a>
+      <a href={config.path('/legal/privacy')} class="legal-link">隱私政策</a>
       <span class="legal-divider">|</span>
-      <a href={`${config.base}/legal/terms`} class="legal-link">服務條款</a>
+      <a href={config.path('/legal/terms')} class="legal-link">服務條款</a>
     </div>
   </div>
 </BaseLayout>
