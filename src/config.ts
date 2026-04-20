@@ -1,4 +1,4 @@
 export const config = {
-  base: '/zen-novel-court',
-  site: 'https://ashashash001001-stack.github.io'
+  base: import.meta.env.BASE_PATH || '/zen-novel-court',
+  site: import.meta.env.SITE_URL || 'https://ashashash001001-stack.github.io'
 } as const;

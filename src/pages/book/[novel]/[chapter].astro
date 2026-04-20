@@ -874,8 +874,8 @@ const hasNext = chapterNum < chaptersList.length;
 </style>
 
 <script>
-  // Expose config base for client-side navigation
-  (window as any).__configBase__ = '/zen-novel-court';
+  // Expose config base for client-side navigation (set at build time)
+  (window as any).__configBase__ = '{config.base}';
 
   // ========== Reader State ==========
   const state = {

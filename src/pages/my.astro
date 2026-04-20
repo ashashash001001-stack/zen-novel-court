@@ -107,9 +107,9 @@ import { config } from '../config';
 
     <!-- Legal Links -->
     <div class="legal-links">
-      <a href="{config.base}/legal/privacy" class="legal-link">隱私政策</a>
+      <a href={`${config.base}/legal/privacy`} class="legal-link">隱私政策</a>
       <span class="legal-divider">|</span>
-      <a href="{config.base}/legal/terms" class="legal-link">服務條款</a>
+      <a href={`${config.base}/legal/terms`} class="legal-link">服務條款</a>
     </div>
   </div>
 </BaseLayout>
@@ -646,12 +646,17 @@ import { config } from '../config';
 </style>
 
 <script>
+  // Use config.base from import.meta.env at build time (Astro injects this)
+  // For runtime, try window.__configBase__ first, then fallback to build-time value
+  const BASE_PATH = (window as any).__configBase__ || '/zen-novel-court';
+
   const novelsData: Record<string, { title: string; chapters: number }> = {
+    '維港深淵': { title: '維港深淵', chapters: 20 },
     '佛系廚神': { title: '佛系廚神', chapters: 18 },
-    '一茶一禪-海鮮僧的靜心茶路': { title: '一茶一禪', chapters: 50 },
-    '万界直播系统': { title: '萬界直播系統', chapters: 130 },
+    '一茶一禪-海岸線的寧靜': { title: '一茶一禪', chapters: 50 },
     '一茶一禪': { title: '一茶一禪', chapters: 50 },
-    '萬界直播系統': { title: '萬界直播系統', chapters: 130 }
+    '萬界直播系統': { title: '萬界直播系統', chapters: 130 },
+    '万界直播系统': { title: '萬界直播系統', chapters: 130 }
   };
 
   function createMiniCover(title: string) {
@@ -711,7 +716,7 @@ function removeFromHistory(id: string) {
       if (chapter) chapter.textContent = last.chapter ? `第 ${last.chapter} 章 / ${data.chapters} 章` : '未開始閱讀';
       if (fill) fill.style.width = `${progress}%`;
       if (text) text.textContent = `${progress}%`;
-      if (btn) (btn as HTMLAnchorElement).href = `{config.base}/book/${last.id}${last.chapter ? '/' + last.chapter : ''}`;
+      if (btn) (btn as HTMLAnchorElement).href = `${BASE_PATH}/book/${last.id}${last.chapter ? '/' + last.chapter : ''}`;
       
       section.style.display = 'block';
     } catch (e) {
@@ -752,13 +757,13 @@ function removeFromHistory(id: string) {
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
             </svg>
             <p>尚未收藏任何小說</p>
-            <a href="{config.base}/library" class="empty-cta">探索書庫</a>
+            <a href="${BASE_PATH}/library" class="empty-cta">探索書庫</a>
           </div>`;
       } else {
         container.innerHTML = favData.map((id: string) => {
           const data = novelsData[id] || { title: id, chapters: 0 };
           return `
-            <a href="{config.base}/book/${id}" class="history-item">
+            <a href="${BASE_PATH}/book/${id}" class="history-item">
               ${createMiniCover(data.title)}
               <div class="item-info">
                 <div class="item-title">${data.title}</div>
@@ -829,7 +834,7 @@ function removeFromHistory(id: string) {
               <polyline points="12 6 12 12 16 14"></polyline>
             </svg>
             <p>尚無閱讀記錄</p>
-            <a href="{config.base}/library" class="empty-cta">開始閱讀</a>
+            <a href="${BASE_PATH}/library" class="empty-cta">開始閱讀</a>
           </div>`;
       } else {
         container.innerHTML = historyData.slice(0, 10).map((item: { id: string; chapter?: number; timestamp?: number }) => {
@@ -837,7 +842,7 @@ function removeFromHistory(id: string) {
           const progress = item.chapter && data.chapters ? Math.round((item.chapter / data.chapters) * 100) : 0;
           const timeAgo = item.timestamp ? getRelativeTime(item.timestamp) : '';
           return `
-            <a href="{config.base}/book/${item.id}${item.chapter ? '/' + item.chapter : ''}" class="history-item">
+            <a href="${BASE_PATH}/book/${item.id}${item.chapter ? '/' + item.chapter : ''}" class="history-item">
               ${createMiniCover(data.title)}
               <div class="item-info">
                 <div class="item-title">${data.title}</div>

@@ -90,9 +90,12 @@ const siteURL = "https://your-domain.com";
 </head>
 <body>
   <script is:inline>
+    // Expose config.base to client-side scripts
+    window.__configBase__ = '{config.base}';
+    
     // Fallback: redirect legacy URLs without base path (for bookmarks/bookmarks)
     (function() {
-      const basePath = '/zen-novel-court';
+      const basePath = '{config.base}';
       const path = window.location.pathname;
       if (path !== basePath && path !== basePath + '/' && path !== '/') {
         const routes = ['/library', '/search', '/shelf', '/my', '/book/', '/category/', '/legal/'];
