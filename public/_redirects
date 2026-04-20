@@ -1,17 +1,16 @@
-# Book detail page slug redirects
+# Book slugs redirect
 /book/維港深淵 /book/維港深淵的引擎聲/
 /book/一茶一禪-海岸線的寧靜 /book/一茶一禪-海鮮僧的靜心茶路/
 /book/一茶一禪 /book/一茶一禪-海鮮僧的靜心茶路/
-/book/万界直播系统 /book/万界直播系统/
-/book/萬界直播系統 /book/万界直播系统/
+/book/万界直播system /book/万界直播system/
+/book/萬界直播系統 /book/万界直播system/
 
-# Trailing slash redirects
+# Trailing slash
 /book/維港深淵的引擎聲 /book/維港深淵的引擎聲/
 /book/佛系廚神 /book/佛系廚神/
 /book/一茶一禪-海鮮僧的靜心茶路 /book/一茶一禪-海鮮僧的靜心茶路/
-/book/万界直播系统 /book/万界直播system/
 
-# Other routes
+# Other
 /library /library/
 /search /search/
 /shelf /shelf/
