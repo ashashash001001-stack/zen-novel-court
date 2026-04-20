@@ -88,14 +88,14 @@ const siteURL = "https://your-domain.com";
     }
   })} />
 </head>
-<body>
+<body data-base-path={config.base}>
   <script is:inline>
     // Expose config.base to client-side scripts
-    window.__configBase__ = '{config.base}';
+    window.__configBase__ = document.body.dataset.basePath;
     
     // Fallback: redirect legacy URLs without base path (for bookmarks/bookmarks)
     (function() {
-      const basePath = '{config.base}';
+      const basePath = document.body.dataset.basePath;
       const path = window.location.pathname;
       if (path !== basePath && path !== basePath + '/' && path !== '/') {
         const routes = ['/library', '/search', '/shelf', '/my', '/book/', '/category/', '/legal/'];

@@ -874,8 +874,7 @@ const hasNext = chapterNum < chaptersList.length;
 </style>
 
 <script>
-  // Expose config base for client-side navigation (set at build time)
-  (window as any).__configBase__ = '{config.base}';
+  (window as any).__configBase__ = document.body.dataset.basePath;
 
   // ========== Reader State ==========
   const state = {
