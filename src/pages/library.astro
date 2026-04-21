@@ -1,5 +1,6 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { config } from '../config';
 
 // Novel data - shared across pages
 const novels = [
@@ -94,7 +95,7 @@ const activeCategory = Astro.url.searchParams.get('category') || 'all';
   <!-- Book Grid -->
   <div class="book-grid" id="bookGrid">
     {novels.map((novel) => (
-      <a href={`/book/${novel.slug}`} class="book-card" data-category={novel.category} data-title={novel.title.toLowerCase()} data-author={novel.author.toLowerCase()}>
+      <a href={config.path('/book/' + novel.slug)} class="book-card" data-category={novel.category} data-title={novel.title.toLowerCase()} data-author={novel.author.toLowerCase()}>
         <div class="book-cover">
           <div class="css-book-cover" style="width: 100%; height: 100%;" role="img" aria-label={`${novel.title}封面`}>
             <div class="cover-content">
