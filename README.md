@@ -163,7 +163,7 @@ zen-novel-court/
 
 ### 環境變量
 
-在 `.env` 文件中配置以下環境變量：
+在 `.env` 文件中配置以下環境變量（本地開發用）：
 
 ```bash
 # 站點 URL（生產環境）
@@ -172,6 +172,47 @@ SITE_URL=https://your-domain.com
 # 基礎路徑（用於 GitHub Pages 等場景）
 BASE_PATH=/your-base-path
 ```
+
+### 環境變量配置詳解
+
+| 變量 | 說明 | 範例 |
+|------|------|------|
+| `SITE_URL` | 站點完整 URL，用於 SEO、sitemap、canonical | `https://example.com` |
+| `BASE_PATH` | 基礎路徑，用於 URL 構建和資源路徑 | `/my-repo` 或 `/` |
+
+### 各平台 BASE_PATH 配置
+
+| 部署平台 | BASE_PATH | 說明 |
+|----------|------------|------|
+| GitHub Pages | `/your-repo-name` | 例如 `/zen-novel-court` |
+| Cloudflare Pages（自定義域名） | `/` | 根路徑，無需子目錄 |
+| Vercel | `/` | 默認根路徑 |
+| Netlify | `/` | 默認根路徑 |
+
+### CI/CD 環境變量配置
+
+**重要**：環境變量在**構建時**讀取，不是運行時。
+
+```bash
+# 本地構建時指定
+BASE_PATH=/ SUB_PATH=/ npm run build
+
+# GitHub Actions 中配置
+- name: Build
+  run: npm run build
+  env:
+    BASE_PATH: /
+    SITE_URL: https://zen-novel-court.pages.dev
+
+# Cloudflare Pages 設置
+# 在 Cloudflare Dashboard → Pages → 項目設置 → 環境變量
+```
+
+### 構建時 vs 運行時
+
+- Astro 的 `import.meta.env.BASE_PATH` 在**構建時**就被嵌入到輸出的 HTML/JS 中
+- 運行時修改環境變量不會生效，必須重新構建
+- 客戶端重定向邏輯（如 `BaseLayout.astro`）使用 `document.body.dataset.basePath` 讀取 HTML 中的值
 
 ### 核心配置（config.ts）
 
