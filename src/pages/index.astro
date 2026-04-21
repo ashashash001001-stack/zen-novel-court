@@ -38,10 +38,11 @@ const categories = [
        <span class="hero-stat-num">{novelData.length}</span>
        <span class="hero-stat-label">精選作品</span>
      </div>
-     <div class="hero-stat">
-       <span class="hero-stat-num">{novelData.reduce((acc, n) => acc + n.chapters, 0)}</span>
-       <span class="hero-stat-label">總章節數</span>
-     </div>
+      <div class="hero-stat">
+        <span class="hero-stat-num">{novelData.reduce((acc, n) => acc + n.totalChapters, 0)}</span>
+        <span class="hero-stat-label">總章節數</span>
+      </div>
+
 
       </div>
     </div>
@@ -69,11 +70,12 @@ const categories = [
           </div>
           <div class="featured-info">
             <div class="featured-title">{novel.title}</div>
-            <div class="featured-meta">
-              <span>{novel.chapters}章</span>
-              <span>•</span>
-              <span>{novel.genre.split('/')[0]}</span>
-            </div>
+          <div class="featured-meta">
+            <span>{novel.totalChapters}章</span>
+            <span>•</span>
+            <span>{novel.genre.split('/')[0]}</span>
+          </div>
+
           </div>
         </a>
       ))}
@@ -118,9 +120,9 @@ const categories = [
           </div>
           <div class="rank-info">
             <div class="rank-title">{novel.title}</div>
-            <div class="rank-sub">{novel.author} • {novel.chapters}章</div>
-          </div>
-          <span class="rank-score">{novel.chapters}</span>
+            <div class="rank-sub">{novel.author} • {novel.totalChapters}章</div>
+            <span class="rank-score">{novel.totalChapters}</span>
+
         </a>
       ))}
     </div>
@@ -139,11 +141,12 @@ const categories = [
               <span class="cover-title" style="font-size: 10px;">{novel.title.slice(0, 2)}</span>
             </div>
           </div>
-          <div class="latest-info">
-            <div class="latest-title">{novel.title}</div>
-            <div class="latest-chapter">{novel.status} • {novel.chapters}章</div>
-          </div>
-          <span class="latest-time">{novel.genre.split('/')[0]}</span>
+      <div class="latest-info">
+        <div class="latest-title">{novel.data.title}</div>
+        <div class="latest-chapter">{novel.data.status} • {novel.data.totalChapters}章</div>
+      </div>
+      <span class="latest-time">{novel.data.genre.split('/')[0]}</span>
+
         </a>
       ))}
     </div>

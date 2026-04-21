@@ -9,10 +9,10 @@ export async function getStaticPaths() {
   const paths = [];
   
   for (const novel of novels) {
-    const slug = novel.slug;
+    const slug = novel.id;
     const data = novel.data;
     
-    for (let i = 1; i <= data.chapters; i++) {
+    for (let i = 1; i <= data.totalChapters; i++) {
       const chapterPath = `../../../content/novels/${slug}/chapters/${i}.md`;
       const chapterModule = import.meta.glob('../../../content/novels/*/chapters/*.md', { eager: true })[chapterPath] as any;
       

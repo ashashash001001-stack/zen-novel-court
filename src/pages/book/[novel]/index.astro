@@ -5,9 +5,8 @@ import { getCollection } from 'astro:content';
 
 export async function getStaticPaths() {
   const novels = await getCollection('novels');
-  const novelMetadata = novels.filter(n => n.data.synopsis);
   
-  return novelMetadata.map((novel) => ({
+  return novels.map((novel) => ({
     params: { novel: novel.slug },
     props: { 
       novel: novel.data,
@@ -43,7 +42,7 @@ const { novel, slug } = Astro.props;
         <p class="detail-author">{novel.author}</p>
         <div class="detail-meta">
           <span>{novel.genre || '都市'}</span>
-          <span>{novel.chapters}章</span>
+          <span>{novel.totalChapters}章</span>
           <span class={`status-tag ${novel.status === '已完結' ? 'done' : 'ongoing'}`}>
             {novel.status || '連載中'}
           </span>
@@ -70,7 +69,7 @@ const { novel, slug } = Astro.props;
     <div class="chapters-section">
       <h3 class="section-title">目錄</h3>
       <ul class="toc-list">
-        {Array.from({ length: novel.chapters }, (_, i) => i + 1).map((num) => (
+        {Array.from({ length: novel.totalChapters }, (_, i) => i + 1).map((num) => (
           <li>
             <a href={config.path('/book/' + slug + '/' + num)} class="toc-item">
               <span class="toc-chapter">{num}</span>
@@ -83,11 +82,11 @@ const { novel, slug } = Astro.props;
   </div>
 
   <!-- Sticky CTA -->
-  <div class="sticky-cta">
-     <a href={config.path('/book/' + slug + '/1')} class="btn-primary">
+    <div class="sticky-cta">
+      <a href={config.path('/book/' + slug + '/1')} class="btn-primary">
+        開始閱讀
+      </a>
 
-      開始閱讀
-    </a>
     <button class="btn-secondary" id="favBtn">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
