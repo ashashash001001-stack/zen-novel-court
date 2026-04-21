@@ -31,6 +31,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Debug secrets
+        run: |
+          echo "CLOUDFLARE_API_TOKEN set: ${{ secrets.CLOUDFLARE_API_TOKEN != '' }}"
+          echo "CLOUDFLARE_ACCOUNT_ID set: ${{ secrets.CLOUDFLARE_ACCOUNT_ID != '' }}"
+
       - name: Build
         run: pnpm build
         env:
@@ -44,4 +49,3 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           projectName: zen-novel-court
           directory: dist
-          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
