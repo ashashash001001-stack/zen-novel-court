@@ -97,11 +97,14 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
     (function() {
       const basePath = document.body.dataset.basePath;
       const path = window.location.pathname;
+      // Normalize: avoid double slashes when basePath is '/'
+      const normalizedBase = basePath === '/' ? '' : basePath;
+      const targetPath = normalizedBase + path;
       if (path !== basePath && path !== basePath + '/' && path !== '/') {
         const routes = ['/library', '/search', '/shelf', '/my', '/book/', '/category/', '/legal/'];
         for (const r of routes) {
           if (path === r || path === r + '/' || path.startsWith(r)) {
-            window.location.href = basePath + path;
+            window.location.href = targetPath;
             return;
           }
         }
