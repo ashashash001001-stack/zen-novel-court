@@ -9,10 +9,14 @@ export async function getStaticPaths() {
   const paths = [];
   
   for (const novel of novels) {
-    const slug = novel.id;
-    const data = novel.data;
+    // Skip non-meta entries
+    if (!novel.id.endsWith('/meta')) continue;
     
-    for (let i = 1; i <= data.totalChapters; i++) {
+    const slug = novel.id.replace('/meta', '');
+    const data = novel.data;
+    const chapters = data.totalChapters || data.chapters || 0;
+    
+    for (let i = 1; i <= chapters; i++) {
       const chapterPath = `../../../content/novels/${slug}/chapters/${i}.md`;
       const chapterModule = import.meta.glob('../../../content/novels/*/chapters/*.md', { eager: true })[chapterPath] as any;
       

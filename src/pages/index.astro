@@ -4,10 +4,11 @@ import { config } from '../config';
 import { getCollection } from 'astro:content';
 
 const novels = await getCollection('novels');
+// Filter to only meta.json entries and use the id as slug
 const novelData = novels
-  .filter(n => n.data.synopsis)
+  .filter(n => n.id.endsWith('/meta') && n.data?.synopsis)
   .map(n => ({
-    slug: n.slug,
+    slug: n.id.replace('/meta', ''),
     ...n.data
   }));
 
@@ -38,11 +39,10 @@ const categories = [
        <span class="hero-stat-num">{novelData.length}</span>
        <span class="hero-stat-label">精選作品</span>
      </div>
-      <div class="hero-stat">
-        <span class="hero-stat-num">{novelData.reduce((acc, n) => acc + n.totalChapters, 0)}</span>
-        <span class="hero-stat-label">總章節數</span>
-      </div>
-
+     <div class="hero-stat">
+       <span class="hero-stat-num">{novelData.reduce((acc, n) => acc + (n.chapters || n.totalChapters || 0), 0)}</span>
+       <span class="hero-stat-label">總章節數</span>
+     </div>
 
       </div>
     </div>
@@ -70,12 +70,11 @@ const categories = [
           </div>
           <div class="featured-info">
             <div class="featured-title">{novel.title}</div>
-          <div class="featured-meta">
-            <span>{novel.totalChapters}章</span>
-            <span>•</span>
-            <span>{novel.genre.split('/')[0]}</span>
-          </div>
-
+            <div class="featured-meta">
+              <span>{novel.chapters}章</span>
+              <span>•</span>
+              <span>{novel.genre.split('/')[0]}</span>
+            </div>
           </div>
         </a>
       ))}
@@ -115,14 +114,14 @@ const categories = [
           <span class={`rank-num ${index < 3 ? 'rank-top' : ''}`}>{index + 1}</span>
           <div class="css-book-cover-mini" style="width: 50px; height: 70px;">
             <div class="cover-content">
-              <span class="cover-title" style="font-size: var(--text-xs-sm);">{novel.title.slice(0, 2)}</span>
+              <span class="cover-title" style="font-size: var(--text-xs-sm);">{novel.title?.slice(0, 2) || ''}</span>
             </div>
           </div>
           <div class="rank-info">
             <div class="rank-title">{novel.title}</div>
-            <div class="rank-sub">{novel.author} • {novel.totalChapters}章</div>
-            <span class="rank-score">{novel.totalChapters}</span>
-
+            <div class="rank-sub">{novel.author} • {novel.chapters}章</div>
+          </div>
+          <span class="rank-score">{novel.chapters}</span>
         </a>
       ))}
     </div>
@@ -134,19 +133,18 @@ const categories = [
       <h2 class="section-title">最新更新</h2>
     </div>
     <div class="latest-list">
-      {novels.map((novel) => (
+      {novelData.map((novel) => (
         <a href={config.path('/book/' + novel.slug)} class="latest-item">
           <div class="css-book-cover-mini" style="width: 40px; height: 56px; flex-shrink: 0;">
             <div class="cover-content">
-              <span class="cover-title" style="font-size: 10px;">{novel.title.slice(0, 2)}</span>
+              <span class="cover-title" style="font-size: 10px;">{novel.title?.slice(0, 2) || ''}</span>
             </div>
           </div>
-      <div class="latest-info">
-        <div class="latest-title">{novel.data.title}</div>
-        <div class="latest-chapter">{novel.data.status} • {novel.data.totalChapters}章</div>
-      </div>
-      <span class="latest-time">{novel.data.genre.split('/')[0]}</span>
-
+          <div class="latest-info">
+            <div class="latest-title">{novel.title}</div>
+            <div class="latest-chapter">{novel.status} • {novel.chapters || novel.totalChapters}章</div>
+          </div>
+          <span class="latest-time">{novel.genre?.split('/')[0] || ''}</span>
         </a>
       ))}
     </div>

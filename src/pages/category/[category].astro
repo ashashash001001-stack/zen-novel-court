@@ -5,7 +5,9 @@ import { config } from '../../config';
 
 export async function getStaticPaths() {
   const novels = await getCollection('novels');
-  const contentCategories = [...new Set(novels.map(n => n.data.category))];
+  // Filter to only meta.json entries
+  const metaNovels = novels.filter(n => n.id.endsWith('/meta'));
+  const contentCategories = [...new Set(metaNovels.map(n => n.data?.category).filter(Boolean))];
   const defaultCategories = ['healing', 'food', 'urban', 'system', 'growth', 'other'];
   const allCategories = [...new Set([...contentCategories, ...defaultCategories])];
   
@@ -17,7 +19,8 @@ export async function getStaticPaths() {
 
 const { category } = Astro.params;
 const novels = await getCollection('novels');
-const filteredNovels = novels.filter(n => n.data.category === category);
+const metaNovels = novels.filter(n => n.id.endsWith('/meta'));
+const filteredNovels = metaNovels.map(n => ({ slug: n.id.replace('/meta', ''), ...n.data })).filter(n => n.category === category);
 
 // Map category slug to display name
 const categoryNames: Record<string, string> = {
@@ -43,8 +46,8 @@ const displayName = categoryNames[category] || category;
       <a href={config.path('/book/' + novel.slug)} class="book-card">
         <div class="book-cover"></div>
         <div class="book-info">
-          <h3>{novel.data.title}</h3>
-          <p>{novel.data.genre}</p>
+          <h3>{novel.title}</h3>
+          <p>{novel.genre}</p>
         </div>
       </a>
     ))}
