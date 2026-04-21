@@ -71,7 +71,7 @@ const { novel, slug } = Astro.props;
     <div class="chapters-section">
       <h3 class="section-title">目錄</h3>
       <ul class="toc-list">
-        {Array.from({ length: novel.chapters }, (_, i) => i + 1).map((num) => (
+        {Array.from({ length: (novel.totalChapters || novel.chapters || 0) }, (_, i) => i + 1).map((num) => (
           <li>
             <a href={config.path('/book/' + slug + '/' + num)} class="toc-item">
               <span class="toc-chapter">{num}</span>
