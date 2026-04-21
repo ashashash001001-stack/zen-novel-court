@@ -214,6 +214,44 @@ BASE_PATH=/ SUB_PATH=/ npm run build
 - 運行時修改環境變量不會生效，必須重新構建
 - 客戶端重定向邏輯（如 `BaseLayout.astro`）使用 `document.body.dataset.basePath` 讀取 HTML 中的值
 
+### 環境密鑰管理（重要！）
+
+**環境密鑰 vs 公共環境變量：**
+- `SITE_URL`、`BASE_PATH` 是**公共環境變量**，會被嵌入到前端代碼中
+- 真正的密鑰（如 API 金鑰）**不應該**出現在前端代碼中！
+
+**在 Astro 中的正確使用：**
+```javascript
+// ✅ 正確：公共配置（會被編譯進前端）
+export const config = {
+  base: process.env.BASE_PATH || '/zen-novel-court',
+  site: process.env.SITE_URL || 'https://example.com'
+}
+
+// ✅ 正輯：服務器端密鑰（僅在 Astro API/routes 中可用）
+// 在 src/pages/api/ 或 src/pages/[path].ts(x) 中：
+const apiKey = process.env.MY_SECRET_KEY  // 不會泄漏給前端
+
+// ❌ 錯誤：不要在組件中直接使用密鑰！
+// 這會把密鑰嵌入到前端 JavaScript 中！
+const apiKey = import.meta.env.MY_SECRET_KEY  // 永遠不要這樣做！
+```
+
+**不同平台的密鑰設置：**
+
+| 平台 | 公共變量 | 密鑰設置位置 |
+|------|----------|--------------|
+| GitHub Actions | `env:` in workflow | Settings → Secrets and variables → Actions |
+| Cloudflare Pages | 環境變量儀表板 | Settings → Environment Variables |
+| Vercel | 環境變量設置 | Project Settings → Environment Variables |
+| Netlify | 環境變量設置 | Site Settings → Build & Deploy → Environment |
+
+**實踐經驗：**
+1. **永遠不要**把 API 金鑰、密鑰放在 `SITE_URL`、`BASE_PATH` 或其他會被前端打包的變量中
+2. 密鑰只能在**服務器端代碼**（Astro API routes, endpoint functions）中使用
+3. 前端需要的配置（如站點 URL）應該是公共的、非敏感的信息
+4. 如果不確定一個變量是否會被前端看到，假設它會被看到，除非你明確知道它只在服務器端運行
+
 ### 核心配置（config.ts）
 
 ```typescript
