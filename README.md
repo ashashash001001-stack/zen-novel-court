@@ -363,10 +363,22 @@ src/content/novels/[小說標題]/
 
 1. Fork 此項目
 2. 在 GitHub 倉庫設置中配置：
-   - **Pages** → Build and deployment → Source: **GitHub Actions**
-3. 設置環境變量（在 Settings → Secrets and variables → Actions）：
-   - `SITE_URL`: 你的 GitHub Pages URL
-   - `BASE_PATH`: `/your-repo-name`
+    - **Pages** → Build and deployment → Source: **GitHub Actions**
+3. 設置環境變量（在 Settings → Secrets and variables → Actions ）:
+    - `SITE_URL`: 你的 GitHub Pages URL
+    - `BASE_PATH`: `/your-repo-name`
+
+### Cloudflare Pages Secrets（備註）
+
+若您仍選擇使用 GitHub Actions 進行自定義構建流程（雖然 Cloudflare Pages 有內建 Git 自動部署），請設置以下 Secrets：
+
+Name: CLOUDFLARE_API_TOKEN
+Value: (paste your Cloudflare API Token)
+Click "Add secret"
+
+Name: CLOUDFLARE_ACCOUNT_ID
+Value: (paste your Cloudflare Account ID)
+Click "Add secret"
 
 ### Vercel
 
