@@ -12,8 +12,4 @@ export const config = {
   base,
   site,
   path: (p: string) => cleanJoin(base, p)
-} as {
-  readonly base: string;
-  readonly site: string;
-  readonly path: (p: string) => string;
 };

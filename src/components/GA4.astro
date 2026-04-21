@@ -32,5 +32,5 @@ const { measurementId = 'G-XXXXXXXXXX' } = Astro.props;
 
 <!-- Alternative: Plausible Analytics (privacy-focused) -->
 <!-- 
-<script defer data-domain="your-domain.com" src="https://plausible.io/js/script.js"></script>
+<script defer data-domain={import.meta.env.SITE_URL?.replace(/^https?:\/\//, '').replace(/\/.*$/, '')} src="https://plausible.io/js/script.js"></script>
 -->

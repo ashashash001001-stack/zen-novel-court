@@ -22,7 +22,7 @@ const {
 } = Astro.props;
 
 const siteName = "小说阁";
-const siteURL = "https://your-domain.com";
+const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.github.io';
 ---
 
 <!DOCTYPE html>
