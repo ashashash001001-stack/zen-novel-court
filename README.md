@@ -405,6 +405,31 @@ node --version
 
 在 `src/pages/` 目錄下創建新的 `.astro` 文件。
 
+## 🔧 部署注意事項（經驗總結）
+
+### BASE_PATH 與 trailingSlash 配置
+
+- 當 `BASE_PATH=/` 時（Cloudflare Pages 根路徑部署），客戶端重定向邏輯需要特別處理
+- 確保 `astro.config.mjs` 中 `trailingSlash: 'always'` 與部署環境一致
+- 客戶端重定向時，應判斷 `basePath === '/'` 並跳過重定向，避免無限循環
+
+### Content Collections 配置
+
+- 使用 `type: 'content'` 時，`meta.json` 文件會作為獨立的 collection entry
+- 獲取小說信息時需要過濾：`entries.filter(e => e.id.endsWith('/meta'))`
+- 數據字段名稱：`totalChapters` 而非 `chapters`（chapters 是 Astro 自動生成的數組）
+
+### 部署平台選擇
+
+- **Cloudflare Pages**: 推薦使用其內建的 Git 自動部署功能（自動從 GitHub 拉取代碼構建），無需額外配置 GitHub Actions
+- **GitHub Pages**: 使用 `.github/workflows/deploy.yml` 自動部署
+
+### 常見問題排查
+
+1. **頁面無限重新加載**: 檢查客戶端重定向邏輯，確認 `basePath !== '/'` 時才執行重定向
+2. **資源 404**: 確認 `BASE_PATH` 與實際部署路徑一致
+3. **鏈接缺少域名**: 避免 `basePath + path` 產生雙斜杠 `//`，如 `/` + `/book/...` → `//book/...`
+
 ## 🤝 貢獻指南
 
 歡迎提交 Issue 與 Pull Request！
