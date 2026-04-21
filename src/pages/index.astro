@@ -1,49 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { config } from '../config';
+import { getCollection } from 'astro:content';
 
-const novels = [
-  {
-    slug: '維港深淵的引擎聲',
-    title: '維港深淵',
-    author: 'AI 生成',
-    genre: '賽博龐克/都市/熱血',
-    category: 'urban',
-    chapters: 20,
-    status: '已完結',
-    synopsis: '隱世紅Van老司機為救女兒，駕駛「紅彗星」與機甲軍團酣戰。'
-  },
-  {
-    slug: '佛系廚神',
-    title: '佛系廚神',
-    author: 'AI 生成',
-    genre: '都市/料理/成長',
-    category: 'food',
-    chapters: 18,
-    status: '連載中',
-    synopsis: '在喧鬧的香港深水埗舊城區，隱藏著一座帶有昭和時代木造建築與枯山水庭園的破舊小佛寺。'
-  },
-  {
-    slug: '一茶一禪-海鮮僧的靜心茶路',
-    title: '一茶一禪',
-    author: 'AI 生成',
-    genre: '都市/禪意/美食',
-    category: 'healing',
-    chapters: 50,
-    status: '已完結',
-    synopsis: '一個關於茶道與禪意的故事。'
-  },
-  {
-    slug: '万界直播系统',
-    title: '萬界直播系統',
-    author: 'AI 生成',
-    genre: '都市/系統/直播',
-    category: 'system',
-    chapters: 130,
-    status: '連載中',
-    synopsis: '主角在異世界進行直播，獲得各種能力。'
-  }
-];
+const novels = await getCollection('novels');
+const novelData = novels
+  .filter(n => n.data.synopsis)
+  .map(n => ({
+    slug: n.slug,
+    ...n.data
+  }));
 
 const categories = [
   { name: '療癒', slug: 'healing', icon: '🌿', color: '#7d9a7d' },
@@ -69,13 +35,14 @@ const categories = [
       </a>
       <div class="hero-stats">
         <div class="hero-stat">
-          <span class="hero-stat-num">{novels.length}</span>
-          <span class="hero-stat-label">精選作品</span>
-        </div>
-        <div class="hero-stat">
-          <span class="hero-stat-num">{novels.reduce((acc, n) => acc + n.chapters, 0)}</span>
-          <span class="hero-stat-label">總章節數</span>
-        </div>
+       <span class="hero-stat-num">{novelData.length}</span>
+       <span class="hero-stat-label">精選作品</span>
+     </div>
+     <div class="hero-stat">
+       <span class="hero-stat-num">{novelData.reduce((acc, n) => acc + n.chapters, 0)}</span>
+       <span class="hero-stat-label">總章節數</span>
+     </div>
+
       </div>
     </div>
   </section>
@@ -86,7 +53,8 @@ const categories = [
       <h2 class="section-title">精選推薦</h2>
     </div>
     <div class="featured-scroll hide-scrollbar">
-      {novels.map((novel, index) => (
+      {novelData.map((novel, index) => (
+
         <a href={config.path('/book/' + novel.slug)} class="featured-card" style={`animation-delay: ${index * 0.05}s`}>
           <div class="book-cover-wrapper">
             <div class="css-book-cover" style="width: 140px; height: 200px;">
@@ -139,7 +107,8 @@ const categories = [
       <button class="rank-tab">推薦</button>
     </div>
     <div class="rank-list">
-      {novels.map((novel, index) => (
+      {novelData.map((novel, index) => (
+
         <a href={config.path('/book/' + novel.slug)} class="rank-item" style={`animation-delay: ${index * 0.02}s`}>
           <span class={`rank-num ${index < 3 ? 'rank-top' : ''}`}>{index + 1}</span>
           <div class="css-book-cover-mini" style="width: 50px; height: 70px;">

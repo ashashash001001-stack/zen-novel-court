@@ -1,61 +1,22 @@
 ---
 import BaseLayout from '../../../layouts/BaseLayout.astro';
 import { config } from '../../../config';
+import { getCollection } from 'astro:content';
 
-export function getStaticPaths() {
-  const novels = [
-    {
-      slug: '維港深淵',
-      title: '維港深淵',
-      author: 'AI 生成',
-      genre: '賽博龐克/都市/熱血',
-      category: 'urban',
-      chapters: 20,
-      status: '已完結',
-      synopsis: '隱世紅Van老司機為救女兒，駕駛「紅彗星」與機甲軍團酣戰。'
-    },
-    {
-      slug: '佛系廚神',
-      title: '佛系廚神',
-      author: 'AI 生成',
-      genre: '都市/料理/成長',
-      category: 'food',
-      chapters: 18,
-      status: '連載中',
-      synopsis: '在喧鬧的香港深水埗舊城區，隱藏著一座帶有昭和時代木造建築與枯山水庭園的破舊小佛寺。年輕的伙頭僧小步，將「動禪」融入「精進料理」，做出的素菜帶有撫慰人心的侘寂之美。為了守護寺廟不被財團拆除，並帶青梅竹馬靜子去北海道參拜大佛，他帶著一隻黃色胖貓下山參賽。',
-      tags: ['禪意', '素食', '成長', '美食']
-    },
-    {
-      slug: '一茶一禪-海岸線的寧靜',
-      title: '一茶一禪',
-      author: 'AI 生成',
-      genre: '都市/禪意/美食',
-      category: 'healing',
-      chapters: 50,
-      status: '已完結',
-      synopsis: '一個關於茶道與禪意的故事。海鮮僧在修行中領悟茶的真理，將禪意融入每一杯茶中。',
-      tags: ['禪意', '美食', '素食', '成長']
-    },
-    {
-      slug: '萬界直播系統',
-      title: '萬界直播系統',
-      author: 'AI 生成',
-      genre: '都市/系統/直播',
-      category: 'system',
-      chapters: 130,
-      status: '連載中',
-      synopsis: '主角在異世界進行直播，獲得各種能力，從此走上人生巔峰。',
-      tags: ['直播', '系統', '都市', '爽文']
-    }
-  ];
+export async function getStaticPaths() {
+  const novels = await getCollection('novels');
+  const novelMetadata = novels.filter(n => n.data.synopsis);
   
-  return novels.map((novel) => ({
+  return novelMetadata.map((novel) => ({
     params: { novel: novel.slug },
-    props: { novel }
+    props: { 
+      novel: novel.data,
+      slug: novel.slug
+    }
   }));
 }
 
-const { novel } = Astro.props;
+const { novel, slug } = Astro.props;
 ---
 
 <BaseLayout title={`${novel.title} - 小说阁`} activeTab="library">
@@ -111,7 +72,7 @@ const { novel } = Astro.props;
       <ul class="toc-list">
         {Array.from({ length: novel.chapters }, (_, i) => i + 1).map((num) => (
           <li>
-            <a href={config.path('/book/' + novel.slug + '/' + num)} class="toc-item">
+            <a href={config.path('/book/' + slug + '/' + num)} class="toc-item">
               <span class="toc-chapter">{num}</span>
               <span class="toc-title">第 {num} 章</span>
             </a>
@@ -123,7 +84,8 @@ const { novel } = Astro.props;
 
   <!-- Sticky CTA -->
   <div class="sticky-cta">
-    <a href={config.path('/book/' + novel.slug + '/1')} class="btn-primary">
+     <a href={config.path('/book/' + slug + '/1')} class="btn-primary">
+
       開始閱讀
     </a>
     <button class="btn-secondary" id="favBtn">

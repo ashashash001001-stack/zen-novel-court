@@ -1,0 +1,64 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+import { config } from '../../config';
+
+export async function getStaticPaths() {
+  const novels = await getCollection('novels');
+  const contentCategories = [...new Set(novels.map(n => n.data.category))];
+  const defaultCategories = ['healing', 'food', 'urban', 'system', 'growth', 'other'];
+  const allCategories = [...new Set([...contentCategories, ...defaultCategories])];
+  
+  return allCategories.map(category => ({
+    params: { category },
+    props: { category }
+  }));
+}
+
+const { category } = Astro.params;
+const novels = await getCollection('novels');
+const filteredNovels = novels.filter(n => n.data.category === category);
+
+// Map category slug to display name
+const categoryNames: Record<string, string> = {
+  healing: '療癒',
+  food: '美食',
+  urban: '都市',
+  system: '系統',
+  growth: '成長',
+  other: '其他'
+};
+
+const displayName = categoryNames[category] || category;
+---
+
+<BaseLayout title={`${displayName} 分类 - 小说阁`} activeTab="library">
+  <div class="page-header">
+    <h1>{displayName}</h1>
+    <p>探索 {displayName} 题材的精彩故事</p>
+  </div>
+
+  <div class="book-grid">
+    {filteredNovels.map(novel => (
+      <a href={config.path('/book/' + novel.slug)} class="book-card">
+        <div class="book-cover"></div>
+        <div class="book-info">
+          <h3>{novel.data.title}</h3>
+          <p>{novel.data.genre}</p>
+        </div>
+      </a>
+    ))}
+  </div>
+</BaseLayout>
+
+<style>
+  .page-header { padding: 1.5rem 1rem; margin-bottom: 2rem; text-align: center; }
+  .page-header h1 { font-size: 2rem; font-weight: 700; }
+  .page-header p { color: var(--text-muted); }
+  .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.5rem; padding: 1rem; }
+  .book-card { display: block; border-radius: 0.75rem; overflow: hidden; text-decoration: none; color: inherit; transition: transform 0.2s; }
+  .book-card:hover { transform: translateY(-4px); }
+  .book-cover { aspect-ratio: 3/4; background: linear-gradient(145deg, #d4c4b5 0%, #a89880 100%); border-radius: 0.5rem; margin-bottom: 0.75rem; }
+  .book-info h3 { font-size: 1rem; font-weight: 600; margin: 0; }
+  .book-info p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+</style>

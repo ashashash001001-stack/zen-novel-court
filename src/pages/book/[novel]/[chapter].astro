@@ -1,41 +1,29 @@
 ---
 import ReaderLayout from '../../../layouts/ReaderLayout.astro';
 import { config } from '../../../config';
+import { getCollection } from 'astro:content';
 
-export function getStaticPaths() {
-  // Novel metadata - MUST be inside getStaticPaths
-  const novelsData: Record<string, { title: string; chapters: number }> = {
-    '維港深淵的引擎聲': { title: '維港深淵', chapters: 20 },
-    '佛系廚神': { title: '佛系廚神', chapters: 18 },
-    '一茶一禪-海鮮僧的靜心茶路': { title: '一茶一禪', chapters: 50 },
-    '万界直播系统': { title: '萬界直播系統', chapters: 130 }
-  };
-  
-  // Load all chapter content at build time - MUST be inside getStaticPaths
-  const allChapters = import.meta.glob('../../../content/novels/*/chapters/*.md', { eager: true });
+export async function getStaticPaths() {
+  const novels = await getCollection('novels');
   
   const paths = [];
   
-  for (const [slug, novel] of Object.entries(novelsData)) {
-    for (let i = 1; i <= novel.chapters; i++) {
-      // Get chapter content from glob
+  for (const novel of novels) {
+    const slug = novel.slug;
+    const data = novel.data;
+    
+    for (let i = 1; i <= data.chapters; i++) {
       const chapterPath = `../../../content/novels/${slug}/chapters/${i}.md`;
-      const chapterModule = allChapters[chapterPath] as { 
-        frontmatter?: { title?: string; part?: string };
-        default?: () => unknown;
-      } | undefined;
-      
-      // Get the content component by calling the default export
-      const ChapterContent = chapterModule?.default;
+      const chapterModule = import.meta.glob('../../../content/novels/*/chapters/*.md', { eager: true })[chapterPath] as any;
       
       paths.push({
         params: { novel: slug, chapter: String(i) },
         props: { 
-          novel: { slug, ...novel }, 
+          novel: { slug, ...data }, 
           chapter: i,
           chapterTitle: chapterModule?.frontmatter?.title || `第 ${i} 章`,
           chapterPart: chapterModule?.frontmatter?.part || '',
-          ChapterContent
+          ChapterContent: chapterModule?.default
         }
       });
     }
