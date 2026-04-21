@@ -54,14 +54,14 @@ const hasNext = chapterNum < chaptersList.length;
     <!-- Top Bar -->
     <header class="reader-topbar" id="readerTopbar">
       <div class="reader-topbar-inner">
-        <a href={`${basePath}/book/${novel.slug}`} class="reader-topbar-back btn-press">
+        <a href={config.path('/book/' + novel.slug)} class="reader-topbar-back btn-press">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M15 18l-7-7 7-7"/>
           </svg>
         </a>
         <span class="reader-topbar-title">{novel.title}</span>
         <span class="reader-topbar-breadcrumb">
-          <a href={`${basePath}/book/${novel.slug}`}>{novel.title}</a>
+          <a href={config.path('/book/' + novel.slug)}>{novel.title}</a>
           <span> › </span>
           <span>{chapterTitle}</span>
         </span>
@@ -130,7 +130,7 @@ const hasNext = chapterNum < chaptersList.length;
         </div>
         <div class="sheet-body">
           {chaptersList.map((num) => (
-            <a href={`${basePath}/book/${novel.slug}/${num}`} class={`toc-item btn-press ${num === chapterNum ? 'active' : ''}`}>
+            <a href={config.path('/book/' + novel.slug + '/' + num)} class={`toc-item btn-press ${num === chapterNum ? 'active' : ''}`}>
               <span>第 {num} 章</span>
               {num === chapterNum && <span class="toc-current">進行中</span>}
             </a>
@@ -1037,7 +1037,8 @@ const hasNext = chapterNum < chaptersList.length;
   });
 
   // Get base path from config at runtime
-  const basePath = (window as any).__configBase__ || '';
+  const rawBasePath = (window as any).__configBase__ || '/';
+  const basePath = rawBasePath === '/' ? '' : rawBasePath;
 
   prevChapterBtn?.addEventListener('click', () => {
     const current = parseInt(window.location.pathname.split('/').pop() || '1');

@@ -648,7 +648,8 @@ import { config } from '../config';
 <script>
 // Use config.base from import.meta.env at build time (Astro injects this)
 // For runtime, use window.__configBase__ from data-base-path attribute
-const BASE_PATH = (window as any).__configBase__ || '/';
+const rawBasePath = (window as any).__configBase__ || '/';
+const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath;
 
   const novelsData: Record<string, { title: string; chapters: number }> = {
     '維港深淵': { title: '維港深淵', chapters: 20 },
