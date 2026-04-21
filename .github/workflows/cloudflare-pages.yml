@@ -8,7 +8,7 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    if: github.event_name == 'workflow_dispatch' || (secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '')
+    if: github.event_name == 'workflow_dispatch' || (secrets.CLOUDFLARE_API_TOKEN != null && secrets.CLOUDFLARE_ACCOUNT_ID != null)
     permissions:
       contents: read
       pages: write
