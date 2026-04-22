@@ -18,9 +18,19 @@ const novelData = novels
 const featuredNovel = novelData[0] || { slug: '', title: '', author: '', genre: '', status: '', synopsis: '', totalChapters: 0 };
 const hotRankings = novelData.slice(0, 5);
 const latestUpdates = novelData.slice(0, 5);
+
+// Build books metadata for client-side reading progress
+const booksMeta: Record<string, { title: string; totalChapters: number }> = {};
+novelData.forEach(n => {
+  booksMeta[n.slug] = { title: n.title, totalChapters: n.totalChapters };
+});
+const booksMetaJSON = JSON.stringify(booksMeta).replace(/</g, '\\u003c');
 ---
 
 <BaseLayout title="小說閣 - 沉浸閱讀，從這裡開始" activeTab="home">
+  <!-- Books metadata for client-side -->
+  <script id="books-meta" type="application/json">{booksMetaJSON}</script>
+  
   <FeaturedHero novel={featuredNovel} />
   
   <VisualCategory />

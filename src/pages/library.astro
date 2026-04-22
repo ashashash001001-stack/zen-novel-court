@@ -55,6 +55,15 @@ const categories = [
 // Get URL params for filtering
 const searchQuery = Astro.url.searchParams.get('q') || '';
 const activeCategory = Astro.url.searchParams.get('category') || 'all';
+const activeStatus = Astro.url.searchParams.get('status') || 'all';
+
+// Reading status filter options
+const statusFilters = [
+  { name: '全部', slug: 'all', icon: '📚' },
+  { name: '閱讀中', slug: 'reading', icon: '📖' },
+  { name: '已完成', slug: 'completed', icon: '✅' },
+  { name: '待閱讀', slug: 'later', icon: '⭐' }
+];
 ---
 
 <BaseLayout title="书阁 - 小说阁" activeTab="library">
@@ -73,8 +82,22 @@ const activeCategory = Astro.url.searchParams.get('category') || 'all';
         id="searchInput"
       >
       <input type="hidden" name="category" value={activeCategory} id="categoryInput">
+      <input type="hidden" name="status" value={activeStatus} id="statusInput">
       <button type="submit" class="search-btn">搜尋</button>
     </form>
+  </div>
+
+  <!-- Status Tabs (for reading progress filtering) -->
+  <div class="status-tabs">
+    {statusFilters.map((status) => (
+      <button 
+        class={`status-tab ${activeStatus === status.slug ? 'active' : ''}`}
+        data-status={status.slug}
+      >
+        <span class="cat-icon">{status.icon}</span>
+        <span class="cat-name">{status.name}</span>
+      </button>
+    ))}
   </div>
 
   <!-- Category Tabs -->
@@ -99,7 +122,7 @@ const activeCategory = Astro.url.searchParams.get('category') || 'all';
   <!-- Book Grid -->
   <div class="book-grid" id="bookGrid">
     {novels.map((novel) => (
-      <a href={config.path('/book/' + novel.slug)} class="book-card" data-category={novel.category} data-title={novel.title.toLowerCase()} data-author={novel.author.toLowerCase()}>
+      <a href={config.path('/book/' + novel.slug)} class="book-card" data-category={novel.category} data-title={novel.title.toLowerCase()} data-author={novel.author.toLowerCase()} data-slug={novel.slug} data-total-chapters={novel.chapters}>
         <div class="book-cover">
           <div class="css-book-cover" style="width: 100%; height: 100%;" role="img" aria-label={`${novel.title}封面`}>
             <div class="cover-content">
@@ -109,6 +132,10 @@ const activeCategory = Astro.url.searchParams.get('category') || 'all';
           <span class={`status-badge ${novel.status === '已完結' ? 'status-done' : 'status-ongoing'}`}>
             {novel.status}
           </span>
+          <!-- Progress indicator (filled by JS) -->
+          <div class="book-progress-wrap">
+            <div class="book-progress-fill"></div>
+          </div>
         </div>
         <div class="book-info">
           <h3>{novel.title}</h3>
@@ -176,6 +203,50 @@ const activeCategory = Astro.url.searchParams.get('category') || 'all';
 
   .search-btn:hover {
     background: var(--accent-hover);
+  }
+
+  /* Status Tabs */
+  .status-tabs {
+    display: flex;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-4);
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    background: var(--bg-base);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .status-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .status-tab {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-1);
+    padding: var(--spacing-1) var(--spacing-3);
+    background: var(--bg-outer);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-full);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .status-tab.active {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: white;
+  }
+
+  .status-tab .cat-icon {
+    font-size: 12px;
+  }
+
+  .status-tab .cat-name {
+    font-weight: 500;
   }
 
   /* Category Tabs */
@@ -363,6 +434,33 @@ const activeCategory = Astro.url.searchParams.get('category') || 'all';
     background: var(--color-bg-card);
   }
 
+  /* Reading Progress on Card */
+  .book-progress-wrap {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .book-card[data-progress] .book-progress-wrap {
+    opacity: 1;
+  }
+
+  .book-progress-fill {
+    height: 100%;
+    background: var(--color-accent);
+    width: 0%;
+    transition: width 0.3s ease;
+  }
+
+  .book-card[data-progress] {
+    position: relative;
+  }
+
   .book-info h3 {
     font-size: var(--text-sm);
     font-weight: 600;
@@ -449,18 +547,64 @@ const activeCategory = Astro.url.searchParams.get('category') || 'all';
 </style>
 
 <script>
+  // Initialize reading progress on book cards
+  function initCardProgress() {
+    try {
+      const progressData = localStorage.getItem('reading_progress');
+      const progress = progressData ? JSON.parse(progressData) : {};
+      
+      bookCards.forEach((card) => {
+        const el = card as HTMLElement;
+        const slug = el.dataset.slug;
+        const totalChapters = parseInt(el.dataset.totalChapters || '0');
+        
+        if (slug && progress[slug] && totalChapters > 0) {
+          const currentChapter = progress[slug].currentChapter || progress[slug].chapter || 1;
+          const percent = Math.round((currentChapter / totalChapters) * 100);
+          el.dataset.progress = percent.toString();
+          const fill = el.querySelector('.book-progress-fill') as HTMLElement;
+          if (fill) {
+            fill.style.width = percent + '%';
+          }
+        }
+      });
+    } catch (e) {
+      console.warn('Failed to init card progress:', e);
+    }
+  }
+
   // Client-side filtering
   const categoryTabs = document.querySelectorAll<HTMLElement>('.category-tab');
+  const statusTabs = document.querySelectorAll<HTMLElement>('.status-tab');
   const bookCards = document.querySelectorAll<HTMLElement>('.book-card');
   const searchInput = document.getElementById('searchInput') as HTMLInputElement | null;
   const categoryInput = document.getElementById('categoryInput') as HTMLInputElement | null;
+  const statusInput = document.getElementById('statusInput') as HTMLInputElement | null;
   const resultsCount = document.getElementById('resultsCount');
   const noResults = document.getElementById('noResults');
   const searchTermSpan = document.querySelector<HTMLElement>('.search-term');
 
+  // Initialize progress on load
+  initCardProgress();
+
+  // Status tab click handlers
+  statusTabs.forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const status = (tab as HTMLElement).dataset.status || 'all';
+      if (statusInput) statusInput.value = status;
+      
+      // Update active state
+      statusTabs.forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      
+      filterBooks();
+    });
+  });
+
   function filterBooks() {
     const searchTerm = (searchInput?.value || '').toLowerCase().trim();
     const activeCategory = categoryInput?.value || 'all';
+    const activeStatus = statusInput?.value || 'all';
     
     let visibleCount = 0;
     
@@ -469,6 +613,8 @@ const activeCategory = Astro.url.searchParams.get('category') || 'all';
       const category = el.dataset.category;
       const title = (el.dataset.title || '').toLowerCase();
       const author = (el.dataset.author || '').toLowerCase();
+      const slug = el.dataset.slug;
+      const totalChapters = parseInt(el.dataset.totalChapters || '0');
       
       const matchesSearch = !searchTerm || 
         title.includes(searchTerm) || 
@@ -477,7 +623,35 @@ const activeCategory = Astro.url.searchParams.get('category') || 'all';
       const matchesCategory = activeCategory === 'all' || 
         category === activeCategory;
       
-      if (matchesSearch && matchesCategory) {
+      // Status filtering based on reading progress
+      let matchesStatus = true;
+      if (activeStatus !== 'all') {
+        try {
+          const progressData = localStorage.getItem('reading_progress');
+          const progress = progressData ? JSON.parse(progressData) : {};
+          const currentProgress = progress[slug || ''];
+          
+          if (activeStatus === 'reading') {
+            // Has progress but not complete
+            matchesStatus = currentProgress && totalChapters > 0 && 
+              (currentProgress.currentChapter || currentProgress.chapter || 1) < totalChapters;
+          } else if (activeStatus === 'completed') {
+            // Finished all chapters
+            matchesStatus = currentProgress && totalChapters > 0 && 
+              (currentProgress.currentChapter || currentProgress.chapter || 0) >= totalChapters;
+          } else if (activeStatus === 'later') {
+            // In favorites but no reading progress
+            const favData = localStorage.getItem('favorites');
+            const favorites = favData ? JSON.parse(favData) : [];
+            const isFav = favorites.some((f: any) => f.id === slug);
+            matchesStatus = isFav && !currentProgress;
+          }
+        } catch (e) {
+          matchesStatus = true;
+        }
+      }
+      
+      if (matchesSearch && matchesCategory && matchesStatus) {
         el.classList.remove('hidden');
         visibleCount++;
       } else {

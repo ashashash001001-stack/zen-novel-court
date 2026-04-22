@@ -1,42 +1,9 @@
 ---
-interface Props {
-  novelData?: Record<string, {
-    title: string;
-    author: string;
-    totalChapters: number;
-    currentChapter: number;
-  }>;
-}
-
-const { novelData = {} } = Astro.props;
+// Client-side only - reading progress loaded from localStorage
 ---
 
-<section class="continue-reading" data-has-progress={Object.keys(novelData).length > 0}>
-  {Object.keys(novelData).length > 0 ? (
-    <div class="continue-reading-card">
-      <h3 class="continue-title">繼續閱讀</h3>
-      {Object.entries(novelData).map(([slug, data]) => (
-        <a href={`/book/${slug}`} class="continue-item">
-          <div class="continue-info">
-            <span class="continue-novel-title">{data.title}</span>
-            <span class="continue-chapter">第 {data.currentChapter} 章 / 共 {data.totalChapters} 章</span>
-          </div>
-          <div class="continue-progress">
-            <div class="progress-bar">
-              <div class="progress-fill" style={`width: ${(data.currentChapter / data.totalChapters) * 100}%`}></div>
-            </div>
-            <span class="progress-percent">{Math.round((data.currentChapter / data.totalChapters) * 100)}%</span>
-          </div>
-        </a>
-      ))}
-    </div>
-  ) : (
-    <div class="continue-reading-empty">
-      <h3 class="continue-title">繼續閱讀</h3>
-      <p class="empty-text">暫無閱讀記錄</p>
-      <a href="/library" class="empty-link">探索小說 →</a>
-    </div>
-  )}
+<section class="continue-reading" id="continue-reading-section">
+  <!-- Content rendered client-side -->
 </section>
 
 <style>
@@ -150,29 +117,101 @@ const { novelData = {} } = Astro.props;
 </style>
 
 <script>
+  // Book data - could be passed from server or loaded from embedded data
+  const bookData = {};
+
   function initContinueReading() {
-    const continueSection = document.querySelector('.continue-reading');
+    const continueSection = document.querySelector('#continue-reading-section');
     if (!continueSection) return;
 
     try {
-      const readingData = localStorage.getItem('reading_progress');
-      if (!readingData) {
-        continueSection.setAttribute('data-has-progress', 'false');
+      // Try to read reading progress from the page (embedded by server)
+      const readingProgressEl = document.getElementById('reading-progress-data');
+      let progress = {};
+      
+      if (readingProgressEl) {
+        progress = JSON.parse(readingProgressEl.textContent || '{}');
+      } else {
+        // Fallback: try localStorage (for client-only state)
+        const localData = localStorage.getItem('reading_progress');
+        if (localData) {
+          progress = JSON.parse(localData);
+        }
+      }
+
+      // Also check for lastReadBook (legacy format)
+      const lastReadBook = localStorage.getItem('lastReadBook');
+      if (lastReadBook && !progress) {
+        try {
+          const lr = JSON.parse(lastReadBook);
+          if (lr.bookId) {
+            progress[lr.bookId] = { currentChapter: lr.chapter || 1 };
+          }
+        } catch (e) {}
+      }
+
+      const entries = Object.entries(progress);
+      if (entries.length === 0) {
+        // Empty state
+        continueSection.innerHTML = `
+          <div class="continue-reading-empty">
+            <h3 class="continue-title">繼續閱讀</h3>
+            <p class="empty-text">暫無閱讀記錄</p>
+            <a href="/library" class="empty-link">探索小說 →</a>
+          </div>
+        `;
         return;
       }
 
-      const progress = JSON.parse(readingData);
-      if (!progress || Object.keys(progress).length === 0) {
-        continueSection.setAttribute('data-has-progress', 'false');
-        return;
-      }
+      // Get book metadata from embedded data
+      const booksMetaEl = document.getElementById('books-meta');
+      const booksMeta = booksMetaEl ? JSON.parse(booksMetaEl.textContent || '{}') : {};
 
-      continueSection.setAttribute('data-has-progress', 'true');
+      let html = '<div class="continue-reading-card"><h3 class="continue-title">繼續閱讀</h3>';
+      
+      for (const [bookId, data] of entries) {
+        const meta = booksMeta[bookId] || {};
+        const title = meta.title || bookId;
+        const totalChapters = meta.totalChapters || data.totalChapters || 1;
+        const currentChapter = data.currentChapter || data.chapter || 1;
+        const percent = Math.round((currentChapter / totalChapters) * 100);
+
+        html += `
+          <a href="/book/${bookId}" class="continue-item">
+            <div class="continue-info">
+              <span class="continue-novel-title">${title}</span>
+              <span class="continue-chapter">第 ${currentChapter} 章 / 共 ${totalChapters} 章</span>
+            </div>
+            <div class="continue-progress">
+              <div class="progress-bar">
+                <div class="progress-fill" style="width: ${percent}%"></div>
+              </div>
+              <span class="progress-percent">${percent}%</span>
+            </div>
+          </a>
+        `;
+      }
+      
+      html += '</div>';
+      continueSection.innerHTML = html;
     } catch (e) {
-      console.warn('Failed to read reading progress:', e);
-      continueSection.setAttribute('data-has-progress', 'false');
+      console.warn('Failed to init continue reading:', e);
+      const continueSection = document.querySelector('#continue-reading-section');
+      if (continueSection) {
+        continueSection.innerHTML = `
+          <div class="continue-reading-empty">
+            <h3 class="continue-title">繼續閱讀</h3>
+            <p class="empty-text">暫無閱讀記錄</p>
+            <a href="/library" class="empty-link">探索小說 →</a>
+          </div>
+        `;
+      }
     }
   }
 
+  // Run on DOMContentLoaded and also after view transitions
   document.addEventListener('DOMContentLoaded', initContinueReading);
+  
+  // Also re-run after Astro view transitions
+  document.addEventListener('astro:page-load', initContinueReading);
 </script>
