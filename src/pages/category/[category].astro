@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { config } from '../../config';
+import VisualCategory from '../../components/VisualCategory.astro';
 
 export async function getStaticPaths() {
   const novels = await getCollection('novels');
@@ -36,15 +37,26 @@ const displayName = categoryNames[category] || category;
 ---
 
 <BaseLayout title={`${displayName} 分类 - 小说阁`} activeTab="library">
+  <!-- Visual Category Navigation -->
+  <VisualCategory />
+
+  <!-- Page Header -->
   <div class="page-header">
     <h1>{displayName}</h1>
     <p>探索 {displayName} 题材的精彩故事</p>
   </div>
 
+  <!-- Bento Book Grid -->
   <div class="book-grid">
     {filteredNovels.map(novel => (
       <a href={config.path('/book/' + novel.slug)} class="book-card">
-        <div class="book-cover"></div>
+        <div class="book-cover">
+          <div class="css-book-cover" style="width: 100%; height: 100%;" role="img" aria-label={`${novel.title}封面`}>
+            <div class="cover-content">
+              <span class="cover-title">{novel.title}</span>
+            </div>
+          </div>
+        </div>
         <div class="book-info">
           <h3>{novel.title}</h3>
           <p>{novel.genre}</p>
@@ -55,13 +67,134 @@ const displayName = categoryNames[category] || category;
 </BaseLayout>
 
 <style>
-  .page-header { padding: 1.5rem 1rem; margin-bottom: 2rem; text-align: center; }
-  .page-header h1 { font-size: 2rem; font-weight: 700; }
-  .page-header p { color: var(--text-muted); }
-  .book-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1.5rem; padding: 1rem; }
-  .book-card { display: block; border-radius: 0.75rem; overflow: hidden; text-decoration: none; color: inherit; transition: transform 0.2s; }
-  .book-card:hover { transform: translateY(-4px); }
-  .book-cover { aspect-ratio: 3/4; background: linear-gradient(145deg, #d4c4b5 0%, #a89880 100%); border-radius: 0.5rem; margin-bottom: 0.75rem; }
-  .book-info h3 { font-size: 1rem; font-weight: 600; margin: 0; }
-  .book-info p { font-size: 0.85rem; color: var(--text-muted); margin: 0; }
+  /* Bento Header */
+  .page-header {
+    padding: var(--spacing-5) var(--spacing-4);
+    text-align: center;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--bento-radius);
+    box-shadow: var(--bento-shadow);
+    margin: var(--bento-gap);
+  }
+
+  .page-header h1 {
+    font-size: var(--text-2xl);
+    font-weight: 700;
+    font-family: var(--font-serif);
+    margin: 0;
+  }
+
+  .page-header p {
+    color: var(--text-muted);
+    margin: var(--spacing-2) 0 0;
+  }
+
+  /* Bento Book Grid */
+  .book-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--bento-gap);
+    padding: var(--spacing-4);
+    padding-bottom: var(--spacing-8);
+  }
+
+  @media (min-width: 640px) {
+    .book-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .book-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--bento-gap-lg);
+      padding: var(--spacing-6);
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+  }
+
+  /* Bento Book Card */
+  .book-card {
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: var(--bento-transition);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--bento-radius);
+    overflow: hidden;
+    box-shadow: var(--bento-shadow);
+  }
+
+  .book-card:active {
+    transform: scale(0.98);
+  }
+
+  @media (hover: hover) {
+    .book-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--bento-shadow-hover);
+    }
+  }
+
+  .book-cover {
+    aspect-ratio: 3/4;
+    position: relative;
+    margin-bottom: 0;
+    overflow: hidden;
+  }
+
+  .css-book-cover {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-primary-300);
+    overflow: hidden;
+    font-family: var(--font-serif);
+  }
+
+  .css-book-cover::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,0) 60%, rgba(0,0,0,0.15) 100%);
+  }
+
+  .cover-content {
+    position: relative;
+    z-index: 1;
+    padding: var(--spacing-3);
+    text-align: center;
+  }
+
+  .cover-title {
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+    color: var(--color-primary-700);
+    display: block;
+    word-break: break-word;
+  }
+
+  .book-info {
+    padding: var(--spacing-3);
+  }
+
+  .book-info h3 {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    margin: 0;
+    color: var(--text-dark);
+  }
+
+  .book-info p {
+    font-size: var(--text-sm);
+    color: var(--text-muted);
+    margin: var(--spacing-1) 0 0;
+  }
 </style>
