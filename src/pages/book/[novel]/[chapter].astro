@@ -878,47 +878,38 @@ const hasNext = chapterNum < chaptersList.length;
     touchStartX: 0
   };
 
-  // Save to Reading History
-  (function saveHistory() {
-    const pathParts = window.location.pathname.split('/').filter(p => p);
-    const bookIndex = pathParts.indexOf('book');
-    if (bookIndex === -1) {
-      return;
-    }
-    
-    const rawSlug = pathParts[bookIndex + 1] || '';
-    const novelSlug = decodeURIComponent(rawSlug);
-    let currentChapter = 1;
-    
-    if (pathParts[bookIndex + 2]) {
-      currentChapter = parseInt(pathParts[bookIndex + 2], 10) || 1;
-    }
-    
-    if (!novelSlug) {
-      return;
-    }
-    
-    let history = [];
-    try {
-      const stored = localStorage.getItem('history');
-      history = stored ? JSON.parse(stored) : [];
-    } catch (e) {
-      history = [];
-    }
-    
-    const entry = { id: novelSlug, chapter: currentChapter, timestamp: Date.now() };
-    history = history.filter((h: { id: string }) => h.id !== novelSlug);
-    history.unshift(entry);
-    if (history.length > 20) history = history.slice(0, 20);
-    
-    localStorage.setItem('history', JSON.stringify(history));
-    console.log('✓ HISTORY SAVED! Total:', history.length);
-  })();
-
-  // Get novel slug for navigation
-  const pathParts = window.location.pathname.split('/').filter(p => p);
-  const bookIndex = pathParts.indexOf('book');
-  const novelSlug = bookIndex > -1 ? decodeURIComponent(pathParts[bookIndex + 1] || '') : '';
+// Save to Reading History and get novel slug for navigation
+   const pathParts = window.location.pathname.split('/').filter(p => p);
+   const bookIndex = pathParts.indexOf('book');
+   let novelSlug = '';
+   let currentChapter = 1;
+   
+   if (bookIndex !== -1) {
+     const rawSlug = pathParts[bookIndex + 1] || '';
+     novelSlug = decodeURIComponent(rawSlug);
+     
+     if (pathParts[bookIndex + 2]) {
+       currentChapter = parseInt(pathParts[bookIndex + 2], 10) || 1;
+     }
+     
+     if (novelSlug) {
+       let history = [];
+       try {
+         const stored = localStorage.getItem('history');
+         history = stored ? JSON.parse(stored) : [];
+       } catch (e) {
+         history = [];
+       }
+       
+       const entry = { id: novelSlug, chapter: currentChapter, timestamp: Date.now() };
+       history = history.filter((h: { id: string }) => h.id !== novelSlug);
+       history.unshift(entry);
+       if (history.length > 20) history = history.slice(0, 20);
+       
+       localStorage.setItem('history', JSON.stringify(history));
+       console.log('✓ HISTORY SAVED! Total:', history.length);
+     }
+   }
 
   // ========== DOM Elements ==========
   const readerProgress = document.getElementById('readerProgress');
