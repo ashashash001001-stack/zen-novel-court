@@ -1,0 +1,247 @@
+---
+interface Props {
+  hotRankings: Array<{
+    slug: string;
+    title: string;
+    author: string;
+    chapters: number;
+  }>;
+  latestUpdates: Array<{
+    slug: string;
+    title: string;
+    status: string;
+    chapters: number;
+  }>;
+}
+
+const { hotRankings = [], latestUpdates = [] } = Astro.props;
+const { config } = await import('../config');
+---
+
+<section class="bento-grid">
+  <div class="bento-cell bento-rank">
+    <h3 class="bento-title">熱門排行</h3>
+    <ol class="rank-list">
+      {hotRankings.slice(0, 5).map((novel, index) => (
+        <li class="rank-item">
+          <a href={config.path('/book/' + novel.slug)} class="rank-link">
+            <span class={`rank-num ${index < 3 ? 'rank-top' : ''}`}>{index + 1}</span>
+            <div class="rank-info">
+              <span class="rank-title">{novel.title}</span>
+              <span class="rank-meta">{novel.author} · {novel.chapters}章</span>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ol>
+  </div>
+
+  <div class="bento-cell bento-updates">
+    <h3 class="bento-title">最新更新</h3>
+    <ul class="update-list">
+      {latestUpdates.slice(0, 5).map((novel) => (
+        <li class="update-item">
+          <a href={config.path('/book/' + novel.slug)} class="update-link">
+            <span class="update-title">{novel.title}</span>
+            <span class="update-meta">{novel.status} · {novel.chapters}章</span>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </div>
+
+  <div class="bento-cell bento-cats">
+    <h3 class="bento-title">探索分類</h3>
+    <div class="cat-grid">
+      <a href="/category/healing" class="cat-chip">療癒</a>
+      <a href="/category/food" class="cat-chip">美食</a>
+      <a href="/category/urban" class="cat-chip">都市</a>
+      <a href="/category/system" class="cat-chip">系統</a>
+      <a href="/category/growth" class="cat-chip">成長</a>
+      <a href="/library" class="cat-chip cat-more">更多 →</a>
+    </div>
+  </div>
+
+  <div class="bento-cell bento-stats">
+    <h3 class="bento-title">站點統計</h3>
+    <div class="stats-grid">
+      <div class="stat-item">
+        <span class="stat-num">{hotRankings.length + latestUpdates.length}</span>
+        <span class="stat-label">作品總數</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-num">{hotRankings.reduce((acc, n) => acc + (n.chapters || 0), 0)}</span>
+        <span class="stat-label">總章節數</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bento-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--bento-gap);
+    padding: var(--spacing-6) var(--page-padding-x);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 640px) {
+    .bento-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .bento-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .bento-cell {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--bento-radius);
+    padding: var(--spacing-4);
+    box-shadow: var(--bento-shadow);
+    transition: var(--bento-transition);
+  }
+
+  @media (hover: hover) {
+    .bento-cell:hover {
+      box-shadow: var(--bento-shadow-hover);
+      transform: translateY(-2px);
+    }
+  }
+
+  .bento-title {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    color: var(--color-text-primary);
+    margin: 0 0 var(--spacing-3);
+    font-family: var(--font-serif);
+  }
+
+  .rank-list, .update-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .rank-item, .update-item {
+    margin-bottom: var(--spacing-2);
+  }
+
+  .rank-link, .update-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    text-decoration: none;
+    padding: var(--spacing-2);
+    border-radius: var(--radius-md);
+    transition: var(--bento-transition);
+  }
+
+  @media (hover: hover) {
+    .rank-link:hover, .update-link:hover {
+      background: var(--color-accent-light);
+    }
+  }
+
+  .rank-num {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    background: var(--color-bg-inner);
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+  }
+
+  .rank-num.rank-top {
+    background: var(--color-accent);
+    color: var(--color-white);
+  }
+
+  .rank-info, .update-link {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .rank-title, .update-title {
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--color-text-primary);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .rank-meta, .update-meta {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+
+  .cat-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+  }
+
+  .cat-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--spacing-2) var(--spacing-3);
+    background: var(--color-accent-light);
+    color: var(--color-text-primary);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    border-radius: var(--radius-full);
+    text-decoration: none;
+    transition: var(--bento-transition);
+  }
+
+  @media (hover: hover) {
+    .cat-chip:hover {
+      background: var(--color-accent);
+      color: var(--color-white);
+    }
+  }
+
+  .cat-chip.cat-more {
+    background: var(--color-bg-inner);
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-3);
+  }
+
+  .stat-item {
+    text-align: center;
+    padding: var(--spacing-3);
+    background: var(--color-bg-inner);
+    border-radius: var(--radius-md);
+  }
+
+  .stat-num {
+    display: block;
+    font-size: var(--text-xl);
+    font-weight: var(--font-bold);
+    color: var(--color-accent);
+    font-family: var(--font-serif);
+  }
+
+  .stat-label {
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+  }
+</style>

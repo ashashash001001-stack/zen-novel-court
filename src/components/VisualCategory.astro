@@ -1,0 +1,81 @@
+---
+interface Category {
+  name: string;
+  slug: string;
+  icon: string;
+  color: string;
+}
+
+const categories: Category[] = [
+  { name: '療癒', slug: 'healing', icon: '🌿', color: 'linear-gradient(135deg, #7d9a7d 0%, #5a7a5a 100%)' },
+  { name: '美食', slug: 'food', icon: '🍜', color: 'linear-gradient(135deg, #b8a86b 0%, #8a7a4b 100%)' },
+  { name: '都市', slug: 'urban', icon: '🏙️', color: 'linear-gradient(135deg, #6b7a8f 0%, #4b5a6f 100%)' },
+  { name: '系統', slug: 'system', icon: '⚡', color: 'linear-gradient(135deg, #8b7dab 0%, #6b5d8b 100%)' },
+  { name: '成長', slug: 'growth', icon: '📈', color: 'linear-gradient(135deg, #b08b8b 0%, #8a6b6b 100%)' },
+  { name: '其他', slug: 'other', icon: '📚', color: 'linear-gradient(135deg, #7a7a7a 0%, #5a5a5a 100%)' },
+];
+
+const { config } = await import('../config');
+---
+
+<section class="visual-categories">
+  {categories.map((cat) => (
+    <a href={config.path('/category/' + cat.slug)} class="cat-card" style={`background: ${cat.color}`}>
+      <span class="cat-icon">{cat.icon}</span>
+      <span class="cat-name">{cat.name}</span>
+    </a>
+  ))}
+</section>
+
+<style>
+  .visual-categories {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--bento-gap);
+    padding: var(--spacing-4) var(--page-padding-x);
+  }
+
+  @media (min-width: 640px) {
+    .visual-categories {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .visual-categories {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  }
+
+  .cat-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 80px;
+    border-radius: var(--bento-radius);
+    text-decoration: none;
+    transition: var(--bento-transition);
+    box-shadow: var(--bento-shadow);
+    padding: var(--spacing-4);
+  }
+
+  @media (hover: hover) {
+    .cat-card:hover {
+      transform: translateY(-4px) scale(1.03);
+      box-shadow: var(--bento-shadow-hover);
+    }
+  }
+
+  .cat-icon {
+    font-size: var(--text-2xl);
+    margin-bottom: var(--spacing-1);
+  }
+
+  .cat-name {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--color-white);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  }
+</style>

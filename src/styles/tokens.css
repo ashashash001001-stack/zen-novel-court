@@ -221,6 +221,15 @@
 
   /* Footer */
   --footer-height: 72px;
+
+  /* Bento Grid */
+  --bento-gap: var(--space-4);
+  --bento-gap-sm: var(--space-3);
+  --bento-gap-lg: var(--space-6);
+  --bento-radius: var(--radius-lg);
+  --bento-shadow: var(--shadow-sm);
+  --bento-shadow-hover: var(--shadow-md);
+  --bento-transition: all var(--t-normal) var(--ease-smooth);
 }
 
 /* ===========================================
