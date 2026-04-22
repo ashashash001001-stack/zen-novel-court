@@ -115,12 +115,12 @@ import { config } from '../config';
 </BaseLayout>
 
 <style>
-/* Mobile-First Bento Grid Layout */
+/* Mobile-First Bento Grid - Match Library Pattern */
   .my-page {
     min-height: 100vh;
     padding-bottom: var(--spacing-lg);
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
     gap: var(--spacing-2);
     padding: var(--spacing-2);
     max-width: 1100px;
@@ -131,7 +131,7 @@ import { config } from '../config';
     display: none;
   }
 
-  /* Profile Header - Compact for Mobile */
+  /* Profile Header - Full Width on Mobile */
   .profile-header {
     display: flex;
     align-items: center;
@@ -141,6 +141,7 @@ import { config } from '../config';
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
+    grid-column: span 2;
   }
 
   .profile-avatar {
@@ -166,7 +167,7 @@ import { config } from '../config';
     min-width: 0;
   }
 
-.profile-name {
+  .profile-name {
     font-size: var(--text-sm);
     font-weight: var(--font-semibold);
     font-family: var(--font-serif);
@@ -178,12 +179,7 @@ import { config } from '../config';
     color: var(--text-muted);
   }
 
-  .profile-stats {
-    font-size: 10px;
-    color: var(--text-muted);
-  }
-
-  /* My Sections - Full Width */
+  /* My Sections - Match Library Card Pattern */
   .my-section {
     width: 100%;
     padding: var(--spacing-2);
@@ -191,6 +187,13 @@ import { config } from '../config';
     border: 1px solid var(--color-border-subtle);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-sm);
+    transition: var(--bento-transition);
+  }
+
+  @media (hover: hover) {
+    .my-section:hover {
+      box-shadow: var(--bento-shadow-hover);
+    }
   }
 
   .section-header {
@@ -207,11 +210,11 @@ import { config } from '../config';
   /* Tablet Layout */
   @media (min-width: 640px) {
     .my-page {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
       padding: var(--bento-gap);
     }
     .profile-header {
-      grid-column: span 2;
+      grid-column: span 3;
     }
     .my-section:nth-of-type(1) {
       grid-column: span 2;
