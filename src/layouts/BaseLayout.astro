@@ -1,6 +1,5 @@
 ---
 import GA4 from '../components/GA4.astro';
-import Breadcrumb from '../components/Breadcrumb.astro';
 import { config } from '../config';
 
 interface Props {
@@ -74,7 +73,7 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
       "@type": "SearchAction",
       "target": {
         "@type": "EntryPoint",
-        "urlTemplate": `${siteURL}/search?q={search_term_string}`
+        "urlTemplate": `${siteURL}/library?q={search_term_string}`
       },
       "query-input": "required name=search_term_string"
     },
@@ -103,7 +102,7 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
         const normalizedBase = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
         const targetPath = normalizedBase + path;
         
-        const routes = ['/library', '/search', '/shelf', '/my', '/book/', '/category/', '/legal/'];
+        const routes = ['/library', '/my', '/book/', '/category/', '/legal/'];
         for (const r of routes) {
           if (path === r || path === r + '/' || path.startsWith(r)) {
             window.location.href = targetPath;

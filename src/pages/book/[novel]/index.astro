@@ -438,19 +438,13 @@ const { novel, slug } = Astro.props;
 </style>
 
 <script>
-  console.log('=== Book detail page loaded ===');
-  
   // Get novel slug from URL - decode if URL-encoded
   const pathSlug = window.location.pathname.split('/book/')[1]?.split('/')[0] || '';
   const novelSlug = decodeURIComponent(pathSlug);
   
-  console.log('Raw slug:', pathSlug, 'Decoded:', novelSlug);
-  
   // Favorite functionality - check both top and bottom buttons
   const favBtnTop = document.getElementById('favBtnTop') as HTMLButtonElement | null;
   const favBtnBottom = document.getElementById('favBtn') as HTMLButtonElement | null;
-  
-  console.log('favBtnTop:', favBtnTop, 'favBtnBottom:', favBtnBottom);
   
   const handleFavorite = () => {
     if (!novelSlug) return;
@@ -467,17 +461,14 @@ const { novel, slug } = Astro.props;
       favorites.splice(index, 1);
       favBtnTop?.querySelector('svg')?.setAttribute('fill', 'none');
       favBtnBottom?.querySelector('svg')?.setAttribute('fill', 'none');
-      console.log('✓ Removed from favorites');
     } else {
       // Add decoded version
       favorites.push(novelSlug);
       favBtnTop?.querySelector('svg')?.setAttribute('fill', 'currentColor');
       favBtnBottom?.querySelector('svg')?.setAttribute('fill', 'currentColor');
-      console.log('✓ Added to favorites');
     }
     
     localStorage.setItem('favorites', JSON.stringify(favorites));
-    console.log('Favorites now:', favorites);
   };
   
   // Initialize: check if already favorited

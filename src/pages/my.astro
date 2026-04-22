@@ -726,10 +726,8 @@ function removeFromHistory(id: string) {
   }
 
   function loadFavorites() {
-    console.log('>>> loadFavorites called');
     try {
       const raw = localStorage.getItem('favorites');
-      console.log('Raw favorites from storage:', raw);
       let favData = JSON.parse(raw || '[]');
       
       // Clean up: decode IDs
@@ -743,7 +741,6 @@ function removeFromHistory(id: string) {
         return true;
       });
       
-      console.log('Cleaned favorites:', favData);
       const container = document.getElementById('favorites');
       const countEl = document.getElementById('favCount');
       
@@ -784,10 +781,8 @@ function removeFromHistory(id: string) {
   }
 
   function loadHistory() {
-    console.log('>>> loadHistory called');
     try {
       const raw = localStorage.getItem('history');
-      console.log('Raw history from storage:', raw);
       let historyData = JSON.parse(raw || '[]');
       
       // Clean up: decode IDs and filter malformed entries
@@ -813,9 +808,7 @@ function removeFromHistory(id: string) {
         return true;
       });
       
-      console.log('Cleaned history:', historyData);
       const container = document.getElementById('history');
-      console.log('Container element:', container);
       
       // Update profile stats
       const fav = JSON.parse(localStorage.getItem('favorites') || '[]');
@@ -881,11 +874,6 @@ function removeFromHistory(id: string) {
   });
 
   // Load on page init
-  console.log('=== My page loaded ===');
-  console.log('All localStorage keys:', Object.keys(localStorage));
-  console.log('history from localStorage:', localStorage.getItem('history'));
-  console.log('favorites from localStorage:', localStorage.getItem('favorites'));
-  
   // Force reload
   loadFavorites();
   loadHistory();

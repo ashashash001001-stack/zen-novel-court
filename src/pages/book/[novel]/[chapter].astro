@@ -868,7 +868,7 @@ const hasNext = chapterNum < chaptersList.length;
 <script>
   (window as any).__configBase__ = document.body.dataset.basePath;
 
-  // ========== Reader State ==========
+  // Reader State
   const state = {
     uiVisible: true,
     ttsPlaying: false,
@@ -878,14 +878,11 @@ const hasNext = chapterNum < chaptersList.length;
     touchStartX: 0
   };
 
-  // ========== Save to Reading History ==========
-  console.log('=== Chapter page loaded ===');
-  
+  // Save to Reading History
   (function saveHistory() {
     const pathParts = window.location.pathname.split('/').filter(p => p);
     const bookIndex = pathParts.indexOf('book');
     if (bookIndex === -1) {
-      console.log('ERROR: No book in path!');
       return;
     }
     
@@ -897,10 +894,7 @@ const hasNext = chapterNum < chaptersList.length;
       currentChapter = parseInt(pathParts[bookIndex + 2], 10) || 1;
     }
     
-    console.log('Slug:', novelSlug, 'Chapter:', currentChapter);
-    
     if (!novelSlug) {
-      console.log('ERROR: No novel slug found');
       return;
     }
     

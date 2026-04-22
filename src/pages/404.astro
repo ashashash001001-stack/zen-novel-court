@@ -22,7 +22,7 @@ const description = "抱歉，您访问的页面不存在。";
         const targetPath = normalizedBase + path;
         
         const routes = [
-          '/library', basePath + '/search', basePath + '/shelf', '/my',
+          '/library', '/my',
           '/book/', basePath + '/category/', basePath + '/legal/'
         ];
         
@@ -53,8 +53,7 @@ const description = "抱歉，您访问的页面不存在。";
       <div class="error-links">
         <p>或者试试:</p>
         <ul>
-          <li><a href={config.path('/shelf')}>精选书架</a></li>
-          <li><a href={config.path('/search')}>搜索小说</a></li>
+          <li><a href={config.path('/library')}>浏览书阁</a></li>
           <li><a href={config.path('/category/healing')}>疗愈分类</a></li>
           <li><a href={config.path('/category/food')}>美食分类</a></li>
         </ul>
