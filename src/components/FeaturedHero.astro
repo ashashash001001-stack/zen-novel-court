@@ -43,6 +43,13 @@ const { config } = await import('../config');
       <a href={config.path('/book/' + novel.slug)} class="btn btn-primary">
         <span>開始閱讀</span>
       </a>
+      <a href={config.path('/library')} class="btn btn-secondary hero-search-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"></circle>
+          <path d="m21 21-4.35-4.35"></path>
+        </svg>
+        <span>搜尋</span>
+      </a>
       <button class="btn btn-secondary" data-novel-slug={novel.slug}>
         <span>加入書架</span>
       </button>
