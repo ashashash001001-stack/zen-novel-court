@@ -130,13 +130,6 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
           </svg>
           <span>首页</span>
         </a>
-        <a href={config.path('/library?q=')} class={`footer-tab ${activeTab === 'search' || activeTab === 'library' ? 'active' : ''}`} aria-current={activeTab === 'library' ? 'page' : undefined}>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <circle cx="11" cy="11" r="8"></circle>
-            <path d="m21 21-4.35-4.35"></path>
-          </svg>
-          <span>搜索</span>
-        </a>
         <a href={config.path('/library')} class={`footer-tab ${activeTab === 'library' ? 'active' : ''}`} aria-current={activeTab === 'library' ? 'page' : undefined}>
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
