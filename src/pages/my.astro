@@ -115,10 +115,10 @@ import { config } from '../config';
 </BaseLayout>
 
 <style>
-  /* Mobile-First Bento Grid Layout */
+/* Mobile-First Bento Grid Layout */
   .my-page {
     min-height: 100vh;
-    padding-bottom: var(--spacing-xl);
+    padding-bottom: var(--spacing-lg);
     display: grid;
     grid-template-columns: 1fr;
     gap: var(--spacing-2);
@@ -131,27 +131,21 @@ import { config } from '../config';
     display: none;
   }
 
-  .page-header h1 {
-    font-size: var(--text-2xl);
-    font-weight: 700;
-    font-family: var(--font-serif);
-  }
-
-  /* Profile Header - Full Width on Mobile */
+  /* Profile Header - Compact for Mobile */
   .profile-header {
     display: flex;
     align-items: center;
-    gap: var(--spacing-3);
-    padding: var(--spacing-3);
+    gap: var(--spacing-2);
+    padding: var(--spacing-2);
     background: var(--color-bg-card);
     border: 1px solid var(--color-border-subtle);
-    border-radius: var(--bento-radius);
-    box-shadow: var(--bento-shadow);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
   }
 
   .profile-avatar {
-    width: 40px;
-    height: 40px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: var(--color-accent);
     display: flex;
@@ -161,7 +155,7 @@ import { config } from '../config';
   }
 
   .profile-avatar span {
-    font-size: var(--text-base);
+    font-size: var(--text-sm);
     font-weight: var(--font-bold);
     color: var(--color-white);
     font-family: var(--font-serif);
@@ -172,114 +166,42 @@ import { config } from '../config';
     min-width: 0;
   }
 
-  .profile-name {
-    font-size: var(--text-base);
-  }
-
-  .profile-stats {
-    font-size: var(--text-xs);
-  }
-
-  /* Extra Small Screens (< 500px) */
-  @media (max-width: 500px) {
-    .my-page {
-      padding: var(--spacing-2);
-      gap: var(--spacing-2);
-    }
-
-    .profile-header {
-      padding: var(--spacing-2);
-      gap: var(--spacing-2);
-    }
-
-    .profile-avatar {
-      width: 36px;
-      height: 36px;
-    }
-
-    .profile-avatar span {
-      font-size: var(--text-sm);
-    }
-
-    .profile-name {
-      font-size: var(--text-sm);
-    }
-
-    .profile-stats {
-      font-size: 10px;
-    }
-  }
-
-  .profile-name {
-    font-size: var(--text-lg);
-    font-weight: var(--font-bold);
+.profile-name {
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
     font-family: var(--font-serif);
     color: var(--text-dark);
   }
 
   .profile-stats {
-    font-size: var(--text-sm);
+    font-size: 10px;
     color: var(--text-muted);
-    margin-top: 2px;
   }
 
-  /* My Sections - Full Width on Mobile */
+  .profile-stats {
+    font-size: 10px;
+    color: var(--text-muted);
+  }
+
+  /* My Sections - Full Width */
   .my-section {
     width: 100%;
-    padding: var(--spacing-3);
+    padding: var(--spacing-2);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
   }
 
   .section-header {
-    padding: var(--spacing-2) 0;
-    margin-bottom: var(--spacing-2);
+    padding: var(--spacing-1) 0;
+    margin-bottom: var(--spacing-1);
+    border-bottom: 1px solid var(--color-border-subtle);
+    padding-bottom: var(--spacing-2);
   }
 
   .section-header h2 {
     font-size: var(--text-sm);
-  }
-
-  /* Extra Small Screen for Sections (< 500px) */
-  @media (max-width: 500px) {
-    .my-section {
-      padding: var(--spacing-2);
-    }
-
-    .section-header {
-      padding: var(--spacing-1) 0;
-      margin-bottom: var(--spacing-1);
-    }
-
-    .section-header h2 {
-      font-size: var(--text-xs);
-    }
-
-    .list-container {
-      padding: 0;
-    }
-
-    .settings-list {
-      margin: 0;
-      border-radius: var(--radius-md);
-    }
-
-    .settings-item {
-      padding: var(--spacing-3);
-      min-height: 40px;
-    }
-
-    .settings-item span,
-    .setting-label {
-      font-size: var(--text-sm);
-    }
-
-    .theme-toggle {
-      margin-left: var(--spacing-2);
-    }
-
-    .theme-btn {
-      padding: var(--spacing-1) var(--spacing-2);
-      font-size: 10px;
-    }
   }
 
   /* Tablet Layout */
