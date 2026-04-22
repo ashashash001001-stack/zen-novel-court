@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { config } from '../config';
+import VisualCategory from '../components/VisualCategory.astro';
 
 // Novel data - shared across pages
 const novels = [
@@ -57,6 +58,9 @@ const activeCategory = Astro.url.searchParams.get('category') || 'all';
 ---
 
 <BaseLayout title="书阁 - 小说阁" activeTab="library">
+  <!-- Visual Categories - Above the Fold -->
+  <VisualCategory />
+  
   <!-- Search Header -->
   <div class="search-header">
     <form method="get" action="/library" class="search-form">
@@ -232,20 +236,40 @@ const activeCategory = Astro.url.searchParams.get('category') || 'all';
     font-weight: var(--font-medium);
   }
 
-  /* Book Grid */
+  /* Book Grid - Bento Style */
   .book-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: var(--spacing-3);
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--bento-gap);
     padding: var(--spacing-4);
     padding-bottom: var(--spacing-8);
+  }
+
+  @media (min-width: 640px) {
+    .book-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .book-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--bento-gap-lg);
+      padding: var(--spacing-6);
+      max-width: 1100px;
+      margin: 0 auto;
+    }
   }
 
   .book-card {
     display: block;
     text-decoration: none;
     color: inherit;
-    transition: transform var(--t-fast) var(--ease-elastic);
+    transition: var(--bento-transition);
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border-subtle);
+    border-radius: var(--bento-radius);
+    overflow: hidden;
   }
 
   .book-card:active {
@@ -258,15 +282,16 @@ const activeCategory = Astro.url.searchParams.get('category') || 'all';
 
   @media (hover: hover) {
     .book-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-4px);
+      box-shadow: var(--bento-shadow-hover);
     }
   }
 
   .book-cover {
     aspect-ratio: 3/4;
     position: relative;
-    margin-bottom: var(--spacing-2);
-    border-radius: var(--radius-md);
+    margin-bottom: 0;
+    border-radius: 0;
     overflow: hidden;
   }
 
@@ -276,10 +301,10 @@ const activeCategory = Astro.url.searchParams.get('category') || 'all';
     align-items: center;
     justify-content: center;
     background: var(--color-primary-300);
-    border-radius: var(--radius-sm);
+    border-radius: 0;
     overflow: hidden;
     font-family: var(--font-serif);
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--bento-shadow);
   }
 
   .css-book-cover::before {
@@ -334,20 +359,21 @@ const activeCategory = Astro.url.searchParams.get('category') || 'all';
   }
 
   .book-info {
-    padding: var(--spacing-1) 0;
+    padding: var(--spacing-3);
+    background: var(--color-bg-card);
   }
 
   .book-info h3 {
-    font-size: var(--text-xs);
+    font-size: var(--text-sm);
     font-weight: 600;
-    margin-bottom: 2px;
+    margin-bottom: var(--spacing-1);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .book-info p {
-    font-size: 10px;
+    font-size: var(--text-xs);
     color: var(--text-muted);
     white-space: nowrap;
     overflow: hidden;
@@ -355,8 +381,9 @@ const activeCategory = Astro.url.searchParams.get('category') || 'all';
   }
 
   .chapter-num {
-    color: var(--accent-dark) !important;
-    margin-top: 2px;
+    color: var(--color-accent) !important;
+    font-weight: var(--font-medium);
+    margin-top: var(--spacing-1);
   }
 
   /* No Results */
