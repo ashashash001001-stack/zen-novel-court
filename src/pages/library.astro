@@ -1,47 +1,22 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { config } from '../config';
+import { getCollection } from 'astro:content';
 import VisualCategory from '../components/VisualCategory.astro';
 
-// Novel data - shared across pages
-const novels = [
-  {
-    slug: '維港深淵的引擎聲',
-    title: '維港深淵',
-    author: 'AI 生成',
-    genre: '賽博龐克/都市/熱血',
-    category: 'urban',
-    chapters: 20,
-    status: '已完結'
-  },
-  {
-    slug: '佛系廚神',
-    title: '佛系廚神',
-    author: 'AI 生成',
-    genre: '美食/禪意/成長',
-    category: 'food',
-    chapters: 18,
-    status: '連載中'
-  },
-  {
-    slug: '一茶一禪-海鮮僧的靜心茶路',
-    title: '一茶一禪',
-    author: 'AI 生成',
-    genre: '療癒/禪意/美食',
-    category: 'healing',
-    chapters: 50,
-    status: '已完結'
-  },
-  {
-    slug: '万界直播系统',
-    title: '萬界直播系統',
-    author: 'AI 生成',
-    genre: '都市/系統/直播',
-    category: 'urban',
-    chapters: 130,
-    status: '連載中'
-  }
-];
+// Novel data - from Content Collection (meta.json)
+const novelsCollection = await getCollection('novels');
+const novels = novelsCollection
+  .filter(n => n.id.endsWith('/meta') && n.data?.title)
+  .map(n => ({
+    slug: n.id.replace('/meta', ''),
+    title: n.data.title,
+    author: n.data.author || 'AI 生成',
+    genre: n.data.genre || '',
+    category: n.data.category || 'other',
+    chapters: n.data.totalChapters || 0,
+    status: n.data.status || '連載中'
+  }));
 
 const categories = [
   { name: '全部', slug: 'all', icon: '📚' },
