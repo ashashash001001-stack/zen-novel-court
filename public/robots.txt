@@ -1,0 +1,11 @@
+# robots.txt for 小說閣 (Zen Novel Court)
+# https://ashashash001001-stack.github.io/zen-novel-court/
+
+User-agent: *
+Allow: /
+
+# Sitemap
+Sitemap: https://ashashash001001-stack.github.io/zen-novel-court/sitemap-index.xml
+
+# Crawl-delay for polite crawling
+Crawl-delay: 1
