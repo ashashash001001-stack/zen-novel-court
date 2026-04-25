@@ -765,20 +765,22 @@ const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath;
     return `${days} 天前`;
   }
 
-function removeFromHistory(id: string) {
+  // Expose functions to global scope for onclick handlers
+  (window as any).removeFromHistory = function(id: string) {
     const h = JSON.parse(localStorage.getItem('history') || '[]');
     const filtered = h.filter((item: { id: string }) => decodeURIComponent(item.id) !== decodeURIComponent(id));
     localStorage.setItem('history', JSON.stringify(filtered));
     loadHistory();
     loadQuickResume();
-  }
+  };
 
-  function removeFromFavorites(id: string) {
+  (window as any).removeFromFavorites = function(id: string) {
     const fav = JSON.parse(localStorage.getItem('favorites') || '[]');
     const filtered = fav.filter((i: string) => decodeURIComponent(i) !== decodeURIComponent(id));
     localStorage.setItem('favorites', JSON.stringify(filtered));
     loadFavorites();
-  }
+    loadQuickResume();
+  };
 
   function loadQuickResume() {
     const section = document.getElementById('quick-resume');
