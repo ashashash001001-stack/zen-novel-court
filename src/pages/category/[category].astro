@@ -3,6 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { config } from '../../config';
 import VisualCategory from '../../components/VisualCategory.astro';
+import fs from 'fs';
+import path from 'path';
 
 export async function getStaticPaths() {
   const novels = await getCollection('novels');
@@ -11,7 +13,7 @@ export async function getStaticPaths() {
   const contentCategories = [...new Set(metaNovels.map(n => n.data?.category).filter(Boolean))];
   const defaultCategories = ['healing', 'food', 'urban', 'system', 'growth', 'other'];
   const allCategories = [...new Set([...contentCategories, ...defaultCategories])];
-  
+
   return allCategories.map(category => ({
     params: { category },
     props: { category }
@@ -21,7 +23,18 @@ export async function getStaticPaths() {
 const { category } = Astro.params;
 const novels = await getCollection('novels');
 const metaNovels = novels.filter(n => n.id.endsWith('/meta'));
-const filteredNovels = metaNovels.map(n => ({ slug: n.id.replace('/meta', ''), ...n.data })).filter(n => n.category === category);
+const filteredNovels = metaNovels.map(n => {
+  const slug = n.id.replace('/meta', '');
+  const novelDir = path.join('src/content/novels', slug);
+  const coverPath = fs.existsSync(path.join(novelDir, 'cover.png')) ? 'cover.png' :
+                fs.existsSync(path.join(novelDir, 'cover.jpg')) ? 'cover.jpg' : null;
+
+  return {
+    slug,
+    ...n.data,
+    cover: coverPath ? `/content/novels/${slug}/${coverPath}` : null
+  };
+}).filter(n => n.category === category);
 
 // Map category slug to display name
 const categoryNames: Record<string, string> = {
@@ -51,11 +64,15 @@ const displayName = categoryNames[category] || category;
     {filteredNovels.map(novel => (
       <a href={config.path('/book/' + novel.slug)} class="book-card">
         <div class="book-cover">
-          <div class="css-book-cover" style="width: 100%; height: 100%;" role="img" aria-label={`${novel.title}封面`}>
-            <div class="cover-content">
-              <span class="cover-title">{novel.title}</span>
+          {novel.cover ? (
+            <img src={novel.cover} alt={`${novel.title}封面`} class="book-cover-image" />
+          ) : (
+            <div class="css-book-cover" style="width: 100%; height: 100%;" role="img" aria-label={`${novel.title}封面`}>
+              <div class="cover-content">
+                <span class="cover-title">{novel.title}</span>
+              </div>
             </div>
-          </div>
+          )}
         </div>
         <div class="book-info">
           <h3>{novel.title}</h3>
@@ -144,6 +161,12 @@ const displayName = categoryNames[category] || category;
     position: relative;
     margin-bottom: 0;
     overflow: hidden;
+  }
+
+  .book-cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .css-book-cover {

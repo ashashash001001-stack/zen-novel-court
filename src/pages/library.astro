@@ -3,20 +3,31 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { config } from '../config';
 import { getCollection } from 'astro:content';
 import VisualCategory from '../components/VisualCategory.astro';
+import fs from 'fs';
+import path from 'path';
 
 // Novel data - from Content Collection (meta.json)
 const novelsCollection = await getCollection('novels');
 const novels = novelsCollection
   .filter(n => n.id.endsWith('/meta') && n.data?.title)
-  .map(n => ({
-    slug: n.id.replace('/meta', ''),
-    title: n.data.title,
-    author: n.data.author || 'AI 生成',
-    genre: n.data.genre || '',
-    category: n.data.category || 'other',
-    chapters: n.data.totalChapters || 0,
-    status: n.data.status || '連載中'
-  }));
+  .map(n => {
+    const slug = n.id.replace('/meta', '');
+    // Check if cover image exists in the novel folder
+    const novelDir = path.join('src/content/novels', slug);
+    const coverPath = fs.existsSync(path.join(novelDir, 'cover.png')) ? 'cover.png' :
+                  fs.existsSync(path.join(novelDir, 'cover.jpg')) ? 'cover.jpg' : null;
+
+    return {
+      slug,
+      title: n.data.title,
+      author: n.data.author || 'AI 生成',
+      genre: n.data.genre || '',
+      category: n.data.category || 'other',
+      chapters: n.data.totalChapters || 0,
+      status: n.data.status || '連載中',
+      cover: coverPath ? `/content/novels/${slug}/${coverPath}` : null
+    };
+  });
 
 const categories = [
   { name: '全部', slug: 'all', icon: '📚' },
@@ -99,13 +110,18 @@ const statusFilters = [
     {novels.map((novel) => (
       <a href={config.path('/book/' + novel.slug)} class="book-card" data-category={novel.category} data-title={novel.title.toLowerCase()} data-author={novel.author.toLowerCase()} data-slug={novel.slug} data-total-chapters={novel.chapters}>
         <div class="book-cover">
-          <div class="css-book-cover" style="width: 100%; height: 100%;" role="img" aria-label={`${novel.title}封面`}>
-            <div class="cover-content">
-              <span class="cover-title">{novel.title}</span>
+          {novel.cover ? (
+            <img src={novel.cover} alt={`${novel.title}封面`} class="book-cover-image" />
+          ) : (
+            <div class="css-book-cover" style="width: 100%; height: 100%;" role="img" aria-label={`${novel.title}封面`}>
+              <div class="cover-content">
+                <span class="cover-title">{novel.title}</span>
+              </div>
             </div>
-          </div>
+          )}
           <span class={`status-badge ${novel.status === '已完結' ? 'status-done' : 'status-ongoing'}`}>
             {novel.status}
+          </span>
           </span>
           <!-- Progress indicator (filled by JS) -->
           <div class="book-progress-wrap">
@@ -339,6 +355,12 @@ const statusFilters = [
     margin-bottom: 0;
     border-radius: 0;
     overflow: hidden;
+  }
+
+  .book-cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
 
   .css-book-cover {

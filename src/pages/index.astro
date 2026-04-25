@@ -6,16 +6,26 @@ import FeaturedHero from '../components/FeaturedHero.astro';
 import BentoGrid from '../components/BentoGrid.astro';
 import ContinueReading from '../components/ContinueReading.astro';
 import VisualCategory from '../components/VisualCategory.astro';
+import fs from 'fs';
+import path from 'path';
 
 const novels = await getCollection('novels');
 const novelData = novels
   .filter(n => n.id.endsWith('/meta') && n.data?.synopsis)
-  .map(n => ({
-    slug: n.id.replace('/meta', ''),
-    ...n.data
-  }));
+  .map(n => {
+    const slug = n.id.replace('/meta', '');
+    const novelDir = path.join('src/content/novels', slug);
+    const coverPath = fs.existsSync(path.join(novelDir, 'cover.png')) ? 'cover.png' :
+                  fs.existsSync(path.join(novelDir, 'cover.jpg')) ? 'cover.jpg' : null;
 
-const featuredNovel = novelData[0] || { slug: '', title: '', author: '', genre: '', status: '', synopsis: '', totalChapters: 0 };
+    return {
+      slug,
+      ...n.data,
+      cover: coverPath ? `/content/novels/${slug}/${coverPath}` : null
+    };
+  });
+
+const featuredNovel = novelData[0] || { slug: '', title: '', author: '', genre: '', status: '', synopsis: '', totalChapters: 0, cover: null };
 const hotRankings = novelData.slice(0, 5);
 const latestUpdates = novelData.slice(0, 5);
 

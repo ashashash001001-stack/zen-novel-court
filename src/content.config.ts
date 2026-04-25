@@ -2,7 +2,7 @@ import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 
 const novels = defineCollection({
-  loader: glob({ base: './src/content/novels', pattern: '**/[a-zA-Z0-9_\u4e00-\u9fff-]*/meta.json' }),
+  loader: glob({ base: './src/content/novels', pattern: '**/*.json' }),
   schema: ({ image }) => z.object({
     title: z.string(),
     titleEn: z.string().optional(),
@@ -14,7 +14,7 @@ const novels = defineCollection({
     tags: z.array(z.string()).optional(),
     status: z.string().optional(),
     synopsis: z.string().optional(),
-    cover: image().optional(),
+    cover: z.string().optional(),  // Cover filename (e.g., "cover.png")
     parts: z.array(z.object({
       id: z.string(),
       name: z.string(),
