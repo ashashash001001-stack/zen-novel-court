@@ -20,9 +20,10 @@ export async function getStaticPaths() {
 }
 
 const { novel, slug } = Astro.props;
-// Check if cover image exists
+// Check if cover image exists (prefer .webp for performance)
 const novelDir = path.join('src/content/novels', slug);
-const coverPath = fs.existsSync(path.join(novelDir, 'cover.png')) ? 'cover.png' :
+const coverPath = fs.existsSync(path.join(novelDir, 'cover.webp')) ? 'cover.webp' :
+               fs.existsSync(path.join(novelDir, 'cover.png')) ? 'cover.png' :
                fs.existsSync(path.join(novelDir, 'cover.jpg')) ? 'cover.jpg' : null;
 const coverUrl = coverPath ? `/content/novels/${slug}/${coverPath}` : null;
 ---

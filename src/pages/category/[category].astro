@@ -26,7 +26,8 @@ const metaNovels = novels.filter(n => n.id.endsWith('/meta'));
 const filteredNovels = metaNovels.map(n => {
   const slug = n.id.replace('/meta', '');
   const novelDir = path.join('src/content/novels', slug);
-  const coverPath = fs.existsSync(path.join(novelDir, 'cover.png')) ? 'cover.png' :
+  const coverPath = fs.existsSync(path.join(novelDir, 'cover.webp')) ? 'cover.webp' :
+                fs.existsSync(path.join(novelDir, 'cover.png')) ? 'cover.png' :
                 fs.existsSync(path.join(novelDir, 'cover.jpg')) ? 'cover.jpg' : null;
 
   return {

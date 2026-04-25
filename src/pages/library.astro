@@ -12,9 +12,10 @@ const novels = novelsCollection
   .filter(n => n.id.endsWith('/meta') && n.data?.title)
   .map(n => {
     const slug = n.id.replace('/meta', '');
-    // Check if cover image exists in the novel folder
+    // Check if cover image exists (prefer .webp for performance)
     const novelDir = path.join('src/content/novels', slug);
-    const coverPath = fs.existsSync(path.join(novelDir, 'cover.png')) ? 'cover.png' :
+    const coverPath = fs.existsSync(path.join(novelDir, 'cover.webp')) ? 'cover.webp' :
+                  fs.existsSync(path.join(novelDir, 'cover.png')) ? 'cover.png' :
                   fs.existsSync(path.join(novelDir, 'cover.jpg')) ? 'cover.jpg' : null;
 
     return {
