@@ -612,6 +612,20 @@ import { config } from '../config';
     border: 1px solid var(--color-border-light);
   }
 
+  :global(.history-item .item-link) {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    flex: 1;
+    min-width: 0;
+    text-decoration: none;
+    color: inherit;
+  }
+
+  :global(.history-item:hover .item-link) {
+    color: inherit;
+  }
+
   :global(.history-item:hover) {
     border-color: var(--accent);
     transform: translateX(var(--spacing-1));
@@ -851,18 +865,20 @@ const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath;
         container.innerHTML = favData.map((id: string) => {
           const data = novelsData[id] || { title: id, chapters: 0 };
           return `
-            <a href="${BASE_PATH}/book/${id}" class="history-item">
-              ${createMiniCover(data.title)}
-              <div class="item-info">
-                <div class="item-title">${data.title}</div>
-                <div class="item-chapter">${data.chapters} 章</div>
-              </div>
-              <button class="item-remove" onclick="removeFromFavorites('${id}')" title="移除收藏">
+            <div class="history-item">
+              <a href="${BASE_PATH}/book/${id}" class="item-link">
+                ${createMiniCover(data.title)}
+                <div class="item-info">
+                  <div class="item-title">${data.title}</div>
+                  <div class="item-chapter">${data.chapters} 章</div>
+                </div>
+              </a>
+              <button class="item-remove" onclick="removeFromFavorites('${id}'); event.stopPropagation();" title="移除收藏">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M18 6L6 18M6 6l12 12"></path>
                 </svg>
               </button>
-            </a>`;
+            </div>`;
         }).join('');
       }
     } catch (e) {
@@ -926,20 +942,22 @@ const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath;
           const progress = item.chapter && data.chapters ? Math.round((item.chapter / data.chapters) * 100) : 0;
           const timeAgo = item.timestamp ? getRelativeTime(item.timestamp) : '';
           return `
-            <a href="${BASE_PATH}/book/${item.id}${item.chapter ? '/' + item.chapter : ''}" class="history-item">
-              ${createMiniCover(data.title)}
-              <div class="item-info">
-                <div class="item-title">${data.title}</div>
-                <div class="item-chapter">${item.chapter ? '第 ' + item.chapter + ' 章 · ' + progress + '%' : '未開始閱讀'}</div>
-                ${item.chapter ? `<div class="item-progress"><div class="item-progress-fill" style="width:${progress}%"></div></div>` : ''}
-                ${timeAgo ? `<div class="item-time">${timeAgo}</div>` : ''}
-              </div>
-              <button class="item-remove" onclick="removeFromHistory('${item.id}')" title="移除">
+            <div class="history-item">
+              <a href="${BASE_PATH}/book/${item.id}${item.chapter ? '/' + item.chapter : ''}" class="item-link">
+                ${createMiniCover(data.title)}
+                <div class="item-info">
+                  <div class="item-title">${data.title}</div>
+                  <div class="item-chapter">${item.chapter ? '第 ' + item.chapter + ' 章 · ' + progress + '%' : '未開始閱讀'}</div>
+                  ${item.chapter ? `<div class="item-progress"><div class="item-progress-fill" style="width:${progress}%"></div></div>` : ''}
+                  ${timeAgo ? `<div class="item-time">${timeAgo}</div>` : ''}
+                </div>
+              </a>
+              <button class="item-remove" onclick="removeFromHistory('${item.id}'); event.stopPropagation();" title="移除">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M18 6L6 18M6 6l12 12"></path>
                 </svg>
               </button>
-            </a>`;
+            </div>`;
         }).join('');
       }
     } catch (e) {
