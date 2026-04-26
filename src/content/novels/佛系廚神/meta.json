@@ -29,5 +29,12 @@
     {"name": "靜子", "role": "女主角", "description": "北海端千金，小步的青梅竹馬"},
     {"name": "皮卡", "role": "配角", "description": "胖橘貓，小步的靈性夥伴"},
     {"name": "陳執念", "role": "反派", "description": "「執念」大亨，最終被小步感化"}
-  ]
+  ],
+  "featured": false,
+  "featuredOrder": 999,
+  "priority": 2,
+  "updatedAt": "2026-04-26T00:00:00Z",
+  "isHot": false,
+  "isNew": true,
+  "publishAt": "2024-01-01T00:00:00Z"
 }

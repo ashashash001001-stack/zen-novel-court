@@ -297,9 +297,78 @@ src/content/novels/[小說標題]/
 
 章節文件使用 Markdown 格式，直接書寫章節標題與正文內容。
 
-### 步驟 4：在首頁或書閣註冊
+### 步驟 4：配置首頁顯示（可選）
 
-在 `src/pages/index.astro` 或 `src/pages/library.astro` 的小說數據中添加條目。
+首頁的精選推薦、熱門排行和最新更新可以通過 `meta.json` 中的欄位來控制：
+
+```json
+{
+  "title": "小說標題",
+  "featured": true,
+  "featuredOrder": 1,
+  "priority": 1,
+  "updatedAt": "2026-04-26T00:00:00Z",
+  "isHot": true,
+  "isNew": true,
+  "publishAt": "2024-01-01T00:00:00Z"
+}
+```
+
+| 欄位 | 用途 | 說明 |
+|------|------|------|
+| `featured` | 精選推薦 | 設為 `true` 該小說會顯示在首頁的 FeaturedHero 區域 |
+| `featuredOrder` | 精選順序 | 數字越小越前面（預留未來多個 featured 輪播） |
+| `priority` | 熱門排行 | 數字越小越前面，控制熱門排行順序 |
+| `updatedAt` | 最新更新 | ISO 8601 時間格式，最近更新的會排在前面 |
+| `isHot` | 熱門標籤 | 設為 `true` 顯示熱門標籤（需組件支持） |
+| `isNew` | 新品標籤 | 設為 `true` 顯示新品標籤（需組件支持） |
+| `publishAt` | 發布時間 | 首次發布時間（預留未來使用） |
+
+**排序邏輯：**
+- **FeaturedHero**：優先顯示 `featured: true` 的小說，按 `featuredOrder` 排序；若無則 fallback 到第一本
+- **熱門排行**：按 `priority` 升序排列（越小越前）
+- **最新更新**：按 `updatedAt` 降序排列（最近的在前面）
+
+**邊緣情況處理：**
+- 若沒有任何小說設定 `featured: true`，會自動 fallback 到第一本小說
+- 若沒有設定 `priority`，預設為 999（排最後）
+- 若沒有設定 `updatedAt`，視為 0（最舊）
+
+**範例配置：**
+
+```json
+// 精選小說（會顯示在 FeaturedHero）
+{
+  "title": "一茶一禪",
+  "featured": true,
+  "featuredOrder": 1,
+  "priority": 1,
+  "isHot": true,
+  "updatedAt": "2026-04-26T00:00:00Z"
+}
+
+// 熱門但非精選
+{
+  "title": "萬界直播系統",
+  "featured": false,
+  "priority": 2,
+  "isHot": true,
+  "updatedAt": "2026-04-25T00:00:00Z"
+}
+
+// 新品
+{
+  "title": "佛系廚神",
+  "featured": false,
+  "priority": 3,
+  "isNew": true,
+  "updatedAt": "2026-04-20T00:00:00Z"
+}
+```
+
+### 步驟 5：在首頁或書冊冊
+
+小說會自動從 `src/content/novels/` 目錄讀取，無需手動在 `index.astro` 或 `library.astro` 中註冊。
 
 ## 🎨 自定義主題
 

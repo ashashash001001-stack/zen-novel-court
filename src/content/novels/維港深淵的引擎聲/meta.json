@@ -8,5 +8,12 @@
   "category": "urban",
   "tags": ["賽博龐克", "香港", "熱血", "改裝車"],
   "status": "已完結",
-  "synopsis": "在未來的新九龍，隱世紅Van老司機華叔為救出被綁走的女兒，駕駛「紅彗星」16座改裝小巴，與大和重工的機甲軍團酣戰。"
+  "synopsis": "在未來的新九龍，隱世紅Van老司機華叔為救出被綁走的女兒，駕駛「紅彗星」16座改裝小巴，與大和重工的機甲軍團酣戰。",
+  "featured": false,
+  "featuredOrder": 999,
+  "priority": 4,
+  "updatedAt": "2026-04-26T00:00:00Z",
+  "isHot": false,
+  "isNew": false,
+  "publishAt": "2024-01-01T00:00:00Z"
 }

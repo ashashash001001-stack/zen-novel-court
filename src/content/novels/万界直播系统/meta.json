@@ -8,5 +8,12 @@
   "category": "system",
   "tags": ["直播", "系統", "都市", "爽文"],
   "status": "連載中",
-  "synopsis": "萬界直播系統 - 主角在異世界進行直播，獲得各種能力。"
+  "synopsis": "萬界直播系統 - 主角在異世界進行直播，獲得各種能力。",
+  "featured": false,
+  "featuredOrder": 999,
+  "priority": 3,
+  "updatedAt": "2026-04-26T00:00:00Z",
+  "isHot": true,
+  "isNew": false,
+  "publishAt": "2024-01-01T00:00:00Z"
 }
