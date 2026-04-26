@@ -5,7 +5,7 @@ import { getCollection } from 'astro:content';
 import VisualCategory from '../components/VisualCategory.astro';
 import fs from 'fs';
 import path from 'path';
-import '../styles/book-cover.css';
+import DualImage from '../components/DualImage.astro';
 
 // Novel data - from Content Collection (meta.json)
 const novelsCollection = await getCollection('novels');
@@ -113,10 +113,7 @@ const statusFilters = [
       <a href={config.path('/book/' + novel.slug)} class="book-card" data-category={novel.category} data-title={novel.title.toLowerCase()} data-author={novel.author.toLowerCase()} data-slug={novel.slug} data-total-chapters={novel.chapters}>
         <div class="book-cover">
           {novel.cover ? (
-            <>
-              <img src={novel.cover} alt="" class="book-cover-bg" />
-              <img src={novel.cover} alt={`${novel.title}封面`} class="book-cover-fg" />
-            </>
+            <DualImage src={novel.cover} alt={`${novel.title}封面`} />
           ) : (
             <div class="css-book-cover" style="width: 100%; height: 100%;" role="img" aria-label={`${novel.title}封面`}>
               <div class="cover-content">

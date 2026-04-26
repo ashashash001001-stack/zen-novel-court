@@ -206,6 +206,12 @@
   --cover-z-bg: 0;
   --cover-z-fg: 1;
 
+  /* Dual Image Effects */
+  --dual-blur: 20px;
+  --dual-scale: 1.1;
+  --dual-z-bg: 0;
+  --dual-z-fg: 1;
+
   /* Buttons - iOS style */
   --button-min-height: 44px;
   --button-min-width: 44px;

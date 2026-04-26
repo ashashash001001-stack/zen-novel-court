@@ -1,4 +1,6 @@
 ---
+import DualImage from './DualImage.astro';
+
 interface Props {
   hotRankings: Array<{
     slug: string;
@@ -33,7 +35,7 @@ const { config } = await import('../config');
           <a href={config.path('/book/' + novel.slug)} class="ranking-card-link">
             <div class="ranking-cover">
               {novel.cover ? (
-                <img src={novel.cover} alt="" class="cover-img" loading="lazy" />
+                <DualImage src={novel.cover} alt={`${novel.title}封面`} />
               ) : (
                 <div class="cover-fallback">{novel.title.charAt(0)}</div>
               )}
@@ -57,7 +59,7 @@ const { config } = await import('../config');
           <a href={config.path('/book/' + novel.slug)} class="ranking-card-link">
             <div class="ranking-cover">
               {novel.cover ? (
-                <img src={novel.cover} alt="" class="cover-img" loading="lazy" />
+                <DualImage src={novel.cover} alt={`${novel.title}封面`} />
               ) : (
                 <div class="cover-fallback">{novel.title.charAt(0)}</div>
               )}

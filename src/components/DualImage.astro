@@ -1,0 +1,52 @@
+---
+/**
+ * DualImage - 雙層圖片元件
+ * 自動產生模糊背景 + 清晰前景的雙層效果
+ *
+ * @example
+ * <DualImage src={cover} alt={`${title}封面`} />
+ * <DualImage src={cover} alt="描述" blur={30} scale={1.2} />
+ */
+import '../styles/dual-image.css';
+
+interface Props {
+  src: string;
+  alt: string;
+  class?: string;
+  blur?: number;
+  scale?: number;
+  loading?: 'lazy' | 'eager';
+}
+
+const {
+  src,
+  alt,
+  class: className,
+  blur,
+  scale,
+  loading = 'lazy'
+} = Astro.props;
+
+// 動態生成 style 變量
+const style = [
+  blur !== undefined ? `--dual-blur: ${blur}px` : null,
+  scale !== undefined ? `--dual-scale: ${scale}` : null,
+].filter(Boolean).join('; ');
+---
+
+<div class:list={['dual-image', className]} style={style || undefined}>
+  <img
+    src={src}
+    alt=""
+    class="dual-image-bg"
+    loading={loading}
+    decoding="async"
+  />
+  <img
+    src={src}
+    alt={alt}
+    class="dual-image-fg"
+    loading={loading}
+    decoding="async"
+  />
+</div>

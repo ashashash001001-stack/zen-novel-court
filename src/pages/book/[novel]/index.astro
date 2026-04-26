@@ -4,7 +4,7 @@ import { config } from '../../../config';
 import { getCollection } from 'astro:content';
 import fs from 'fs';
 import path from 'path';
-import '../../../styles/book-cover.css';
+import DualImage from '../../../components/DualImage.astro';
 
 export async function getStaticPaths() {
   const novels = await getCollection('novels');
@@ -131,13 +131,6 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
     position: relative;
     width: 120px;
     height: 170px;
-  }
-
-  /* Book cover uses shared CSS from ../../../styles/book-cover.css */
-  /* Page-specific: add border-radius and shadow to .book-cover-fg */
-  .book-cover-fg {
-    border-radius: var(--radius-sm);
-    box-shadow: var(--bento-shadow);
   }
 
   .css-book-cover {
