@@ -201,15 +201,15 @@
 
 :root {
   /* Book Cover Effects */
-  --cover-blur: 20px;
+  --cover-blur: 12px;
   --cover-scale: 1.1;
   --cover-z-bg: 0;
   --cover-z-fg: 1;
 
   /* Dual Image Effects */
-  --dual-blur: 5px;
+  --dual-blur: 2px;
   --dual-scale: 1.25;
-  --dual-bg-opacity: 0.2;
+  --dual-bg-opacity: 0.5;
   --dual-z-bg: 0;
   --dual-z-fg: 1;
 
