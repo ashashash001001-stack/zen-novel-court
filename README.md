@@ -203,7 +203,7 @@ BASE_PATH=/ SUB_PATH=/ npm run build
 
 ### 構建時 vs 運行時
 
-- Astro 的 `import.meta.env.BASE_PATH` 在**構建時**就被嵌入到輸出的 HTML/JS 中
+- Astro 的 `import.meta.env.BASE_URL` 在**構建時**就被嵌入到輸出的 HTML/JS 中
 - 運行時修改環境變量不會生效，必須重新構建
 - 客戶端重定向邏輯（如 `BaseLayout.astro`）使用 `document.body.dataset.basePath` 讀取 HTML 中的值
 
@@ -419,6 +419,13 @@ src/content/novels/[小說標題]/
 
 ## 🔧 部署指南
 
+### 當前部署
+
+| 平台 | URL |
+|------|-----|
+| Cloudflare Pages | https://zen-novel-court.pages.dev/ |
+| GitHub Pages | https://ashashash001001-stack.github.io/zen-novel-court/ |
+
 ### GitHub Pages（推薦）
 
 項目已配置 GitHub Actions，Push 到 `main` 分支後自動部署。
@@ -585,7 +592,16 @@ node --version
 
 ### 最近的部署修復經驗
 
-1. **雙斜線URL問題修復**（2026-04-22）：
+1. **GitHub Pages 圖片載入修復**（2026-04-27）：
+   - 問題：圖片在 https://zen-novel-court.pages.dev/ 正常載入，但在 https://ashashash001001-stack.github.io/zen-novel-court/ 無法顯示
+   - 原因：圖片路徑（如 `/content/novels/...`）和連結路徑（如 `/book/...`）為硬編碼，缺少 base path 前綴
+   - 解決方案：
+     - 修正 `src/config.ts` 中 `import.meta.env.BASE_PATH` → `import.meta.env.BASE_URL`（Astro 正確的環境變量）
+     - 所有頁面和組件中的靜態路徑改用 `config.path()` 動態生成
+     - 客戶端 JavaScript 使用 `window.__configBase__`（由 BaseLayout 注入）動態處理路徑
+   - 受影響文件：`src/config.ts`, `src/pages/index.astro`, `src/pages/library.astro`, `src/pages/category/[category].astro`, `src/pages/book/[novel]/index.astro`, `src/components/FeaturedHero.astro`, `src/components/BentoGrid.astro`, `src/components/ContinueReading.astro`, `src/layouts/BaseLayout.astro`, `src/layouts/ReaderLayout.astro`, `src/pages/404.astro`
+
+2. **雙斜線URL問題修復**（2026-04-22）：
    - 當 `BASE_PATH=/` 時（Cloudflare Pages根路徑部署），客戶端重定向邏輯會產生協議相對URL（如 `//book/...`）
    - 解決方案：在運行時檢測 `basePath`，當其為 `'/'` 時將其設置為空字符串 `''`
    - 受影響文件：`src/pages/my.astro` 和 `src/pages/book/[novel]/[chapter].astro`
