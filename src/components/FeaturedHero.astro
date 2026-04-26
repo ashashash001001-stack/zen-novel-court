@@ -353,6 +353,11 @@ const { config } = await import('../config');
     box-shadow: var(--bento-shadow-hover);
   }
 
+  .btn:active {
+    transform: scale(0.96);
+    transition: transform 0.1s ease-out;
+  }
+
   .btn-secondary {
     background: var(--color-bg-inner);
     color: var(--color-text-primary);

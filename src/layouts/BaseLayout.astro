@@ -123,21 +123,21 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
 
   <nav class="footer-nav" aria-label="主导航">
       <div class="footer-nav-inner">
-        <a href={config.base} class={`footer-tab ${activeTab === 'home' ? 'active' : ''}`} aria-current={activeTab === 'home' ? 'page' : undefined}>
+        <a href={config.base} class={`footer-tab ${activeTab === 'home' ? 'active' : ''}`} aria-current={activeTab === 'home' ? 'page' : undefined} aria-label="首页">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
             <polyline points="9 22 9 12 15 12 15 22"></polyline>
           </svg>
           <span>首页</span>
         </a>
-        <a href={config.path('/library')} class={`footer-tab ${activeTab === 'library' ? 'active' : ''}`} aria-current={activeTab === 'library' ? 'page' : undefined}>
+        <a href={config.path('/library')} class={`footer-tab ${activeTab === 'library' ? 'active' : ''}`} aria-current={activeTab === 'library' ? 'page' : undefined} aria-label="书阁">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
           </svg>
           <span>书阁</span>
         </a>
-        <a href={config.path('/my')} class={`footer-tab ${activeTab === 'my' ? 'active' : ''}`} aria-current={activeTab === 'my' ? 'page' : undefined}>
+        <a href={config.path('/my')} class={`footer-tab ${activeTab === 'my' ? 'active' : ''}`} aria-current={activeTab === 'my' ? 'page' : undefined} aria-label="我的">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
             <circle cx="12" cy="7" r="4"></circle>
@@ -322,6 +322,13 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
     transform: scale(1.1);
   }
 
+  /* Focus visible for accessibility */
+  .footer-tab:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 12px;
+  }
+
   /* Skip Link for Accessibility */
   .skip-link {
     position: absolute;
@@ -347,6 +354,12 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
   a {
     color: inherit;
     text-decoration: none;
+    cursor: pointer;
+  }
+
+  /* Interactive elements cursor */
+  button, .footer-tab, [role="button"] {
+    cursor: pointer;
   }
 
   .btn-press {
