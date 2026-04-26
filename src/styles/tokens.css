@@ -207,8 +207,9 @@
   --cover-z-fg: 1;
 
   /* Dual Image Effects */
-  --dual-blur: 20px;
-  --dual-scale: 1.1;
+  --dual-blur: 15px;
+  --dual-scale: 1.15;
+  --dual-bg-opacity: 0.6;
   --dual-z-bg: 0;
   --dual-z-fg: 1;
 
