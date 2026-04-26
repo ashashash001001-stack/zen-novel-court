@@ -27,7 +27,7 @@ const novels = novelsCollection
       category: n.data.category || 'other',
       chapters: n.data.totalChapters || 0,
       status: n.data.status || '連載中',
-      cover: coverPath ? `/content/novels/${slug}/${coverPath}` : null
+      cover: coverPath ? config.path('/content/novels/' + slug + '/' + coverPath) : null
     };
   });
 
@@ -60,7 +60,7 @@ const statusFilters = [
   
   <!-- Search Header -->
   <div class="search-header">
-    <form method="get" action="/library" class="search-form">
+    <form method="get" action={config.path('/library')} class="search-form">
       <input 
         type="text" 
         name="q" 

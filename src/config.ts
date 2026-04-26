@@ -1,4 +1,4 @@
-const base = import.meta.env.BASE_PATH || '/';
+const base = import.meta.env.BASE_URL || '/';
 const site = import.meta.env.SITE_URL || 'https://ashashash001001-stack.github.io';
 
 function cleanJoin(a: string, b: string): string {

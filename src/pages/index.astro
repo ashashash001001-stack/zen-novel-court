@@ -22,7 +22,7 @@ const novelData = novels
     return {
       slug,
       ...n.data,
-      cover: coverPath ? `/content/novels/${slug}/${coverPath}` : null,
+      cover: coverPath ? config.path('/content/novels/' + slug + '/' + coverPath) : null,
       featured: n.data.featured ?? false,
       featuredOrder: n.data.featuredOrder ?? 999,
       priority: n.data.priority ?? 999,

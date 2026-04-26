@@ -15,7 +15,7 @@ const {
   title = "小说阁 - 沉浸阅读，从这里开始", 
   description = "小说阁 - 发现精彩中文网络小说，沉浸式阅读体验。涵盖都市、玄幻、仙侠、科幻等多种题材。",
   canonicalURL = Astro.url.href,
-  ogImage = "/og-image.png",
+  ogImage = config.path('/og-image.png'),
   activeTab = 'home',
   gaMeasurementId = 'G-XXXXXXXXXX'  // Replace with your actual GA4 Measurement ID
 } = Astro.props;
@@ -53,8 +53,8 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
   <meta name="twitter:description" content={description}>
   <meta name="twitter:image" content={ogImage}>
   
-  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" type="image/svg+xml" href={config.path('/favicon.svg')}>
+  <link rel="manifest" href={config.path('/manifest.json')}>
   
   <title>{title}</title>
   <!-- System fonts only: instant rendering on all devices -->
@@ -82,7 +82,7 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
       "name": siteName,
       "logo": {
         "@type": "ImageObject",
-        "url": `${siteURL}/favicon.svg`
+        "url": `${siteURL}${config.path('/favicon.svg')}`
       }
     }
   })} />

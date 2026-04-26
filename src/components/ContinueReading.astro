@@ -120,6 +120,9 @@
   // Book data - could be passed from server or loaded from embedded data
   const bookData = {};
 
+  // Get base path from window.__configBase__ (set by BaseLayout)
+  const BASE_PATH = typeof window !== 'undefined' ? (window.__configBase__ || '') : '';
+
   function initContinueReading() {
     const continueSection = document.querySelector('#continue-reading-section');
     if (!continueSection) return;
@@ -157,7 +160,7 @@
           <div class="continue-reading-empty">
             <h3 class="continue-title">繼續閱讀</h3>
             <p class="empty-text">暫無閱讀記錄</p>
-            <a href="/library" class="empty-link">探索小說 →</a>
+            <a href="${BASE_PATH}/library" class="empty-link">探索小說 →</a>
           </div>
         `;
         return;
@@ -177,7 +180,7 @@
         const percent = Math.round((currentChapter / totalChapters) * 100);
 
         html += `
-          <a href="/book/${bookId}" class="continue-item">
+          <a href="${BASE_PATH}/book/${bookId}" class="continue-item">
             <div class="continue-info">
               <span class="continue-novel-title">${title}</span>
               <span class="continue-chapter">第 ${currentChapter} 章 / 共 ${totalChapters} 章</span>
@@ -202,7 +205,7 @@
           <div class="continue-reading-empty">
             <h3 class="continue-title">繼續閱讀</h3>
             <p class="empty-text">暫無閱讀記錄</p>
-            <a href="/library" class="empty-link">探索小說 →</a>
+            <a href="${BASE_PATH}/library" class="empty-link">探索小說 →</a>
           </div>
         `;
       }

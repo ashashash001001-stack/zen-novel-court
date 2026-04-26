@@ -34,7 +34,7 @@ const filteredNovels = metaNovels.map(n => {
   return {
     slug,
     ...n.data,
-    cover: coverPath ? `/content/novels/${slug}/${coverPath}` : null
+    cover: coverPath ? config.path('/content/novels/' + slug + '/' + coverPath) : null
   };
 }).filter(n => n.category === category);
 

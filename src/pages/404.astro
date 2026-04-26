@@ -42,7 +42,7 @@ const description = "抱歉，您访问的页面不存在。";
       <p class="error-message">抱歉，您访问的页面不存在或已 moved.</p>
       
       <div class="error-actions">
-        <a href="/" class="btn-primary">
+        <a href={config.path('/')} class="btn-primary">
           <span>返回首页</span>
         </a>
         <a href={config.path('/library')} class="btn-secondary">

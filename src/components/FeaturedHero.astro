@@ -21,7 +21,7 @@ const { config } = await import('../config');
 <section class="featured-hero">
   <!-- Hero Background Image -->
   <div class="hero-background">
-    <img src="/images/hero-bamboo-16x9.png" alt="竹林閱讀空間" />
+    <img src={config.path('/images/hero-bamboo-16x9.png')} alt="竹林閱讀空間" />
   </div>
   <a href={config.path('/book/' + novel.slug)} class="hero-link" aria-label={`查看《${novel.title}》詳情`}></a>
 

@@ -26,7 +26,7 @@ const novelDir = path.join('src/content/novels', slug);
 const coverPath = fs.existsSync(path.join(novelDir, 'cover.webp')) ? 'cover.webp' :
                fs.existsSync(path.join(novelDir, 'cover.png')) ? 'cover.png' :
                fs.existsSync(path.join(novelDir, 'cover.jpg')) ? 'cover.jpg' : null;
-const coverUrl = coverPath ? `/content/novels/${slug}/${coverPath}` : null;
+const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + coverPath) : null;
 ---
 
 <BaseLayout title={`${novel.title} - 小说阁`} activeTab="library">
