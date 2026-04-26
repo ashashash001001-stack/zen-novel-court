@@ -4,6 +4,7 @@ import { config } from '../../../config';
 import { getCollection } from 'astro:content';
 import fs from 'fs';
 import path from 'path';
+import '../../../styles/book-cover.css';
 
 export async function getStaticPaths() {
   const novels = await getCollection('novels');
@@ -35,8 +36,8 @@ const coverUrl = coverPath ? `/content/novels/${slug}/${coverPath}` : null;
       <div class="detail-cover">
         {coverUrl ? (
           <>
-            <img src={coverUrl} alt="" class="detail-cover-bg" />
-            <img src={coverUrl} alt={`${novel.title}封面`} class="detail-cover-fg" />
+            <img src={coverUrl} alt="" class="book-cover-bg" />
+            <img src={coverUrl} alt={`${novel.title}封面`} class="book-cover-fg" />
           </>
         ) : (
           <div class="css-book-cover" style="width: 120px; height: 170px;">
@@ -132,24 +133,9 @@ const coverUrl = coverPath ? `/content/novels/${slug}/${coverPath}` : null;
     height: 170px;
   }
 
-  .detail-cover-bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: blur(20px);
-    transform: scale(1.1);
-    z-index: 0;
-    border-radius: var(--radius-sm);
-  }
-
-  .detail-cover-fg {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    z-index: 1;
+  /* Book cover uses shared CSS from ../../../styles/book-cover.css */
+  /* Page-specific: add border-radius and shadow to .book-cover-fg */
+  .book-cover-fg {
     border-radius: var(--radius-sm);
     box-shadow: var(--bento-shadow);
   }

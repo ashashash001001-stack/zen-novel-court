@@ -1,0 +1,30 @@
+/**
+ * ===========================================
+ * Book Cover - Dual Layer Effect
+ * ===========================================
+ * Shared styles for book cover with blurred background
+ *
+ * Import in Astro components:
+ *   import '../styles/book-cover.css';
+ * =========================================== */
+
+/* Background layer - blurred */
+.book-cover-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(var(--cover-blur, 20px));
+  transform: scale(var(--cover-scale, 1.1));
+  z-index: var(--cover-z-bg, 0);
+}
+
+/* Foreground layer - contain */
+.book-cover-fg {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  z-index: var(--cover-z-fg, 1);
+}

@@ -5,6 +5,7 @@ import { config } from '../../config';
 import VisualCategory from '../../components/VisualCategory.astro';
 import fs from 'fs';
 import path from 'path';
+import '../../styles/book-cover.css';
 
 export async function getStaticPaths() {
   const novels = await getCollection('novels');
@@ -167,24 +168,7 @@ const displayName = categoryNames[category] || category;
     overflow: hidden;
   }
 
-  .book-cover-bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: blur(20px);
-    transform: scale(1.1);
-    z-index: 0;
-  }
-
-  .book-cover-fg {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    z-index: 1;
-  }
+  /* Book cover uses shared CSS from ../../styles/book-cover.css */
 
   .css-book-cover {
     position: relative;

@@ -5,6 +5,7 @@ import { getCollection } from 'astro:content';
 import VisualCategory from '../components/VisualCategory.astro';
 import fs from 'fs';
 import path from 'path';
+import '../styles/book-cover.css';
 
 // Novel data - from Content Collection (meta.json)
 const novelsCollection = await getCollection('novels');
@@ -361,24 +362,7 @@ const statusFilters = [
     overflow: hidden;
   }
 
-  .book-cover-bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: blur(20px);
-    transform: scale(1.1);
-    z-index: 0;
-  }
-
-  .book-cover-fg {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    z-index: 1;
-  }
+  /* Book cover uses shared CSS from ../styles/book-cover.css */
 
   .css-book-cover {
     position: relative;
