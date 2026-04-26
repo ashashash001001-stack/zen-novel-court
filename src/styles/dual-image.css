@@ -23,9 +23,9 @@
   width: 100%;
   height: 100%;
   object-fit: cover;
-  filter: blur(var(--dual-blur, 15px));
-  transform: scale(var(--dual-scale, 1.15));
-  opacity: var(--dual-bg-opacity, 0.6);
+  filter: blur(var(--dual-blur, 8px));
+  transform: scale(var(--dual-scale, 1.2));
+  opacity: var(--dual-bg-opacity, 0.35);
   z-index: var(--dual-z-bg, 0);
 }
 

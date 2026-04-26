@@ -35,10 +35,7 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
     <div class="detail-hero">
       <div class="detail-cover">
         {coverUrl ? (
-          <>
-            <img src={coverUrl} alt="" class="book-cover-bg" />
-            <img src={coverUrl} alt={`${novel.title}封面`} class="book-cover-fg" />
-          </>
+          <DualImage src={coverUrl} alt={`${novel.title}封面`} />
         ) : (
           <div class="css-book-cover" style="width: 120px; height: 170px;">
             <div class="cover-content">
@@ -131,6 +128,7 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
     position: relative;
     width: 120px;
     height: 170px;
+    overflow: hidden;
   }
 
   .css-book-cover {
