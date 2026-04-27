@@ -100,6 +100,12 @@ const hasNext = chapterNum < chaptersList.length;
             </svg>
             <span>設定</span>
           </button>
+          <button class="tool-btn btn-press" id="toolBtnMore" aria-label="更多">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 6h16M4 12h16M4 18h16"/>
+            </svg>
+            <span>更多</span>
+          </button>
           <button class="tool-btn btn-press" id="toolBtnTts" aria-label="朗讀">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M15.536 8.464a5 5 0 010 7.072M18.364 5.636a9 9 0 010 12.728M12 12h.01"/>
@@ -219,6 +225,52 @@ const hasNext = chapterNum < chaptersList.length;
             </div>
             <input type="range" min="0.5" max="2" step="0.1" value="1" id="ttsPitch" oninput="setTTSPitch(this.value)">
           </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- More Navigation Sheet -->
+    <div class="sheet-overlay" id="moreSheet">
+      <div class="sheet-content" onclick="event.stopPropagation()">
+        <div class="sheet-handle"></div>
+        <div class="sheet-header">
+          <h3>導航</h3>
+          <button class="btn-press sheet-close" onclick="closeSheet('moreSheet')">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        <div class="sheet-body">
+          <a href={config.path('/')} class="nav-item btn-press">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span>首頁</span>
+          </a>
+          <a href={config.path('/library')} class="nav-item btn-press">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+            </svg>
+            <span>書庫</span>
+          </a>
+          <a href={config.path('/my')} class="nav-item btn-press">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+              <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span>我的</span>
+          </a>
+          <a href={config.path('/book/' + novel.slug)} class="nav-item btn-press">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+              <line x1="12" y1="6" x2="12" y2="12"/>
+            </svg>
+            <span>書籍詳情頁</span>
+          </a>
         </div>
       </div>
     </div>
@@ -585,6 +637,29 @@ const hasNext = chapterNum < chaptersList.length;
   .toc-current {
     font-size: var(--text-xs);
     color: var(--accent);
+  }
+
+  /* Navigation Items */
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) var(--spacing-2);
+    border-bottom: 1px solid var(--color-border-light);
+    text-decoration: none;
+    color: var(--text-dark);
+    font-size: var(--text-base);
+    font-weight: var(--font-medium);
+    transition: all var(--t-fast);
+  }
+
+  .nav-item:active {
+    transform: translate(2px, 2px);
+  }
+
+  .nav-item svg {
+    color: var(--text-muted);
+    flex-shrink: 0;
   }
 
   /* Settings */
@@ -1011,12 +1086,14 @@ const hasNext = chapterNum < chaptersList.length;
   // ========== Toolbar Buttons ==========
   const toolBtnToc = document.getElementById('toolBtnToc');
   const toolBtnSettings = document.getElementById('toolBtnSettings');
+  const toolBtnMore = document.getElementById('toolBtnMore');
   const toolBtnTts = document.getElementById('toolBtnTts');
   const prevChapterBtn = document.getElementById('prevChapterBtn');
   const nextChapterBtn = document.getElementById('nextChapterBtn');
 
   toolBtnToc?.addEventListener('click', () => (window as any).openSheet('tocSheet'));
   toolBtnSettings?.addEventListener('click', () => (window as any).openSheet('settingsSheet'));
+  toolBtnMore?.addEventListener('click', () => (window as any).openSheet('moreSheet'));
   toolBtnTts?.addEventListener('click', () => {
     initTTS();
     (window as any).openSheet('ttsSheet');
