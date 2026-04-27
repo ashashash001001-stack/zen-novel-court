@@ -1,0 +1,47 @@
+{
+  "title": "萬象骨扇",
+  "titleEn": "The Bone Fan of Ten Thousand Worlds",
+  "author": "Babubu",
+  "language": "繁體中文",
+  "genre": "東方奇幻 / 懸疑武俠 / 成長史詩",
+  "totalChapters": 12,
+  "totalWordCount": 120000,
+  "synopsis": "霜骨城落魄書生范輕書，在祖宅地窖中發現一把刻著「風起」二字的詭異骨扇，從此被卷入十二城的風雲變幻。每展開一摺骨扇，便會失去一部分記憶——直到徹底遺忘自己為何而戰。為了擺脫風神轉世的宿命，他必須在記憶消散之前，找到天墟城解除綁定。而那個手持峨眉刺的黑衣女子，將成為他在永恆遺忘之前最後的羈絆。",
+  "parts": [
+    {
+      "id": "第一幕",
+      "name": "風起霜骨，紙面藏機",
+      "chapters": [1, 2]
+    },
+    {
+      "id": "第二幕",
+      "name": "十二城圖卷，步步生蓮",
+      "chapters": [3, 4, 5, 6]
+    },
+    {
+      "id": "第三幕",
+      "name": "神明之骨，狐妖之淚",
+      "chapters": [7, 8, 9]
+    },
+    {
+      "id": "第四幕",
+      "name": "萬象歸一，骨繪生花",
+      "chapters": [10, 11, 12]
+    }
+  ],
+  "characters": [
+    {"name": "范輕書", "role": "男主角", "description": "霜骨城落魄書生，風神轉世，萬象骨扇現任主人"},
+    {"name": "林夜遙", "role": "女主角", "description": "夜雨閣天字號刺客，范輕書的護道人"},
+    {"name": "觀雲君", "role": "反派", "description": "巡天司大司命，謫仙身份，終極反派"},
+    {"name": "醉翁", "role": "導師", "description": "上一代骨扇主人，在千機城隕落"},
+    {"name": "唐悲風", "role": "中期反派", "description": "千機城城主，癡迷機關術的偏執狂"},
+    {"name": "九尾天狐", "role": "隱藏角色", "description": "暗戀風神的九尾天狐，靈魂封印於骨扇中"}
+  ],
+  "featured": false,
+  "featuredOrder": 999,
+  "priority": 1,
+  "updatedAt": "2026-04-27T00:00:00Z",
+  "isHot": true,
+  "isNew": true,
+  "publishAt": "2026-04-27T00:00:00Z"
+}
