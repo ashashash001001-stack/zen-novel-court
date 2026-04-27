@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { config } from '../config';
+import { categoryConfig } from '../config/categories';
 
 const title = "页面未找到 | 小说阁";
 const description = "抱歉，您访问的页面不存在。";
@@ -54,8 +55,9 @@ const description = "抱歉，您访问的页面不存在。";
         <p>或者试试:</p>
         <ul>
           <li><a href={config.path('/library')}>浏览书阁</a></li>
-          <li><a href={config.path('/category/healing')}>疗愈分类</a></li>
-          <li><a href={config.path('/category/food')}>美食分类</a></li>
+          {Object.entries(categoryConfig).map(([slug, data]) => (
+            <li><a href={config.path('/category/' + slug)}>{data.name}分类</a></li>
+          ))}
         </ul>
       </div>
     </div>
