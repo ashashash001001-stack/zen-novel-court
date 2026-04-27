@@ -229,7 +229,7 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
     left: 0;
     right: 0;
     z-index: 100;
-    padding: 8px 16px;
+    padding: var(--spacing-2) var(--spacing-4);
     padding-bottom: calc(8px + env(safe-area-inset-bottom, 0px));
     display: flex;
     justify-content: center;
@@ -254,7 +254,7 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
     .footer-nav {
       position: fixed;
       bottom: 0;
-      padding: 12px 32px;
+      padding: var(--spacing-3) var(--spacing-8);
       background: rgba(255, 255, 255, 0.95);
     }
 
@@ -264,8 +264,8 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
 
     .footer-tab {
       flex-direction: row;
-      gap: 8px;
-      padding: 12px 20px;
+      gap: var(--spacing-2);
+      padding: var(--spacing-3) var(--spacing-5);
     }
 
     .footer-tab svg {
@@ -283,8 +283,8 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 4px;
-    padding: 8px 12px;
+    gap: var(--spacing-2);
+    padding: var(--spacing-2) var(--spacing-3);
     background: transparent;
     border: none;
     border-radius: 12px;
@@ -336,7 +336,7 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
     left: 0;
     background: var(--accent);
     color: var(--color-white);
-    padding: 8px 16px;
+    padding: var(--spacing-2) var(--spacing-4);
     z-index: 1000;
     transition: top 0.2s;
     font-weight: 600;
