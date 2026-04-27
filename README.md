@@ -370,6 +370,20 @@ src/content/novels/[小說標題]/
 
 小說會自動從 `src/content/novels/` 目錄讀取，無需手動在 `index.astro` 或 `library.astro` 中註冊。
 
+### 封面圖片
+
+添加或更新小說封面：
+
+1. 將封面圖片放入 `src/content/novels/[小說名稱]/cover.[副檔名]`
+   - 支援格式：.webp, .png, .jpg, .jpeg
+   - 建議使用：.webp（效能較好）
+
+2. 執行 `npm run build` - 封面會自動同步到 `public/content/novels/[小說名稱]/`
+
+3. 就這樣！無需手動複製。
+
+> 💡 構建時會自動執行 `scripts/sync-covers.mjs`，將 `src/content/novels/` 中的封面圖片複製到 `public/content/novels/`。使用者只需要管理 `src` 目錄中的圖片即可。
+
 ## 🎨 自定義主題
 
 ### 修改顏色變量
