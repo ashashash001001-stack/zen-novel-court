@@ -2,6 +2,7 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getCollection } from 'astro:content';
 import { config } from '../../config';
+import { getCategoryConfig } from '../../config/categories';
 import VisualCategory from '../../components/VisualCategory.astro';
 import fs from 'fs';
 import path from 'path';
@@ -11,11 +12,10 @@ export async function getStaticPaths() {
   const novels = await getCollection('novels');
   // Filter to only meta.json entries
   const metaNovels = novels.filter(n => n.id.endsWith('/meta'));
+  // 从数据中提取所有分类（包括新添加的）
   const contentCategories = [...new Set(metaNovels.map(n => n.data?.category).filter(Boolean))];
-  const defaultCategories = ['healing', 'food', 'urban', 'system', 'growth', 'other'];
-  const allCategories = [...new Set([...contentCategories, ...defaultCategories])];
 
-  return allCategories.map(category => ({
+  return contentCategories.map(category => ({
     params: { category },
     props: { category }
   }));
@@ -38,17 +38,9 @@ const filteredNovels = metaNovels.map(n => {
   };
 }).filter(n => n.category === category);
 
-// Map category slug to display name
-const categoryNames: Record<string, string> = {
-  healing: '療癒',
-  food: '美食',
-  urban: '都市',
-  system: '系統',
-  growth: '成長',
-  other: '其他'
-};
-
-const displayName = categoryNames[category] || category;
+// 获取分类配置
+const categoryInfo = getCategoryConfig(category);
+const displayName = categoryInfo.name;
 ---
 
 <BaseLayout title={`${displayName} 分类 - 小说阁`} activeTab="library">
