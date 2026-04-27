@@ -1,5 +1,6 @@
 ---
 import DualImage from './DualImage.astro';
+import { categoryConfig } from '../config/categories';
 
 interface Props {
   hotRankings: Array<{
@@ -78,11 +79,9 @@ const { config } = await import('../config');
   <div class="bento-cell bento-cats">
     <h3 class="bento-title">探索分類</h3>
     <div class="cat-grid">
-      <a href={config.path('/category/healing')} class="cat-chip">療癒</a>
-      <a href={config.path('/category/food')} class="cat-chip">美食</a>
-      <a href={config.path('/category/urban')} class="cat-chip">都市</a>
-      <a href={config.path('/category/system')} class="cat-chip">系統</a>
-      <a href={config.path('/category/growth')} class="cat-chip">成長</a>
+      {Object.entries(categoryConfig).map(([slug, data]) => (
+        <a href={config.path('/category/' + slug)} class="cat-chip">{data.name}</a>
+      ))}
       <a href={config.path('/library')} class="cat-chip cat-more">更多 →</a>
     </div>
   </div>
