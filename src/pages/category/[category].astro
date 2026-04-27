@@ -13,7 +13,8 @@ export async function getStaticPaths() {
   // Filter to only meta.json entries
   const metaNovels = novels.filter(n => n.id.endsWith('/meta'));
   // 从数据中提取所有分类（包括新添加的）
-  const contentCategories = [...new Set(metaNovels.map(n => n.data?.category).filter(Boolean))];
+  const allCategories = metaNovels.flatMap(n => n.data?.categories || []);
+  const contentCategories = [...new Set(allCategories)];
 
   return contentCategories.map(category => ({
     params: { category },
@@ -36,7 +37,7 @@ const filteredNovels = metaNovels.map(n => {
     ...n.data,
     cover: coverPath ? config.path('/content/novels/' + slug + '/' + coverPath) : null
   };
-}).filter(n => n.category === category);
+}).filter(n => n.categories && n.categories.includes(category));
 
 // 获取分类配置
 const categoryInfo = getCategoryConfig(category);
