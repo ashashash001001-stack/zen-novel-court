@@ -208,13 +208,13 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
 
   .main {
     flex: 1;
-    padding-bottom: 80px;
+    padding-bottom: var(--spacing-section);
   }
 
   /* Desktop: add padding for fixed footer */
   @media (min-width: 1024px) {
     .main {
-      padding-bottom: 100px;
+      padding-bottom: var(--spacing-footer);
     }
   }
 
