@@ -73,9 +73,8 @@ async function syncCovers() {
 
       if (needsSync) {
         if (srcExt === '.webp') {
-          // For webp, convert via jimp and save as webp format
-          const image = await Jimp.read(coverPath);
-          await image.writeAsync(destCoverPath);
+          // For webp, directly copy (jimp doesn't support decoding webp)
+          fs.copyFileSync(coverPath, destCoverPath);
           console.log(`✅ Synced: ${novelName}/cover.webp (original webp)`);
         } else {
           // Convert to webp for png/jpg/jpeg
