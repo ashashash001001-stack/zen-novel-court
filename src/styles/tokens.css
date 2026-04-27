@@ -136,6 +136,10 @@
   --space-16: 64px;
   --space-20: 80px;
 
+  /* Large section padding */
+  --spacing-section: 80px;
+  --spacing-footer: 100px;
+
   /* ---------- Layout Spacing (larger iOS/App Store style) ---------- */
   --reading-padding-x: 24px;
   --page-padding-x: 20px;
