@@ -1,7 +1,6 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { Jimp } from 'jimp';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
@@ -19,11 +18,6 @@ function getCoverFile(dir) {
     }
   }
   return null;
-}
-
-async function convertToWebp(inputPath, outputPath) {
-  const image = await Jimp.read(inputPath);
-  await image.writeAsync(outputPath);
 }
 
 async function syncCovers() {
@@ -63,25 +57,25 @@ async function syncCovers() {
       // Get source file stats
       const srcStats = fs.statSync(coverPath);
       const destExists = fs.existsSync(destCoverPath);
+      const srcWebpExists = fs.existsSync(path.join(srcNovelDir, 'cover.webp'));
 
       // Check if we need to sync/convert
-      let needsSync = !destExists;
-      if (destExists) {
+      let needsSync = !destExists || !srcWebpExists;
+      if (destExists && srcWebpExists) {
         const destStats = fs.statSync(destCoverPath);
         needsSync = destStats.mtimeMs < srcStats.mtimeMs;
       }
 
       if (needsSync) {
-        if (srcExt === '.webp') {
-          // For webp, directly copy (jimp doesn't support decoding webp)
-          fs.copyFileSync(coverPath, destCoverPath);
-          console.log(`✅ Synced: ${novelName}/cover.webp (original webp)`);
-        } else {
-          // Convert to webp for png/jpg/jpeg
-          await convertToWebp(coverPath, destCoverPath);
-          console.log(`✅ Converted: ${novelName}/cover.webp (from ${srcExt})`);
-          converted++;
-        }
+        // Copy to public with original extension
+        const destCoverPath = path.join(publicNovelDir, `cover${srcExt}`);
+        fs.copyFileSync(coverPath, destCoverPath);
+
+        // Also copy to src (website checks for webp first, then png/jpg)
+        const srcCoverPath = path.join(srcNovelDir, `cover${srcExt}`);
+        fs.copyFileSync(coverPath, srcCoverPath);
+
+        console.log(`✅ Synced: ${novelName}/cover${srcExt}`);
         synced++;
       } else {
         console.log(`⏭️  Up-to-date: ${novelName}/cover.webp`);
