@@ -24,8 +24,7 @@ const novels = novelsCollection
       slug,
       title: n.data.title,
       author: n.data.author || 'AI 生成',
-      genre: n.data.genre || '',
-      category: n.data.category || 'other',
+      categories: n.data.categories || ['其他'],
       chapters: n.data.totalChapters || 0,
       status: n.data.status || '連載中',
       cover: coverPath ? config.path('/content/novels/' + slug + '/' + coverPath) : null
@@ -112,7 +111,7 @@ const statusFilters = [
   <!-- Book Grid -->
   <div class="book-grid" id="bookGrid">
     {novels.map((novel) => (
-      <a href={config.path('/book/' + novel.slug)} class="book-card" data-category={novel.category} data-title={novel.title.toLowerCase()} data-author={novel.author.toLowerCase()} data-slug={novel.slug} data-total-chapters={novel.chapters}>
+      <a href={config.path('/book/' + novel.slug)} class="book-card" data-categories={JSON.stringify(novel.categories)} data-title={novel.title.toLowerCase()} data-author={novel.author.toLowerCase()} data-slug={novel.slug} data-total-chapters={novel.chapters}>
         <div class="book-cover">
           {novel.cover ? (
             <DualImage src={novel.cover} alt={`${novel.title}封面`} />
@@ -607,18 +606,19 @@ const statusFilters = [
     
     bookCards.forEach((card) => {
       const el = card as HTMLElement;
-      const category = el.dataset.category;
+      const categoriesStr = el.dataset.categories;
+      const categories = categoriesStr ? JSON.parse(categoriesStr) : [];
       const title = (el.dataset.title || '').toLowerCase();
       const author = (el.dataset.author || '').toLowerCase();
       const slug = el.dataset.slug;
       const totalChapters = parseInt(el.dataset.totalChapters || '0');
-      
-      const matchesSearch = !searchTerm || 
-        title.includes(searchTerm) || 
+
+      const matchesSearch = !searchTerm ||
+        title.includes(searchTerm) ||
         author.includes(searchTerm);
-      
-      const matchesCategory = activeCategory === 'all' || 
-        category === activeCategory;
+
+      const matchesCategory = activeCategory === 'all' ||
+        categories.includes(activeCategory);
       
       // Status filtering based on reading progress
       let matchesStatus = true;
