@@ -48,7 +48,7 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
       <div class="detail-info">
         <div class="detail-info-row">
           <h1 class="detail-title">{novel.title}</h1>
-          <button class="fav-btn-top" id="favBtnTop" title="收藏">
+          <button class="fav-btn-top" id="favBtnTop" title="收藏" aria-label="收藏此小說">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
             </svg>
@@ -102,7 +102,7 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
 
       開始閱讀
     </a>
-    <button class="btn-secondary" id="favBtn">
+    <button class="btn-secondary" id="favBtn" aria-label="收藏此小說">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
       </svg>
@@ -119,8 +119,9 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
     display: flex;
     gap: var(--spacing-lg);
     padding: var(--spacing-lg);
-    background: var(--bg-base);
+    background: linear-gradient(135deg, var(--bg-base) 0%, rgba(253, 251, 247, 0.8) 50%, var(--bg-base) 100%);
     border-bottom: 1px solid var(--color-border-light);
+    border-left: 3px solid var(--color-accent);
   }
 
   .detail-cover {
@@ -222,6 +223,11 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
     color: var(--color-accent);
   }
 
+  .fav-btn-top:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
   .fav-btn-top svg {
     width: 24px;
     height: 24px;
@@ -277,7 +283,7 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
   .synopsis {
     padding: var(--spacing-lg);
     background: var(--bg-base);
-    margin-top: var(--spacing-4);
+    margin-top: var(--spacing-6);
   }
 
   .synopsis-title {
@@ -297,9 +303,9 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
     display: flex;
     flex-wrap: wrap;
     gap: var(--spacing-2);
-    padding: var(--spacing-lg);
+    padding: var(--spacing-6);
     background: var(--bg-base);
-    margin-top: var(--spacing-4);
+    margin-top: var(--spacing-6);
   }
 
   .tag {
@@ -312,9 +318,9 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
   }
 
   .chapters-section {
-    padding: var(--spacing-lg);
+    padding: var(--spacing-6);
     background: var(--bg-base);
-    margin-top: var(--spacing-4);
+    margin-top: var(--spacing-6);
     padding-bottom: 100px;
   }
 
@@ -331,7 +337,7 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
     margin: 0;
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--spacing-2);
+    gap: var(--spacing-3);
   }
 
   .toc-item {
@@ -355,16 +361,21 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
     transform: scale(0.98);
   }
 
+  .toc-item:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
   .toc-chapter {
-    width: 44px;
-    height: 44px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--color-bg-inner);
-    border: 1px solid var(--color-border-subtle);
-    border-radius: var(--radius-md);
-    font-size: var(--text-sm);
+    background: var(--bg-outer);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
     color: var(--color-text-muted);
     flex-shrink: 0;
     touch-action: manipulation;
@@ -390,6 +401,7 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
     padding-bottom: calc(var(--spacing-md) + env(safe-area-inset-bottom));
     display: flex;
     gap: var(--spacing-md);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
   }
 
   /* Desktop: constrain to content width */
@@ -428,6 +440,11 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
     transform: scale(0.98);
   }
 
+  .btn-primary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
+  }
+
   .btn-secondary {
     width: 48px;
     height: 48px;
@@ -451,6 +468,11 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
 
   .btn-secondary:active {
     transform: scale(0.98);
+  }
+
+  .btn-secondary:focus-visible {
+    outline: 2px solid var(--color-accent);
+    outline-offset: 2px;
   }
 </style>
 
