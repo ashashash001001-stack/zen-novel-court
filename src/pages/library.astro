@@ -2,6 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { config } from '../config';
 import { getCollection } from 'astro:content';
+import { categoryConfig, getAllCategorySlugs } from '../config/categories';
 import VisualCategory from '../components/VisualCategory.astro';
 import fs from 'fs';
 import path from 'path';
@@ -31,13 +32,14 @@ const novels = novelsCollection
     };
   });
 
+const categorySlugs = getAllCategorySlugs();
 const categories = [
   { name: '全部', slug: 'all', icon: '📚' },
-  { name: '療癒', slug: 'healing', icon: '🌿' },
-  { name: '美食', slug: 'food', icon: '🍜' },
-  { name: '都市', slug: 'urban', icon: '🏙️' },
-  { name: '系統', slug: 'system', icon: '⚡' },
-  { name: '成長', slug: 'growth', icon: '📈' }
+  ...categorySlugs.map(slug => ({
+    name: categoryConfig[slug].name,
+    slug,
+    icon: categoryConfig[slug].icon
+  }))
 ];
 
 // Get URL params for filtering
