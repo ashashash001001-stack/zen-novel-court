@@ -11,6 +11,15 @@ const path = require('path');
 const projectRoot = path.join(__dirname);
 const issues = [];
 
+// Define valid spacing tokens from tokens.css
+const validSpacingTokens = [
+  'spacing-1', 'spacing-2', 'spacing-3', 'spacing-4', 'spacing-5', 'spacing-6',
+  'spacing-8', 'spacing-10', 'spacing-12', 'spacing-section', 'spacing-footer'
+];
+
+// Tokens that are NOT valid (not defined in tokens.css)
+const invalidTokens = ['spacing-lg', 'spacing-md', 'spacing-xl', 'spacing-7', 'spacing-9', 'spacing-11'];
+
 function checkFile(filePath) {
   const content = fs.readFileSync(filePath, 'utf-8');
 
@@ -31,6 +40,21 @@ function checkFile(filePath) {
 
   // Note: --space-* and --spacing-* are both valid design tokens in tokens.css
   // So we skip this check as both are acceptable
+
+  // Issue: Check for undefined spacing tokens (lg, md, xl, 7, 9, 11)
+  for (const token of invalidTokens) {
+    const regex = new RegExp(`var\\(--${token}\\)`, 'g');
+    const matches = content.match(regex);
+    if (matches) {
+      issues.push({
+        file: filePath,
+        type: 'undefined-token',
+        token: token,
+        count: matches.length,
+        examples: [`--${token} is not defined in tokens.css`]
+      });
+    }
+  }
 }
 
 function scanDirectory(dir) {
