@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import sharp from 'sharp';
+import { Jimp } from 'jimp';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
@@ -22,9 +22,8 @@ function getCoverFile(dir) {
 }
 
 async function convertToWebp(inputPath, outputPath) {
-  await sharp(inputPath)
-    .webp({ quality: 85 })
-    .toFile(outputPath);
+  const image = await Jimp.read(inputPath);
+  await image.writeAsync(outputPath);
 }
 
 async function syncCovers() {
@@ -74,10 +73,9 @@ async function syncCovers() {
 
       if (needsSync) {
         if (srcExt === '.webp') {
-          // Direct copy for webp
-          await sharp(coverPath)
-            .webp({ quality: 85 })
-            .toFile(destCoverPath);
+          // For webp, convert via jimp and save as webp format
+          const image = await Jimp.read(coverPath);
+          await image.writeAsync(destCoverPath);
           console.log(`✅ Synced: ${novelName}/cover.webp (original webp)`);
         } else {
           // Convert to webp for png/jpg/jpeg

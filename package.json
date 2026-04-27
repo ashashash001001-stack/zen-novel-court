@@ -13,7 +13,8 @@
     "sync-covers": "node scripts/sync-covers.mjs"
   },
   "dependencies": {
-    "astro": "^6.1.5"
+    "astro": "^6.1.5",
+    "jimp": "^1.6.1"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
