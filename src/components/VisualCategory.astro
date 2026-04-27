@@ -1,21 +1,13 @@
 ---
-interface Category {
-  name: string;
-  slug: string;
-  icon: string;
-  color: string;
-}
+import { categoryConfig } from '../config/categories';
+import { config } from '../config';
 
-const categories: Category[] = [
-  { name: '療癒', slug: 'healing', icon: '🌿', color: 'linear-gradient(135deg, #7d9a7d 0%, #5a7a5a 100%)' },
-  { name: '美食', slug: 'food', icon: '🍜', color: 'linear-gradient(135deg, #b8a86b 0%, #8a7a4b 100%)' },
-  { name: '都市', slug: 'urban', icon: '🏙️', color: 'linear-gradient(135deg, #6b7a8f 0%, #4b5a6f 100%)' },
-  { name: '系統', slug: 'system', icon: '⚡', color: 'linear-gradient(135deg, #8b7dab 0%, #6b5d8b 100%)' },
-  { name: '成長', slug: 'growth', icon: '📈', color: 'linear-gradient(135deg, #b08b8b 0%, #8a6b6b 100%)' },
-  { name: '其他', slug: 'other', icon: '📚', color: 'linear-gradient(135deg, #7a7a7a 0%, #5a5a5a 100%)' },
-];
-
-const { config } = await import('../config');
+const categories = Object.entries(categoryConfig).map(([slug, data]) => ({
+  name: data.name,
+  slug,
+  icon: data.icon,
+  color: data.color
+}));
 ---
 
 <section class="visual-categories">
