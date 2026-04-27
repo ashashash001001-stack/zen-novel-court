@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import sharp from 'sharp';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
@@ -18,6 +19,12 @@ function getCoverFile(dir) {
     }
   }
   return null;
+}
+
+async function convertToWebp(inputPath, outputPath) {
+  await sharp(inputPath)
+    .webp({ quality: 85 })
+    .toFile(outputPath);
 }
 
 async function syncCovers() {
@@ -53,11 +60,12 @@ async function syncCovers() {
     if (coverPath) {
       const srcExt = path.extname(coverPath);
       const destCoverPath = path.join(publicNovelDir, 'cover.webp');
+      const srcWebpPath = path.join(srcNovelDir, 'cover.webp');
 
       // Get source file stats
       const srcStats = fs.statSync(coverPath);
       const destExists = fs.existsSync(destCoverPath);
-      const srcWebpExists = fs.existsSync(path.join(srcNovelDir, 'cover.webp'));
+      const srcWebpExists = fs.existsSync(srcWebpPath);
 
       // Check if we need to sync/convert
       let needsSync = !destExists || !srcWebpExists;
@@ -67,15 +75,18 @@ async function syncCovers() {
       }
 
       if (needsSync) {
-        // Copy to public with original extension
-        const destCoverPath = path.join(publicNovelDir, `cover${srcExt}`);
-        fs.copyFileSync(coverPath, destCoverPath);
-
-        // Also copy to src (website checks for webp first, then png/jpg)
-        const srcCoverPath = path.join(srcNovelDir, `cover${srcExt}`);
-        fs.copyFileSync(coverPath, srcCoverPath);
-
-        console.log(`✅ Synced: ${novelName}/cover${srcExt}`);
+        if (srcExt === '.webp') {
+          // WebP: copy directly
+          fs.copyFileSync(coverPath, destCoverPath);
+          fs.copyFileSync(coverPath, srcWebpPath);
+          console.log(`✅ Synced: ${novelName}/cover.webp (original webp)`);
+        } else {
+          // PNG/JPG/JPEG: convert to WebP
+          await convertToWebp(coverPath, destCoverPath);
+          await convertToWebp(coverPath, srcWebpPath);
+          console.log(`✅ Converted: ${novelName}/cover.webp (from ${srcExt})`);
+          converted++;
+        }
         synced++;
       } else {
         console.log(`⏭️  Up-to-date: ${novelName}/cover.webp`);
