@@ -1,6 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import sharp from 'sharp';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const rootDir = path.resolve(__dirname, '..');
@@ -20,8 +21,14 @@ function getCoverFile(dir) {
   return null;
 }
 
-function syncCovers() {
-  console.log('🔄 Syncing cover images...\n');
+async function convertToWebp(inputPath, outputPath) {
+  await sharp(inputPath)
+    .webp({ quality: 85 })
+    .toFile(outputPath);
+}
+
+async function syncCovers() {
+  console.log('🔄 Syncing and converting cover images...\n');
 
   // Ensure public directory exists
   if (!fs.existsSync(publicDir)) {
@@ -37,6 +44,7 @@ function syncCovers() {
 
   let synced = 0;
   let skipped = 0;
+  let converted = 0;
 
   for (const novelName of novelDirs) {
     const srcNovelDir = path.join(srcDir, novelName);
@@ -50,19 +58,36 @@ function syncCovers() {
     const coverPath = getCoverFile(srcNovelDir);
 
     if (coverPath) {
-      const ext = path.extname(coverPath);
-      const destCoverPath = path.join(publicNovelDir, `cover${ext}`);
+      const srcExt = path.extname(coverPath);
+      const destCoverPath = path.join(publicNovelDir, 'cover.webp');
 
-      // Copy file (only if different to avoid unnecessary rebuilds)
+      // Get source file stats
       const srcStats = fs.statSync(coverPath);
       const destExists = fs.existsSync(destCoverPath);
 
-      if (!destExists || fs.statSync(destCoverPath).mtimeMs < srcStats.mtimeMs) {
-        fs.copyFileSync(coverPath, destCoverPath);
-        console.log(`✅ Synced: ${novelName}/cover${ext}`);
+      // Check if we need to sync/convert
+      let needsSync = !destExists;
+      if (destExists) {
+        const destStats = fs.statSync(destCoverPath);
+        needsSync = destStats.mtimeMs < srcStats.mtimeMs;
+      }
+
+      if (needsSync) {
+        if (srcExt === '.webp') {
+          // Direct copy for webp
+          await sharp(coverPath)
+            .webp({ quality: 85 })
+            .toFile(destCoverPath);
+          console.log(`✅ Synced: ${novelName}/cover.webp (original webp)`);
+        } else {
+          // Convert to webp for png/jpg/jpeg
+          await convertToWebp(coverPath, destCoverPath);
+          console.log(`✅ Converted: ${novelName}/cover.webp (from ${srcExt})`);
+          converted++;
+        }
         synced++;
       } else {
-        console.log(`⏭️  Up-to-date: ${novelName}/cover${ext}`);
+        console.log(`⏭️  Up-to-date: ${novelName}/cover.webp`);
         skipped++;
       }
     } else {
@@ -70,7 +95,7 @@ function syncCovers() {
     }
   }
 
-  console.log(`\n📊 Total: ${synced} synced, ${skipped} up-to-date`);
+  console.log(`\n📊 Total: ${synced} synced, ${skipped} up-to-date, ${converted} converted to webp`);
 }
 
 syncCovers();
