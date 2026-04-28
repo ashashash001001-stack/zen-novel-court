@@ -5,11 +5,11 @@ interface Props {
   title?: string;
 }
 
-const { title = "阅读" } = Astro.props;
+const { title = "閱讀" } = Astro.props;
 ---
 
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="zh-TW" class="lang-pending">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -21,6 +21,17 @@ const { title = "阅读" } = Astro.props;
   <link rel="icon" type="image/svg+xml" href={config.path('/favicon.svg')}>
   <link rel="manifest" href={config.path('/manifest.json')}>
   <title>{title}</title>
+
+  <!-- i18n: Prevent flash of unstyled content -->
+  <style is:inline>
+    html.lang-pending {
+      visibility: hidden;
+    }
+    html.lang-ready {
+      visibility: visible;
+    }
+  </style>
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -29,6 +40,33 @@ const { title = "阅读" } = Astro.props;
   <div class="reader-container">
     <slot />
   </div>
+
+  <!-- i18n: Initialize language conversion on client side -->
+  <script type="module">
+    import { initLanguage } from '../scripts/i18n.ts';
+
+    // Initialize i18n when DOM is ready
+    async function init() {
+      try {
+        await initLanguage();
+        // Mark as ready to show content
+        document.documentElement.classList.remove('lang-pending');
+        document.documentElement.classList.add('lang-ready');
+      } catch (error) {
+        console.error('i18n initialization failed:', error);
+        // Show content anyway on error
+        document.documentElement.classList.remove('lang-pending');
+        document.documentElement.classList.add('lang-ready');
+      }
+    }
+
+    // Run on DOMContentLoaded or immediately if DOM is already ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  </script>
 </body>
 </html>
 
