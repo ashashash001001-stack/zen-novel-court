@@ -11,8 +11,8 @@ interface Props {
   gaMeasurementId?: string;
 }
 
-const { 
-  title = "小说阁 - 沉浸阅读，从这里开始", 
+const {
+  title = "小說閣 - 沉浸閱讀，從這裡開始", 
   description = "小说阁 - 发现精彩中文网络小说，沉浸式阅读体验。涵盖都市、玄幻、仙侠、科幻等多种题材。",
   canonicalURL = Astro.url.href,
   ogImage = config.path('/og-image.png'),
@@ -25,7 +25,7 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
 ---
 
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="light">
+<html lang="zh-TW" data-theme="light" class="lang-pending">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -86,6 +86,16 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
       }
     }
   })} />
+
+  <!-- i18n: Prevent flash of unstyled content -->
+  <style is:inline>
+    html.lang-pending {
+      visibility: hidden;
+    }
+    html.lang-ready {
+      visibility: visible;
+    }
+  </style>
 </head>
 <body data-base-path={config.base}>
   <script is:inline>
@@ -146,6 +156,33 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
         </a>
       </div>
     </nav>
+
+  <!-- i18n: Initialize language conversion on client side -->
+  <script type="module">
+    import { initLanguage } from '../scripts/i18n.ts';
+
+    // Initialize i18n when DOM is ready
+    async function init() {
+      try {
+        await initLanguage();
+        // Mark as ready to show content
+        document.documentElement.classList.remove('lang-pending');
+        document.documentElement.classList.add('lang-ready');
+      } catch (error) {
+        console.error('i18n initialization failed:', error);
+        // Show content anyway on error
+        document.documentElement.classList.remove('lang-pending');
+        document.documentElement.classList.add('lang-ready');
+      }
+    }
+
+    // Run on DOMContentLoaded or immediately if DOM is already ready
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  </script>
   </body>
 </html>
 
