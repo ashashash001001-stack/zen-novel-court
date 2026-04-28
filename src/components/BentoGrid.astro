@@ -77,7 +77,7 @@ const { config } = await import('../config');
   </div>
 
   <div class="bento-cell bento-cats">
-    <h3 class="bento-title">探索分類</h3>
+    <h3 class="bento-title">探索分类</h3>
     <div class="cat-grid">
       {Object.entries(categoryConfig).map(([slug, data]) => (
         <a href={config.path('/category/' + slug)} class="cat-chip">{data.name}</a>
@@ -87,15 +87,15 @@ const { config } = await import('../config');
   </div>
 
   <div class="bento-cell bento-stats">
-    <h3 class="bento-title">站點統計</h3>
+    <h3 class="bento-title">站点统计</h3>
     <div class="stats-grid">
       <div class="stat-item">
         <span class="stat-num">{hotRankings.length + latestUpdates.length}</span>
-        <span class="stat-label">作品總數</span>
+        <span class="stat-label">作品总数</span>
       </div>
       <div class="stat-item">
         <span class="stat-num">{hotRankings.reduce((acc, n) => acc + (n.chapters || 0), 0)}</span>
-        <span class="stat-label">總章節數</span>
+        <span class="stat-label">总章节数</span>
       </div>
     </div>
   </div>

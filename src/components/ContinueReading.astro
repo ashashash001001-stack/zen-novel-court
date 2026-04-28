@@ -158,9 +158,9 @@
         // Empty state
         continueSection.innerHTML = `
           <div class="continue-reading-empty">
-            <h3 class="continue-title">繼續閱讀</h3>
-            <p class="empty-text">暫無閱讀記錄</p>
-            <a href="${BASE_PATH}/library" class="empty-link">探索小說 →</a>
+            <h3 class="continue-title">继续阅读</h3>
+            <p class="empty-text">暂无阅读记录</p>
+            <a href="${BASE_PATH}/library" class="empty-link">探索小说 →</a>
           </div>
         `;
         return;
@@ -170,7 +170,7 @@
       const booksMetaEl = document.getElementById('books-meta');
       const booksMeta = booksMetaEl ? JSON.parse(booksMetaEl.textContent || '{}') : {};
 
-      let html = '<div class="continue-reading-card"><h3 class="continue-title">繼續閱讀</h3>';
+      let html = '<div class="continue-reading-card"><h3 class="continue-title">继续阅读</h3>';
       
       for (const [bookId, data] of entries) {
         const meta = booksMeta[bookId] || {};
@@ -203,9 +203,9 @@
       if (continueSection) {
         continueSection.innerHTML = `
           <div class="continue-reading-empty">
-            <h3 class="continue-title">繼續閱讀</h3>
-            <p class="empty-text">暫無閱讀記錄</p>
-            <a href="${BASE_PATH}/library" class="empty-link">探索小說 →</a>
+            <h3 class="continue-title">继续阅读</h3>
+            <p class="empty-text">暂无阅读记录</p>
+            <a href="${BASE_PATH}/library" class="empty-link">探索小说 →</a>
           </div>
         `;
       }

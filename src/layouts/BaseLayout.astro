@@ -124,7 +124,7 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
   </script>
   <!-- Skip to main content link for accessibility -->
   <a href="#main-content" class="skip-link">跳到主要内容</a>
-  
+
   <main id="main-content" class="main">
     <div class="content-wrapper">
       <slot />
@@ -159,8 +159,8 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
 
   <!-- i18n: Initialize language conversion on client side -->
   <script type="module">
-    // Load OpenCC from CDN and convert to Traditional
-    async function loadOpenCCAndConvert() {
+    // Load OpenCC from CDN
+    async function loadOpenCC() {
       return new Promise((resolve, reject) => {
         if (window.OpenCC) {
           resolve();
@@ -171,17 +171,13 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
         script.onload = () => resolve();
         script.onerror = () => reject(new Error('Failed to load OpenCC'));
         document.head.appendChild(script);
-      }).then(() => {
-        const opencc = window.OpenCC;
-        const converter = opencc('s2t.json');
-        converter(document.body);
       });
     }
 
-    // Default content is Simplified Chinese - convert to Traditional for non-Simplified browsers
+    // Detect browser language preference
     function detectLanguage() {
       const browserLang = navigator.language ?? navigator.userLanguage ?? 'zh-CN';
-      // If browser is Simplified Chinese (zh-CN, zh-SG), no conversion needed
+      // If browser is Simplified Chinese (zh-CN, zh-SG), convert to Simplified
       if (browserLang === 'zh-CN' || browserLang === 'zh-SG') {
         return 'simplified';
       }
@@ -191,13 +187,21 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
 
     async function initLanguage() {
       const lang = detectLanguage();
-      // If user prefers Traditional, convert from Simplified to Traditional
-      if (lang === 'traditional') {
-        try {
-          await loadOpenCCAndConvert();
-        } catch (error) {
-          console.error('Failed to convert to Traditional Chinese:', error);
+      try {
+        await loadOpenCC();
+        const opencc = window.OpenCC;
+
+        if (lang === 'simplified') {
+          // Browser prefers Simplified: convert Traditional to Simplified
+          const converter = opencc('t2s.json');
+          converter(document.body);
+        } else {
+          // Browser prefers Traditional: convert Simplified to Traditional
+          const converter = opencc('s2t.json');
+          converter(document.body);
         }
+      } catch (error) {
+        console.error('Language conversion failed:', error);
       }
     }
 

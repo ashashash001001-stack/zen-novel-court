@@ -5,7 +5,7 @@ interface Props {
   title?: string;
 }
 
-const { title = "閱讀" } = Astro.props;
+const { title = "阅读" } = Astro.props;
 ---
 
 <!DOCTYPE html>
@@ -17,7 +17,7 @@ const { title = "閱讀" } = Astro.props;
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
-  <meta name="description" content="小說閣 - 閱讀">
+  <meta name="description" content="小说阁 - 阅读">
   <link rel="icon" type="image/svg+xml" href={config.path('/favicon.svg')}>
   <link rel="manifest" href={config.path('/manifest.json')}>
   <title>{title}</title>
@@ -43,8 +43,8 @@ const { title = "閱讀" } = Astro.props;
 
   <!-- i18n: Initialize language conversion on client side -->
   <script type="module">
-    // Load OpenCC from CDN and convert to Traditional
-    async function loadOpenCCAndConvert() {
+    // Load OpenCC from CDN
+    async function loadOpenCC() {
       return new Promise((resolve, reject) => {
         if (window.OpenCC) {
           resolve();
@@ -55,17 +55,13 @@ const { title = "閱讀" } = Astro.props;
         script.onload = () => resolve();
         script.onerror = () => reject(new Error('Failed to load OpenCC'));
         document.head.appendChild(script);
-      }).then(() => {
-        const opencc = window.OpenCC;
-        const converter = opencc('s2t.json');
-        converter(document.body);
       });
     }
 
-    // Default content is Simplified Chinese - convert to Traditional for non-Simplified browsers
+    // Detect browser language preference
     function detectLanguage() {
       const browserLang = navigator.language ?? navigator.userLanguage ?? 'zh-CN';
-      // If browser is Simplified Chinese (zh-CN, zh-SG), no conversion needed
+      // If browser is Simplified Chinese (zh-CN, zh-SG), convert to Simplified
       if (browserLang === 'zh-CN' || browserLang === 'zh-SG') {
         return 'simplified';
       }
@@ -75,13 +71,21 @@ const { title = "閱讀" } = Astro.props;
 
     async function initLanguage() {
       const lang = detectLanguage();
-      // If user prefers Traditional, convert from Simplified to Traditional
-      if (lang === 'traditional') {
-        try {
-          await loadOpenCCAndConvert();
-        } catch (error) {
-          console.error('Failed to convert to Traditional Chinese:', error);
+      try {
+        await loadOpenCC();
+        const opencc = window.OpenCC;
+
+        if (lang === 'simplified') {
+          // Browser prefers Simplified: convert Traditional to Simplified
+          const converter = opencc('t2s.json');
+          converter(document.body);
+        } else {
+          // Browser prefers Traditional: convert Simplified to Traditional
+          const converter = opencc('s2t.json');
+          converter(document.body);
         }
+      } catch (error) {
+        console.error('Language conversion failed:', error);
       }
     }
 

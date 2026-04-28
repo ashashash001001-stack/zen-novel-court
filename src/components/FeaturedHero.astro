@@ -21,9 +21,9 @@ const { config } = await import('../config');
 <section class="featured-hero">
   <!-- Hero Background Image -->
   <div class="hero-background">
-    <img src={config.path('/images/hero-bamboo-16x9.png')} alt="竹林閱讀空間" />
+    <img src={config.path('/images/hero-bamboo-16x9.png')} alt="竹林阅读空间" />
   </div>
-  <a href={config.path('/book/' + novel.slug)} class="hero-link" aria-label={`查看《${novel.title}》詳情`}></a>
+  <a href={config.path('/book/' + novel.slug)} class="hero-link" aria-label={`查看《${novel.title}》详情`}></a>
 
   <div class="hero-cover">
     {novel.cover ? (
@@ -42,7 +42,7 @@ const { config } = await import('../config');
   </div>
 
   <div class="hero-content">
-    <span class="hero-badge">精選推薦</span>
+    <span class="hero-badge">精选推荐</span>
     <h1 class="hero-title">{novel.title}</h1>
     <p class="hero-author">作者：{novel.author}</p>
     <p class="hero-meta">
@@ -54,14 +54,14 @@ const { config } = await import('../config');
 
     <div class="hero-actions">
       <a href={config.path('/book/' + novel.slug + '/1')} class="btn btn-primary" data-hotkey="r">
-        <span>開始閱讀</span>
+        <span>开始阅读</span>
       </a>
       <a href={config.path('/library')} class="btn btn-secondary hero-search-btn">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
           <circle cx="11" cy="11" r="8"></circle>
           <path d="m21 21-4.35-4.35"></path>
         </svg>
-        <span>搜尋</span>
+        <span>搜索</span>
       </a>
     </div>
   </div>

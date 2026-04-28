@@ -49,9 +49,9 @@ const activeStatus = Astro.url.searchParams.get('status') || 'all';
 // Reading status filter options
 const statusFilters = [
   { name: '全部', slug: 'all', icon: '📚' },
-  { name: '閱讀中', slug: 'reading', icon: '📖' },
+  { name: '阅读中', slug: 'reading', icon: '📖' },
   { name: '已完成', slug: 'completed', icon: '✅' },
-  { name: '待閱讀', slug: 'later', icon: '⭐' }
+  { name: '待阅读', slug: 'later', icon: '⭐' }
 ];
 ---
 
@@ -62,17 +62,17 @@ const statusFilters = [
   <!-- Search Header -->
   <div class="search-header">
     <form method="get" action={config.path('/library')} class="search-form">
-      <input 
-        type="text" 
-        name="q" 
+      <input
+        type="text"
+        name="q"
         value={searchQuery}
-        placeholder="搜尋小說、作者..." 
+        placeholder="搜索小说、作者..."
         class="search-input"
         id="searchInput"
       >
       <input type="hidden" name="category" value={activeCategory} id="categoryInput">
       <input type="hidden" name="status" value={activeStatus} id="statusInput">
-      <button type="submit" class="search-btn">搜尋</button>
+      <button type="submit" class="search-btn">搜索</button>
     </form>
   </div>
 

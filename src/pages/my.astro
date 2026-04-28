@@ -12,14 +12,14 @@ import { config } from '../config';
       </div>
       <div class="profile-info">
         <div class="profile-name">Reader</div>
-        <div class="profile-stats" id="profileStats">0 本收藏 · 0 章閱讀</div>
+        <div class="profile-stats" id="profileStats">0 本收藏 · 0 章阅读</div>
       </div>
     </div>
 
     <!-- Quick Resume Section -->
     <div id="quick-resume" class="my-section quick-resume-section" style="display: none;">
       <div class="section-header">
-        <h2>繼續閱讀</h2>
+        <h2>继续阅读</h2>
       </div>
       <div class="quick-resume-card">
         <div class="qr-cover" id="qrCover"></div>
@@ -31,7 +31,7 @@ import { config } from '../config';
             <span class="qr-progress-text" id="qrProgressText"></span>
           </div>
         </div>
-        <a href="#" class="qr-continue-btn" id="qrContinue">繼續閱讀</a>
+        <a href="#" class="qr-continue-btn" id="qrContinue">继续阅读</a>
       </div>
     </div>
 
@@ -45,7 +45,7 @@ import { config } from '../config';
           <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
           </svg>
-          <p>尚未收藏任何小說</p>
+          <p>尚未收藏任何小说</p>
         </div>
       </div>
     </div>
@@ -53,7 +53,7 @@ import { config } from '../config';
     <!-- History Section -->
     <div class="my-section">
       <div class="section-header">
-        <h2>閱讀記錄</h2>
+        <h2>阅读记录</h2>
       </div>
       <div id="history" class="list-container">
         <div class="empty-state">
@@ -61,7 +61,7 @@ import { config } from '../config';
             <circle cx="12" cy="12" r="10"></circle>
             <polyline points="12 6 12 12 16 14"></polyline>
           </svg>
-          <p>尚無閱讀記錄</p>
+          <p>尚无阅读记录</p>
         </div>
       </div>
     </div>
@@ -69,12 +69,12 @@ import { config } from '../config';
     <!-- Settings Section -->
     <div class="my-section">
       <div class="section-header">
-        <h2>設定</h2>
+        <h2>设置</h2>
       </div>
       <div class="settings-list">
         <!-- Theme Toggle -->
         <div class="setting-row">
-          <div class="setting-label">主題</div>
+          <div class="setting-label">主题</div>
           <div class="theme-toggle">
             <button class="theme-btn active" data-theme="light">浅色</button>
             <button class="theme-btn" data-theme="sepia">護眼</button>
@@ -101,15 +101,15 @@ import { config } from '../config';
     <!-- About Section -->
     <div class="my-section">
       <div class="about-section">
-        <span>小說閣 v1.0</span>
+        <span>小说阁 v1.0</span>
       </div>
     </div>
 
     <!-- Legal Links -->
     <div class="legal-links">
-      <a href={config.path('/legal/privacy')} class="legal-link">隱私政策</a>
+      <a href={config.path('/legal/privacy')} class="legal-link">隐私政策</a>
       <span class="legal-divider">|</span>
-      <a href={config.path('/legal/terms')} class="legal-link">服務條款</a>
+      <a href={config.path('/legal/terms')} class="legal-link">服务条款</a>
     </div>
   </div>
 </BaseLayout>
@@ -745,9 +745,9 @@ const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath;
     const minutes = Math.floor(diff / 60000);
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
-    if (minutes < 1) return '剛剛';
-    if (minutes < 60) return `${minutes} 分鐘前`;
-    if (hours < 24) return `${hours} 小時前`;
+    if (minutes < 1) return '刚刚';
+    if (minutes < 60) return `${minutes} 分钟前`;
+    if (hours < 24) return `${hours} 小时前`;
     if (days < 2) return '昨天';
     return `${days} 天前`;
   }
@@ -791,7 +791,7 @@ const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath;
       
       if (cover) cover.innerHTML = `<span>${data.title.slice(0, 2)}</span>`;
       if (title) title.textContent = data.title;
-      if (chapter) chapter.textContent = last.chapter ? `第 ${last.chapter} 章 / ${data.chapters} 章` : '未開始閱讀';
+      if (chapter) chapter.textContent = last.chapter ? `第 ${last.chapter} 章 / ${data.chapters} 章` : '未开始阅读';
       if (fill) fill.style.width = `${progress}%`;
       if (text) text.textContent = `${progress}%`;
       if (btn) (btn as HTMLAnchorElement).href = `${BASE_PATH}/book/${last.id}${last.chapter ? '/' + last.chapter : ''}`;
@@ -831,8 +831,8 @@ const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath;
             <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
               <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
             </svg>
-            <p>尚未收藏任何小說</p>
-            <a href="${BASE_PATH}/library" class="empty-cta">探索書庫</a>
+            <p>尚未收藏任何小说</p>
+            <a href="${BASE_PATH}/library" class="empty-cta">探索书库</a>
           </div>`;
       } else {
         container.innerHTML = favData.map((id: string) => {
@@ -894,7 +894,7 @@ const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath;
       const totalChapters = historyData.reduce((sum: number, item: { chapter?: number }) => sum + (item.chapter || 0), 0);
       const statsEl = document.getElementById('profileStats');
       if (statsEl) {
-        statsEl.textContent = `${fav.length} 本收藏 · ${totalChapters} 章閱讀`;
+        statsEl.textContent = `${fav.length} 本收藏 · ${totalChapters} 章阅读`;
       }
       
       if (!container) return;
@@ -906,8 +906,8 @@ const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath;
               <circle cx="12" cy="12" r="10"></circle>
               <polyline points="12 6 12 12 16 14"></polyline>
             </svg>
-            <p>尚無閱讀記錄</p>
-            <a href="${BASE_PATH}/library" class="empty-cta">開始閱讀</a>
+            <p>尚无阅读记录</p>
+            <a href="${BASE_PATH}/library" class="empty-cta">开始阅读</a>
           </div>`;
       } else {
         container.innerHTML = historyData.slice(0, 10).map((item: { id: string; chapter?: number; timestamp?: number }) => {
@@ -920,7 +920,7 @@ const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath;
                 ${createMiniCover(data.title)}
                 <div class="item-info">
                   <div class="item-title">${data.title}</div>
-                  <div class="item-chapter">${item.chapter ? '第 ' + item.chapter + ' 章 · ' + progress + '%' : '未開始閱讀'}</div>
+                  <div class="item-chapter">${item.chapter ? '第 ' + item.chapter + ' 章 · ' + progress + '%' : '未开始阅读'}</div>
                   ${item.chapter ? `<div class="item-progress"><div class="item-progress-fill" style="width:${progress}%"></div></div>` : ''}
                   ${timeAgo ? `<div class="item-time">${timeAgo}</div>` : ''}
                 </div>
@@ -939,7 +939,7 @@ const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath;
   }
 
   document.getElementById('clear-favorites')?.addEventListener('click', () => {
-    if (confirm('確定要清空所有收藏嗎？')) {
+    if (confirm('确定要清空所有收藏嗎？')) {
       localStorage.removeItem('favorites');
       loadFavorites();
       loadQuickResume();
@@ -947,7 +947,7 @@ const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath;
   });
 
   document.getElementById('clear-history')?.addEventListener('click', () => {
-    if (confirm('確定要清空所有閱讀記錄嗎？')) {
+    if (confirm('确定要清空所有阅读记录嗎？')) {
       localStorage.removeItem('history');
       loadHistory();
       loadQuickResume();
