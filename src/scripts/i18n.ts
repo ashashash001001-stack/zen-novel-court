@@ -13,7 +13,7 @@ import { Converter, HTMLConverter, Locale } from 'opencc-js';
  *   - Other languages → traditional
  */
 export function detectLanguage(): 'traditional' | 'simplified' {
-  const browserLang = navigator.language || (navigator as Record<string, unknown>).userLanguage as string;
+  const browserLang = navigator.language ?? (navigator as unknown as { userLanguage?: string }).userLanguage ?? 'zh-TW';
 
   // Check for Simplified Chinese locales
   if (browserLang === 'zh-CN' || browserLang === 'zh-SG') {
@@ -32,7 +32,11 @@ export async function initLanguage(): Promise<void> {
   const lang = detectLanguage();
 
   if (lang === 'simplified') {
-    await convertToSimplified();
+    try {
+      await convertToSimplified();
+    } catch (error) {
+      console.error('Failed to convert to Simplified Chinese:', error);
+    }
   }
 }
 
@@ -40,21 +44,26 @@ export async function initLanguage(): Promise<void> {
  * Convert the entire page from Traditional to Simplified Chinese
  */
 async function convertToSimplified(): Promise<void> {
-  // Create converter: Traditional Chinese (Taiwan) to Simplified Chinese (Mainland China)
-  const converter = Converter({
-    from: Locale.TW,
-    to: Locale.CN
-  });
+  try {
+    // Create converter: Traditional Chinese (Taiwan) to Simplified Chinese (Mainland China)
+    const converter = Converter({
+      from: Locale.TW,
+      to: Locale.CN
+    });
 
-  // Get root element
-  const rootNode = document.documentElement;
+    // Get root element
+    const rootNode = document.documentElement;
 
-  // Create HTML converter handler
-  // Convert from zh-TW to zh-CN
-  const htmlConverter = HTMLConverter(converter, rootNode, 'zh-TW', 'zh-CN');
+    // Create HTML converter handler
+    // Convert from zh-TW to zh-CN
+    const htmlConverter = HTMLConverter(converter, rootNode, 'zh-TW', 'zh-CN');
 
-  // Perform conversion
-  htmlConverter.convert();
+    // Perform conversion
+    htmlConverter.convert();
+  } catch (error) {
+    console.error('Error during Chinese conversion:', error);
+    throw error;
+  }
 }
 
 /**
