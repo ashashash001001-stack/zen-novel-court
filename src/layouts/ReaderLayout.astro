@@ -9,7 +9,7 @@ const { title = "閱讀" } = Astro.props;
 ---
 
 <!DOCTYPE html>
-<html lang="zh-TW" class="lang-pending">
+<html lang="zh-CN" class="lang-pending">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -44,24 +44,28 @@ const { title = "閱讀" } = Astro.props;
   <!-- i18n: Initialize language conversion on client side -->
   <script type="module">
     // Inline i18n implementation to avoid module loading issues
+    // Default content is Simplified Chinese - convert to Traditional for non-Simplified browsers
     function detectLanguage() {
-      const browserLang = navigator.language ?? navigator.userLanguage ?? 'zh-TW';
+      const browserLang = navigator.language ?? navigator.userLanguage ?? 'zh-CN';
+      // If browser is Simplified Chinese (zh-CN, zh-SG), no conversion needed
       if (browserLang === 'zh-CN' || browserLang === 'zh-SG') {
         return 'simplified';
       }
+      // Otherwise (zh-TW, zh-HK, en, etc.), convert to Traditional
       return 'traditional';
     }
 
     async function initLanguage() {
       const lang = detectLanguage();
-      if (lang === 'simplified') {
+      // If user prefers Traditional, convert from Simplified to Traditional
+      if (lang === 'traditional') {
         try {
           const { Converter, HTMLConverter, Locale } = await import('opencc-js');
-          const converter = Converter({ from: Locale.TW, to: Locale.CN });
-          const htmlConverter = HTMLConverter(converter, document.documentElement, 'zh-TW', 'zh-CN');
+          const converter = Converter({ from: Locale.CN, to: Locale.TW });
+          const htmlConverter = HTMLConverter(converter, document.documentElement, 'zh-CN', 'zh-TW');
           htmlConverter.convert();
         } catch (error) {
-          console.error('Failed to convert to Simplified Chinese:', error);
+          console.error('Failed to convert to Traditional Chinese:', error);
         }
       }
     }

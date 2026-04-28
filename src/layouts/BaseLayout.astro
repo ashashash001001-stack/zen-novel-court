@@ -12,8 +12,8 @@ interface Props {
 }
 
 const {
-  title = "小說閣 - 沉浸閱讀，從這裡開始", 
-  description = "小說閣 - 發現精彩中文網路小說，沉浸式閱讀體驗。涵蓋都市、玄幻、仙俠科幻等多種題材。",
+  title = "小说阁 - 沉浸阅读，从这里开始",
+  description = "小说阁 - 发现精彩中文网络小说，沉浸式阅读体验。涵盖都市、玄幻、仙侠、科幻等多种题材。",
   canonicalURL = Astro.url.href,
   ogImage = config.path('/og-image.png'),
   activeTab = 'home',
@@ -25,7 +25,7 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
 ---
 
 <!DOCTYPE html>
-<html lang="zh-TW" data-theme="light" class="lang-pending">
+<html lang="zh-CN" data-theme="light" class="lang-pending">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -133,19 +133,19 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
 
   <nav class="footer-nav" aria-label="主导航">
       <div class="footer-nav-inner">
-        <a href={config.base} class={`footer-tab ${activeTab === 'home' ? 'active' : ''}`} aria-current={activeTab === 'home' ? 'page' : undefined} aria-label="首頁">
+        <a href={config.base} class={`footer-tab ${activeTab === 'home' ? 'active' : ''}`} aria-current={activeTab === 'home' ? 'page' : undefined} aria-label="首页">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
             <polyline points="9 22 9 12 15 12 15 22"></polyline>
           </svg>
-          <span>首頁</span>
+          <span>首页</span>
         </a>
-        <a href={config.path('/library')} class={`footer-tab ${activeTab === 'library' ? 'active' : ''}`} aria-current={activeTab === 'library' ? 'page' : undefined} aria-label="書閣">
+        <a href={config.path('/library')} class={`footer-tab ${activeTab === 'library' ? 'active' : ''}`} aria-current={activeTab === 'library' ? 'page' : undefined} aria-label="书阁">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
           </svg>
-          <span>書閣</span>
+          <span>书阁</span>
         </a>
         <a href={config.path('/my')} class={`footer-tab ${activeTab === 'my' ? 'active' : ''}`} aria-current={activeTab === 'my' ? 'page' : undefined} aria-label="我的">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
@@ -160,24 +160,28 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
   <!-- i18n: Initialize language conversion on client side -->
   <script type="module">
     // Inline i18n implementation to avoid module loading issues
+    // Default content is Simplified Chinese - convert to Traditional for non-Simplified browsers
     function detectLanguage() {
-      const browserLang = navigator.language ?? navigator.userLanguage ?? 'zh-TW';
+      const browserLang = navigator.language ?? navigator.userLanguage ?? 'zh-CN';
+      // If browser is Simplified Chinese (zh-CN, zh-SG), no conversion needed
       if (browserLang === 'zh-CN' || browserLang === 'zh-SG') {
         return 'simplified';
       }
+      // Otherwise (zh-TW, zh-HK, en, etc.), convert to Traditional
       return 'traditional';
     }
 
     async function initLanguage() {
       const lang = detectLanguage();
-      if (lang === 'simplified') {
+      // If user prefers Traditional, convert from Simplified to Traditional
+      if (lang === 'traditional') {
         try {
           const { Converter, HTMLConverter, Locale } = await import('opencc-js');
-          const converter = Converter({ from: Locale.TW, to: Locale.CN });
-          const htmlConverter = HTMLConverter(converter, document.documentElement, 'zh-TW', 'zh-CN');
+          const converter = Converter({ from: Locale.CN, to: Locale.TW });
+          const htmlConverter = HTMLConverter(converter, document.documentElement, 'zh-CN', 'zh-TW');
           htmlConverter.convert();
         } catch (error) {
-          console.error('Failed to convert to Simplified Chinese:', error);
+          console.error('Failed to convert to Traditional Chinese:', error);
         }
       }
     }
