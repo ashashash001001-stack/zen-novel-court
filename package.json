@@ -21,6 +21,7 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.8",
     "@astrojs/sitemap": "^3.7.2",
+    "@types/opencc-js": "^1.0.3",
     "typescript": "^5.9.3"
   }
 }
