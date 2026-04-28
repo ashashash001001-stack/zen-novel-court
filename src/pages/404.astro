@@ -3,8 +3,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { config } from '../config';
 import { categoryConfig } from '../config/categories';
 
-const title = "页面未找到 | 小说阁";
-const description = "抱歉，您访问的页面不存在。";
+const title = "頁面未找到 | 小說閣";
+const description = "抱歉，您訪問的頁面不存在。";
 ---
 
 <BaseLayout title={title} description={description}>
@@ -39,22 +39,22 @@ const description = "抱歉，您访问的页面不存在。";
   <div class="error-container">
     <div class="error-card">
       <div class="error-icon">📭</div>
-      <h1 class="error-title">页面未找到</h1>
+      <h1 class="error-title">頁面未找到</h1>
       <p class="error-message">抱歉，您访问的页面不存在或已 moved.</p>
       
       <div class="error-actions">
         <a href={config.path('/')} class="btn-primary">
-          <span>返回首页</span>
+          <span>返回首頁</span>
         </a>
         <a href={config.path('/library')} class="btn-secondary">
-          <span>浏览书阁</span>
+          <span>瀏覽書閣</span>
         </a>
       </div>
       
       <div class="error-links">
         <p>或者试试:</p>
         <ul>
-          <li><a href={config.path('/library')}>浏览书阁</a></li>
+          <li><a href={config.path('/library')}>瀏覽書閣</a></li>
           {Object.entries(categoryConfig).map(([slug, data]) => (
             <li><a href={config.path('/category/' + slug)}>{data.name}分类</a></li>
           ))}

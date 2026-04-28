@@ -13,7 +13,7 @@ interface Props {
 
 const {
   title = "小說閣 - 沉浸閱讀，從這裡開始", 
-  description = "小说阁 - 发现精彩中文网络小说，沉浸式阅读体验。涵盖都市、玄幻、仙侠、科幻等多种题材。",
+  description = "小說閣 - 發現精彩中文網路小說，沉浸式閱讀體驗。涵蓋都市、玄幻、仙俠科幻等多種題材。",
   canonicalURL = Astro.url.href,
   ogImage = config.path('/og-image.png'),
   activeTab = 'home',
@@ -133,19 +133,19 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
 
   <nav class="footer-nav" aria-label="主导航">
       <div class="footer-nav-inner">
-        <a href={config.base} class={`footer-tab ${activeTab === 'home' ? 'active' : ''}`} aria-current={activeTab === 'home' ? 'page' : undefined} aria-label="首页">
+        <a href={config.base} class={`footer-tab ${activeTab === 'home' ? 'active' : ''}`} aria-current={activeTab === 'home' ? 'page' : undefined} aria-label="首頁">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
             <polyline points="9 22 9 12 15 12 15 22"></polyline>
           </svg>
-          <span>首页</span>
+          <span>首頁</span>
         </a>
-        <a href={config.path('/library')} class={`footer-tab ${activeTab === 'library' ? 'active' : ''}`} aria-current={activeTab === 'library' ? 'page' : undefined} aria-label="书阁">
+        <a href={config.path('/library')} class={`footer-tab ${activeTab === 'library' ? 'active' : ''}`} aria-current={activeTab === 'library' ? 'page' : undefined} aria-label="書閣">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
             <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
             <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
           </svg>
-          <span>书阁</span>
+          <span>書閣</span>
         </a>
         <a href={config.path('/my')} class={`footer-tab ${activeTab === 'my' ? 'active' : ''}`} aria-current={activeTab === 'my' ? 'page' : undefined} aria-label="我的">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
