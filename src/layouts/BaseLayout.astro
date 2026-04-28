@@ -159,7 +159,28 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
 
   <!-- i18n: Initialize language conversion on client side -->
   <script type="module">
-    import { initLanguage } from '../scripts/i18n.ts';
+    // Inline i18n implementation to avoid module loading issues
+    function detectLanguage() {
+      const browserLang = navigator.language ?? navigator.userLanguage ?? 'zh-TW';
+      if (browserLang === 'zh-CN' || browserLang === 'zh-SG') {
+        return 'simplified';
+      }
+      return 'traditional';
+    }
+
+    async function initLanguage() {
+      const lang = detectLanguage();
+      if (lang === 'simplified') {
+        try {
+          const { Converter, HTMLConverter, Locale } = await import('opencc-js');
+          const converter = Converter({ from: Locale.TW, to: Locale.CN });
+          const htmlConverter = HTMLConverter(converter, document.documentElement, 'zh-TW', 'zh-CN');
+          htmlConverter.convert();
+        } catch (error) {
+          console.error('Failed to convert to Simplified Chinese:', error);
+        }
+      }
+    }
 
     // Initialize i18n when DOM is ready
     async function init() {
