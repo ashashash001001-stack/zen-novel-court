@@ -211,13 +211,13 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
         if (lang === 'simplified') {
           // Browser prefers Simplified: convert Traditional to Simplified
           // from: tw (Traditional), to: cn (Simplified)
-          const converter = OpenCC.Converter(OpenCC.Locale.from.tw, OpenCC.Locale.to.cn);
+          const converter = OpenCC.Converter({ from: 'tw', to: 'cn' });
           const htmlConverter = OpenCC.HTMLConverter(converter);
           htmlConverter(document.body);
         } else {
           // Browser prefers Traditional: convert Simplified to Traditional
           // from: cn (Simplified), to: tw (Traditional)
-          const converter = OpenCC.Converter(OpenCC.Locale.from.cn, OpenCC.Locale.to.tw);
+          const converter = OpenCC.Converter({ from: 'cn', to: 'tw' });
           const htmlConverter = OpenCC.HTMLConverter(converter);
           htmlConverter(document.body);
         }
