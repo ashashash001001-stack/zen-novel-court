@@ -86,6 +86,43 @@ const { title = "阅读" } = Astro.props;
       return 'traditional';
     }
 
+    // Convert all text nodes in an element using the provided converter
+    function convertTextNodes(element, converter) {
+      const walker = document.createTreeWalker(
+        element,
+        NodeFilter.SHOW_TEXT,
+        {
+          acceptNode: function(node) {
+            // Skip script, style, and elements with ignore-opencc class
+            const parent = node.parentElement;
+            if (!parent) return NodeFilter.FILTER_REJECT;
+            if (parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE') {
+              return NodeFilter.FILTER_REJECT;
+            }
+            if (parent.classList && parent.classList.contains('ignore-opencc')) {
+              return NodeFilter.FILTER_REJECT;
+            }
+            // Skip empty text nodes
+            if (!node.nodeValue.trim()) return NodeFilter.FILTER_REJECT;
+            return NodeFilter.FILTER_ACCEPT;
+          }
+        }
+      );
+
+      const textNodes = [];
+      while (walker.nextNode()) {
+        textNodes.push(walker.currentNode);
+      }
+
+      textNodes.forEach(node => {
+        const originalText = node.nodeValue;
+        const convertedText = converter(originalText);
+        if (convertedText !== originalText) {
+          node.nodeValue = convertedText;
+        }
+      });
+    }
+
     async function initLanguage() {
       const browserLang = navigator.language ?? navigator.userLanguage ?? 'zh-CN';
       const lang = detectLanguage();
@@ -101,20 +138,16 @@ const { title = "阅读" } = Astro.props;
           // from: tw (Traditional), to: cn (Simplified)
           const converter = OpenCC.Converter({ from: 'tw', to: 'cn' });
           console.log('[i18n] Testing converter:', converter('繁体字'));
-          // Add lang attribute to body so HTMLConverter can find content elements
-          document.body.lang = 'zh-CN';
-          const htmlConverter = OpenCC.HTMLConverter(converter, document.body);
-          htmlConverter.convert();
+          // Convert all text nodes in document
+          convertTextNodes(document.body, converter);
           console.log('[i18n] Conversion complete (simplified)');
         } else {
           // Browser prefers Traditional: convert Simplified to Traditional
           // from: cn (Simplified), to: tw (Traditional)
           const converter = OpenCC.Converter({ from: 'cn', to: 'tw' });
           console.log('[i18n] Testing converter:', converter('简体字'));
-          // Add lang attribute to body so HTMLConverter can find content elements
-          document.body.lang = 'zh-CN';
-          const htmlConverter = OpenCC.HTMLConverter(converter, document.body);
-          htmlConverter.convert();
+          // Convert all text nodes in document
+          convertTextNodes(document.body, converter);
           console.log('[i18n] Conversion complete (traditional)');
         }
       } catch (error) {
