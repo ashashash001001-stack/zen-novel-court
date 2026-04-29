@@ -159,18 +159,35 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
 
   <!-- i18n: Initialize language conversion on client side -->
   <script type="module">
-    // Load OpenCC from CDN
+    // Load OpenCC from CDN with fallback
     async function loadOpenCC() {
       return new Promise((resolve, reject) => {
         if (window.OpenCC) {
           resolve();
           return;
         }
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/opencc-js@1.0.1/dist/umd/opencc.min.js';
-        script.onload = () => resolve();
-        script.onerror = () => reject(new Error('Failed to load OpenCC'));
-        document.head.appendChild(script);
+        const cdnUrls = [
+          'https://cdn.jsdelivr.net/npm/opencc-js@1.0.5/dist/umd/full.js',
+          'https://unpkg.com/opencc-js@1.0.5/dist/umd/full.js',
+          'https://cdn.staticfile.org/opencc-js/1.0.5/dist/umd/full.js'
+        ];
+        let currentIndex = 0;
+
+        function tryLoad() {
+          if (currentIndex >= cdnUrls.length) {
+            reject(new Error('Failed to load OpenCC from all CDNs'));
+            return;
+          }
+          const script = document.createElement('script');
+          script.src = cdnUrls[currentIndex];
+          script.onload = () => resolve();
+          script.onerror = () => {
+            currentIndex++;
+            tryLoad();
+          };
+          document.head.appendChild(script);
+        }
+        tryLoad();
       });
     }
 
@@ -189,16 +206,20 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
       const lang = detectLanguage();
       try {
         await loadOpenCC();
-        const opencc = window.OpenCC;
+        const OpenCC = window.OpenCC;
 
         if (lang === 'simplified') {
           // Browser prefers Simplified: convert Traditional to Simplified
-          const converter = opencc('t2s.json');
-          converter(document.body);
+          // from: tw (Traditional), to: cn (Simplified)
+          const converter = OpenCC.Converter(OpenCC.Locale.from.tw, OpenCC.Locale.to.cn);
+          const htmlConverter = OpenCC.HTMLConverter(converter);
+          htmlConverter(document.body);
         } else {
           // Browser prefers Traditional: convert Simplified to Traditional
-          const converter = opencc('s2t.json');
-          converter(document.body);
+          // from: cn (Simplified), to: tw (Traditional)
+          const converter = OpenCC.Converter(OpenCC.Locale.from.cn, OpenCC.Locale.to.tw);
+          const htmlConverter = OpenCC.HTMLConverter(converter);
+          htmlConverter(document.body);
         }
       } catch (error) {
         console.error('Language conversion failed:', error);
