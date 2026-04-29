@@ -96,14 +96,14 @@ const { title = "阅读" } = Astro.props;
           // Browser prefers Simplified: convert Traditional to Simplified
           // from: tw (Traditional), to: cn (Simplified)
           const converter = OpenCC.Converter({ from: 'tw', to: 'cn' });
-          const htmlConverter = OpenCC.HTMLConverter(converter);
-          htmlConverter(document.body);
+          const htmlConverter = OpenCC.HTMLConverter(converter, document.body);
+          htmlConverter.convert();
         } else {
           // Browser prefers Traditional: convert Simplified to Traditional
           // from: cn (Simplified), to: tw (Traditional)
           const converter = OpenCC.Converter({ from: 'cn', to: 'tw' });
-          const htmlConverter = OpenCC.HTMLConverter(converter);
-          htmlConverter(document.body);
+          const htmlConverter = OpenCC.HTMLConverter(converter, document.body);
+          htmlConverter.convert();
         }
       } catch (error) {
         console.error('Language conversion failed:', error);
