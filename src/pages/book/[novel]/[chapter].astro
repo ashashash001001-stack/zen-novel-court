@@ -162,10 +162,11 @@ const hasNext = chapterNum < chaptersList.length;
         <div class="sheet-body">
           <div class="setting-group">
             <div class="setting-label">外观模式</div>
-            <div class="setting-row">
-              <button class="setting-btn" id="themeLight" onclick="setTheme('light')">白底</button>
-              <button class="setting-btn" id="themeNight" onclick="setTheme('night')">夜间</button>
-              <button class="setting-btn" id="themeSepia" onclick="setTheme('sepia')">护眼</button>
+            <div class="setting-row theme-options">
+              <button class="setting-btn theme-btn" id="themeLight" onclick="setTheme('light')" style="background:#FDFBF7">白底</button>
+              <button class="setting-btn theme-btn" id="themeSepia" onclick="setTheme('sepia')" style="background:#F5F0E8">護眼</button>
+              <button class="setting-btn theme-btn" id="themeGreen" onclick="setTheme('green')" style="background:#E8F0E8">綠色</button>
+              <button class="setting-btn theme-btn" id="themeNight" onclick="setTheme('night')" style="background:#1E1E1C;color:#fff">夜間</button>
             </div>
           </div>
           <div class="setting-group">
@@ -940,6 +941,40 @@ const hasNext = chapterNum < chaptersList.length;
     --bg-base: #faf6ef;
     --accent: #8b7355;
   }
+
+  /* Theme: Green (護眼綠) - New */
+  :global([data-theme="green"]) {
+    --bg-reading: #E8F0E8;
+    --text-dark: #3A4A3A;
+    --text-muted: #5A6A5A;
+    --color-border-light: rgba(58, 74, 58, 0.08);
+    --color-border: rgba(58, 74, 58, 0.15);
+    --bg-base: #F0F5F0;
+    --accent: #6B8B6B;
+  }
+
+  /* Theme buttons */
+  .theme-options {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+
+  .theme-btn {
+    aspect-ratio: 1;
+    border-radius: 12px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 12px;
+  }
+
+  .theme-btn.active {
+    border-color: var(--accent);
+  }
 </style>
 
 <script>
@@ -1170,19 +1205,25 @@ nextChapterBtn?.addEventListener('click', () => {
   }
 
   (window as any).setTheme = function(t: string) {
+    // Set both data-theme (existing) and data-reader-theme (new)
     if (t === 'light') {
       document.documentElement.removeAttribute('data-theme');
+      document.documentElement.removeAttribute('data-reader-theme');
     } else {
       document.documentElement.setAttribute('data-theme', t);
+      document.documentElement.setAttribute('data-reader-theme', t);
     }
     try {
       localStorage.setItem('dn_theme', t);
+      // Also save to new reader-settings format
+      localStorage.setItem('zen-novel-reader-prefs', JSON.stringify({ theme: t }));
     } catch (e) {}
-    
-    // Update active state
+
+    // Update active state for all theme buttons
     document.getElementById('themeLight')?.classList.toggle('active', t === 'light');
     document.getElementById('themeNight')?.classList.toggle('active', t === 'night');
     document.getElementById('themeSepia')?.classList.toggle('active', t === 'sepia');
+    document.getElementById('themeGreen')?.classList.toggle('active', t === 'green');
   };
 
   (window as any).setFontSize = function(v: string) {
