@@ -124,31 +124,19 @@ const { title = "阅读" } = Astro.props;
     }
 
     async function initLanguage() {
-      const browserLang = navigator.language ?? navigator.userLanguage ?? 'zh-CN';
       const lang = detectLanguage();
-      console.log('[i18n] Browser language:', browserLang);
-      console.log('[i18n] Detected target:', lang);
       try {
         await loadOpenCC();
-        console.log('[i18n] OpenCC loaded:', !!window.OpenCC);
         const OpenCC = window.OpenCC;
 
         if (lang === 'simplified') {
           // Browser prefers Simplified: convert Traditional to Simplified
-          // from: tw (Traditional), to: cn (Simplified)
           const converter = OpenCC.Converter({ from: 'tw', to: 'cn' });
-          console.log('[i18n] Testing converter:', converter('繁体字'));
-          // Convert all text nodes in document
           convertTextNodes(document.body, converter);
-          console.log('[i18n] Conversion complete (simplified)');
         } else {
           // Browser prefers Traditional: convert Simplified to Traditional
-          // from: cn (Simplified), to: tw (Traditional)
           const converter = OpenCC.Converter({ from: 'cn', to: 'tw' });
-          console.log('[i18n] Testing converter:', converter('简体字'));
-          // Convert all text nodes in document
           convertTextNodes(document.body, converter);
-          console.log('[i18n] Conversion complete (traditional)');
         }
       } catch (error) {
         console.error('Language conversion failed:', error);
