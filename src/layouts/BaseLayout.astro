@@ -217,6 +217,8 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
           // from: tw (Traditional), to: cn (Simplified)
           const converter = OpenCC.Converter({ from: 'tw', to: 'cn' });
           console.log('[i18n] Testing converter:', converter('繁体字'));
+          // Add lang attribute to body so HTMLConverter can find content elements
+          document.body.lang = 'zh-CN';
           const htmlConverter = OpenCC.HTMLConverter(converter, document.body);
           htmlConverter.convert();
           console.log('[i18n] Conversion complete (simplified)');
@@ -225,6 +227,8 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
           // from: cn (Simplified), to: tw (Traditional)
           const converter = OpenCC.Converter({ from: 'cn', to: 'tw' });
           console.log('[i18n] Testing converter:', converter('简体字'));
+          // Add lang attribute to body so HTMLConverter can find content elements
+          document.body.lang = 'zh-CN';
           const htmlConverter = OpenCC.HTMLConverter(converter, document.body);
           htmlConverter.convert();
           console.log('[i18n] Conversion complete (traditional)');

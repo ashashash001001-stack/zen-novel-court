@@ -101,6 +101,8 @@ const { title = "阅读" } = Astro.props;
           // from: tw (Traditional), to: cn (Simplified)
           const converter = OpenCC.Converter({ from: 'tw', to: 'cn' });
           console.log('[i18n] Testing converter:', converter('繁体字'));
+          // Add lang attribute to body so HTMLConverter can find content elements
+          document.body.lang = 'zh-CN';
           const htmlConverter = OpenCC.HTMLConverter(converter, document.body);
           htmlConverter.convert();
           console.log('[i18n] Conversion complete (simplified)');
@@ -109,6 +111,8 @@ const { title = "阅读" } = Astro.props;
           // from: cn (Simplified), to: tw (Traditional)
           const converter = OpenCC.Converter({ from: 'cn', to: 'tw' });
           console.log('[i18n] Testing converter:', converter('简体字'));
+          // Add lang attribute to body so HTMLConverter can find content elements
+          document.body.lang = 'zh-CN';
           const htmlConverter = OpenCC.HTMLConverter(converter, document.body);
           htmlConverter.convert();
           console.log('[i18n] Conversion complete (traditional)');
