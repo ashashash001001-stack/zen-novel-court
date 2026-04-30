@@ -218,9 +218,12 @@ const readingTimePlaceholder = '0';
           </div>
           <div class="setting-group">
             <div class="setting-label">字体</div>
-            <div class="setting-row">
-              <button class="setting-btn" id="fontSans" onclick="setFont('sans')">无衬线</button>
-              <button class="setting-btn" id="fontSerif" onclick="setFont('serif')">衬线</button>
+            <div class="setting-row font-options">
+              <button class="setting-btn" id="fontSans" onclick="setFont('sans')">思源黑體</button>
+              <button class="setting-btn" id="fontSerif" onclick="setFont('serif')">思源宋體</button>
+              <button class="setting-btn" id="fontSystem" onclick="setFont('system')">系統預設</button>
+              <button class="setting-btn" id="fontPingFang" onclick="setFont('pingfang')">蘋方體</button>
+              <button class="setting-btn" id="fontJhengHei" onclick="setFont('jhenghei')">微軟正黑</button>
             </div>
           </div>
         </div>
@@ -755,6 +758,17 @@ const readingTimePlaceholder = '0';
   .setting-row {
     display: flex;
     gap: var(--spacing-2);
+  }
+
+  .setting-row.font-options {
+    flex-wrap: wrap;
+  }
+
+  .setting-row.font-options .setting-btn {
+    flex: 1;
+    min-width: calc(50% - var(--spacing-1));
+    padding: var(--spacing-2);
+    font-size: var(--text-xs);
   }
 
   .setting-btn {
@@ -1385,12 +1399,20 @@ nextChapterBtn?.addEventListener('click', () => {
 
   (window as any).setFont = function(t: string) {
     if (readerContent) {
-      readerContent.style.fontFamily = t === 'serif' 
-        ? '"Noto Serif TC", "Songti TC", "PMingLiU", Georgia, serif'
-        : '"Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif';
+      const fontFamilies: Record<string, string> = {
+        sans: '"Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif',
+        serif: '"Noto Serif TC", "Songti TC", "PMingLiU", Georgia, serif',
+        system: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
+        pingfang: '"PingFang TC", "PingFang SC", "Helvetica Neue", sans-serif',
+        jhenghei: '"Microsoft JhengHei", "Microsoft JhengHei UI", sans-serif'
+      };
+      readerContent.style.fontFamily = fontFamilies[t] || fontFamilies.sans;
     }
     document.getElementById('fontSans')?.classList.toggle('active', t === 'sans');
     document.getElementById('fontSerif')?.classList.toggle('active', t === 'serif');
+    document.getElementById('fontSystem')?.classList.toggle('active', t === 'system');
+    document.getElementById('fontPingFang')?.classList.toggle('active', t === 'pingfang');
+    document.getElementById('fontJhengHei')?.classList.toggle('active', t === 'jhenghei');
     try {
       localStorage.setItem('dn_font', t);
     } catch (e) {}
