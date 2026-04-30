@@ -54,7 +54,7 @@ const readingTimePlaceholder = '0';
 ---
 
 <ReaderLayout title={`${novel.title} - ${chapterTitle}`}>
-  <div class="reader-page">
+  <div class="reader-page" data-has-next={hasNext ? 'true' : 'false'} data-total-chapters={totalChapters}>
     <!-- Reading Progress Bar -->
     <div class="reader-progress" id="readerProgress">
       <div class="reader-progress-bar" id="readerProgressBar"></div>
@@ -1584,6 +1584,81 @@ nextChapterBtn?.addEventListener('click', () => {
     const minutes = Math.ceil(totalChars / readingSpeed);
     readTimeEl.textContent = String(minutes);
   }
+
+  // ========== Chapter Preload ==========
+  const PRELOAD_KEY = 'preloaded-chapters';
+
+  // Get chapter info from data attributes
+  const readerPage = document.querySelector('.reader-page');
+  const hasNextChapter = readerPage?.getAttribute('data-has-next') === 'true';
+  const totalChaptersCount = parseInt(readerPage?.getAttribute('data-total-chapters') || '0', 10);
+
+  function preloadNextChapter() {
+    // Only preload if there's a next chapter
+    if (!hasNextChapter) return;
+
+    try {
+      // Check if already preloaded
+      const preloaded = JSON.parse(localStorage.getItem(PRELOAD_KEY) || '{}');
+      const nextChapterUrl = `${basePath}/book/${novelSlug}/${currentChapter + 1}`;
+
+      if (preloaded[nextChapterUrl]) {
+        console.log('✓ Chapter already preloaded:', nextChapterUrl);
+        return;
+      }
+
+      // Prefetch using link preload
+      const link = document.createElement('link');
+      link.rel = 'prefetch';
+      link.href = nextChapterUrl;
+      link.as = 'document';
+      document.head.appendChild(link);
+
+      // Mark as preloaded
+      preloaded[nextChapterUrl] = true;
+      localStorage.setItem(PRELOAD_KEY, JSON.stringify(preloaded));
+      console.log('✓ Preloading next chapter:', nextChapterUrl);
+    } catch (e) {
+      // Ignore storage errors
+    }
+  }
+
+  // Smart preload: when user scrolls past 50% or idle for 3s
+  let preloadTriggered = false;
+  function checkPreload() {
+    if (preloadTriggered || !hasNextChapter) return;
+
+    const scrollTop = window.scrollY;
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const progress = docHeight > 0 ? scrollTop / docHeight : 0;
+
+    // Preload when user has read 50% or more
+    if (progress >= 0.5) {
+      preloadTriggered = true;
+      preloadNextChapter();
+    }
+  }
+
+  // Also preload after idle for 3 seconds
+  let idleTimeout: ReturnType<typeof setTimeout>;
+  function resetIdleTimer() {
+    clearTimeout(idleTimeout);
+    idleTimeout = setTimeout(() => {
+      if (!preloadTriggered) {
+        preloadTriggered = true;
+        preloadNextChapter();
+      }
+    }, 3000);
+  }
+
+  // Listen to scroll events
+  window.addEventListener('scroll', () => {
+    checkPreload();
+    resetIdleTimer();
+  }, { passive: true });
+
+  // Initial check after page loads
+  setTimeout(checkPreload, 1000);
 
   // ========== Initialize ==========
   loadSettings();
