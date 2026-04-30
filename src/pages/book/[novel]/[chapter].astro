@@ -1614,11 +1614,10 @@ nextChapterBtn?.addEventListener('click', () => {
         delete preloaded[oldestKey];
       }
 
-      // Use link preload for next chapter
+      // Use link preload for next chapter (as="document" not needed for HTML)
       const link = document.createElement('link');
       link.rel = 'preload';
       link.href = nextChapterUrl;
-      link.as = 'document';
       document.head.appendChild(link);
 
       // Mark as preloaded
