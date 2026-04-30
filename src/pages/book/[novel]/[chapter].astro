@@ -226,6 +226,29 @@ const readingTimePlaceholder = '0';
               <button class="setting-btn" id="fontJhengHei" onclick="setFont('jhenghei')">微軟正黑</button>
             </div>
           </div>
+          <div class="setting-group">
+            <div class="setting-label">行距 <span id="lineHeightVal">1.7</span></div>
+            <div class="setting-range">
+              <span class="range-label">緊</span>
+              <input type="range" min="1.4" max="2.2" step="0.1" value="1.7" id="lineHeightRange" oninput="setLineHeight(this.value)">
+              <span class="range-label large">鬆</span>
+            </div>
+          </div>
+          <div class="setting-group">
+            <div class="setting-label">段落間距 <span id="paraSpacingVal">1.5em</span></div>
+            <div class="setting-range">
+              <span class="range-label">小</span>
+              <input type="range" min="0" max="2.5" step="0.25" value="1.5" id="paraSpacingRange" oninput="setParaSpacing(this.value)">
+              <span class="range-label large">大</span>
+            </div>
+          </div>
+          <div class="setting-group">
+            <div class="setting-label">對齊方式</div>
+            <div class="setting-row">
+              <button class="setting-btn" id="alignLeft" onclick="setTextAlign('left')">靠左</button>
+              <button class="setting-btn" id="alignJustify" onclick="setTextAlign('justify')">分散</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -1343,6 +1366,15 @@ nextChapterBtn?.addEventListener('click', () => {
 
       const font = localStorage.getItem('dn_font');
       if (font) (window as any).setFont(font);
+
+      const lineHeight = localStorage.getItem('dn_lineheight');
+      if (lineHeight) (window as any).setLineHeight(lineHeight);
+
+      const paraSpacing = localStorage.getItem('dn_paraspacing');
+      if (paraSpacing) (window as any).setParaSpacing(paraSpacing);
+
+      const textAlign = localStorage.getItem('dn_textalign');
+      if (textAlign) (window as any).setTextAlign(textAlign);
     } catch (e) {}
   }
 
@@ -1415,6 +1447,39 @@ nextChapterBtn?.addEventListener('click', () => {
     document.getElementById('fontJhengHei')?.classList.toggle('active', t === 'jhenghei');
     try {
       localStorage.setItem('dn_font', t);
+    } catch (e) {}
+  };
+
+  (window as any).setLineHeight = function(v: string) {
+    if (readerContent) {
+      readerContent.style.lineHeight = v;
+    }
+    const lineHeightVal = document.getElementById('lineHeightVal');
+    if (lineHeightVal) lineHeightVal.textContent = v;
+    try {
+      localStorage.setItem('dn_lineheight', v);
+    } catch (e) {}
+  };
+
+  (window as any).setParaSpacing = function(v: string) {
+    if (readerContent) {
+      readerContent.style.setProperty('--reading-paragraph-space', v + 'em');
+    }
+    const paraSpacingVal = document.getElementById('paraSpacingVal');
+    if (paraSpacingVal) paraSpacingVal.textContent = v + 'em';
+    try {
+      localStorage.setItem('dn_paraspacing', v);
+    } catch (e) {}
+  };
+
+  (window as any).setTextAlign = function(align: string) {
+    if (readerContent) {
+      readerContent.style.textAlign = align;
+    }
+    document.getElementById('alignLeft')?.classList.toggle('active', align === 'left');
+    document.getElementById('alignJustify')?.classList.toggle('active', align === 'justify');
+    try {
+      localStorage.setItem('dn_textalign', align);
     } catch (e) {}
   };
 
