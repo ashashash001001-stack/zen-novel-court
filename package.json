@@ -13,9 +13,11 @@
     "sync-covers": "node scripts/sync-covers.mjs"
   },
   "dependencies": {
+    "@preact/preset-vite": "^2.10.5",
     "astro": "^6.1.5",
     "jimp": "^1.6.1",
     "opencc-js": "^1.0.5",
+    "preact": "^10.29.1",
     "sharp": "^0.34.5"
   },
   "devDependencies": {
