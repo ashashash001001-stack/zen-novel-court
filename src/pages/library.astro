@@ -25,6 +25,7 @@ const novels = novelsCollection
       title: n.data.title,
       author: n.data.author || 'AI 生成',
       categories: n.data.categories || ['其他'],
+      tags: n.data.tags || [],
       chapters: n.data.totalChapters || 0,
       status: n.data.status || '連載中',
       cover: coverPath ? config.path('/content/novels/' + slug + '/' + coverPath) : null
@@ -86,6 +87,22 @@ const statusFilters = [
     </form>
   </div>
 
+  <!-- Tag Filter -->
+  <div class="tag-filter" id="tagFilter">
+    <div class="tag-filter-label">標籤篩選</div>
+    <div class="tag-filter-tags">
+      <button class="tag-filter-btn active" data-tag="all">全部</button>
+      <button class="tag-filter-btn" data-tag="禪意">禪意</button>
+      <button class="tag-filter-btn" data-tag="美食">美食</button>
+      <button class="tag-filter-btn" data-tag="素食">素食</button>
+      <button class="tag-filter-btn" data-tag="成長">成長</button>
+      <button class="tag-filter-btn" data-tag="奇幻">奇幻</button>
+      <button class="tag-filter-btn" data-tag="系統">系統</button>
+      <button class="tag-filter-btn" data-tag="都市">都市</button>
+      <button class="tag-filter-btn" data-tag="人生">人生</button>
+    </div>
+  </div>
+
   <!-- Status Tabs (for reading progress filtering) -->
   <div class="status-tabs">
     {statusFilters.map((status) => (
@@ -121,7 +138,7 @@ const statusFilters = [
   <!-- Book Grid -->
   <div class="book-grid" id="bookGrid">
     {novels.map((novel) => (
-      <a href={config.path('/book/' + novel.slug)} class="book-card" data-categories={JSON.stringify(novel.categories)} data-title={novel.title.toLowerCase()} data-author={novel.author.toLowerCase()} data-slug={novel.slug} data-total-chapters={novel.chapters}>
+      <a href={config.path('/book/' + novel.slug)} class="book-card" data-categories={JSON.stringify(novel.categories)} data-tags={JSON.stringify(novel.tags)} data-title={novel.title.toLowerCase()} data-author={novel.author.toLowerCase()} data-slug={novel.slug} data-total-chapters={novel.chapters}>
         <div class="book-cover">
           {novel.cover ? (
             <DualImage src={novel.cover} alt={`${novel.title}封面`} />
@@ -145,6 +162,13 @@ const statusFilters = [
           <h3>{novel.title}</h3>
           <p>{novel.genre}</p>
           <p class="chapter-num">{novel.chapters} 章</p>
+          {novel.tags && novel.tags.length > 0 && (
+            <div class="book-tags">
+              {novel.tags.slice(0, 3).map((tag) => (
+                <span class="book-tag">{tag}</span>
+              ))}
+            </div>
+          )}
         </div>
       </a>
     ))}
@@ -207,6 +231,63 @@ const statusFilters = [
 
   .search-btn:hover {
     background: var(--accent-hover);
+  }
+
+  /* Tag Filter */
+  .tag-filter {
+    padding: var(--spacing-3) var(--spacing-4);
+    background: var(--color-bg-base);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .tag-filter-label {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    margin-bottom: var(--spacing-2);
+  }
+
+  .tag-filter-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-2);
+  }
+
+  .tag-filter-btn {
+    padding: var(--spacing-1) var(--spacing-3);
+    font-size: var(--text-xs);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-full);
+    background: var(--color-bg-card);
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--t-fast);
+  }
+
+  .tag-filter-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .tag-filter-btn.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+
+  /* Book Tags */
+  .book-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: var(--spacing-1);
+  }
+
+  .book-tag {
+    font-size: 10px;
+    padding: 2px 6px;
+    background: var(--color-bg-hover);
+    color: var(--text-muted);
+    border-radius: var(--radius-sm);
   }
 
   /* Status Tabs */
@@ -773,17 +854,35 @@ const statusFilters = [
     });
   });
 
+  // Tag filter click handlers
+  const tagFilterBtns = document.querySelectorAll<HTMLElement>('.tag-filter-btn');
+  tagFilterBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tag = (btn as HTMLElement).dataset.tag || 'all';
+      (window as any).__activeTag = tag;
+
+      // Update active state
+      tagFilterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      filterBooks();
+    });
+  });
+
   function filterBooks() {
     const searchTerm = (searchInput?.value || '').toLowerCase().trim();
     const activeCategory = categoryInput?.value || 'all';
     const activeStatus = statusInput?.value || 'all';
-    
+    const activeTag = (window as any).__activeTag || 'all';
+
     let visibleCount = 0;
-    
+
     bookCards.forEach((card) => {
       const el = card as HTMLElement;
       const categoriesStr = el.dataset.categories;
       const categories = categoriesStr ? JSON.parse(categoriesStr) : [];
+      const tagsStr = el.dataset.tags;
+      const tags = tagsStr ? JSON.parse(tagsStr) : [];
       const title = (el.dataset.title || '').toLowerCase();
       const author = (el.dataset.author || '').toLowerCase();
       const slug = el.dataset.slug;
@@ -791,10 +890,14 @@ const statusFilters = [
 
       const matchesSearch = !searchTerm ||
         title.includes(searchTerm) ||
-        author.includes(searchTerm);
+        author.includes(searchTerm) ||
+        tags.some((t: string) => t.toLowerCase().includes(searchTerm));
 
       const matchesCategory = activeCategory === 'all' ||
         categories.includes(activeCategory);
+
+      // Tag filtering
+      const matchesTag = activeTag === 'all' || tags.includes(activeTag);
       
       // Status filtering based on reading progress
       let matchesStatus = true;
@@ -824,7 +927,7 @@ const statusFilters = [
         }
       }
       
-      if (matchesSearch && matchesCategory && matchesStatus) {
+      if (matchesSearch && matchesCategory && matchesStatus && matchesTag) {
         el.classList.remove('hidden');
         visibleCount++;
       } else {
