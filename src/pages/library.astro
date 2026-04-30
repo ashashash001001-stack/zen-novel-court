@@ -87,6 +87,19 @@ const statusFilters = [
     </form>
   </div>
 
+  <!-- Hot Keywords -->
+  <div class="hot-keywords">
+    <span class="hot-keywords-label">熱門關鍵詞</span>
+    <div class="hot-keywords-list">
+      <button class="hot-keyword-btn" data-keyword="禪意">禪意</button>
+      <button class="hot-keyword-btn" data-keyword="美食">美食</button>
+      <button class="hot-keyword-btn" data-keyword="系統">系統</button>
+      <button class="hot-keyword-btn" data-keyword="都市">都市</button>
+      <button class="hot-keyword-btn" data-keyword="奇幻">奇幻</button>
+      <button class="hot-keyword-btn" data-keyword="成長">成長</button>
+    </div>
+  </div>
+
   <!-- Tag Filter -->
   <div class="tag-filter" id="tagFilter">
     <div class="tag-filter-label">標籤篩選</div>
@@ -231,6 +244,43 @@ const statusFilters = [
 
   .search-btn:hover {
     background: var(--accent-hover);
+  }
+
+  /* Hot Keywords */
+  .hot-keywords {
+    padding: var(--spacing-2) var(--spacing-4);
+    background: var(--color-bg-base);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-2);
+    flex-wrap: wrap;
+  }
+
+  .hot-keywords-label {
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+  }
+
+  .hot-keywords-list {
+    display: flex;
+    gap: var(--spacing-2);
+    flex-wrap: wrap;
+  }
+
+  .hot-keyword-btn {
+    font-size: var(--text-xs);
+    padding: 2px 8px;
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all var(--t-fast);
+  }
+
+  .hot-keyword-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
   }
 
   /* Tag Filter */
@@ -835,6 +885,19 @@ const statusFilters = [
     if (searchInput?.value) {
       saveSearchToHistory(searchInput.value);
     }
+  });
+
+  // Hot keywords click handlers
+  const hotKeywordBtns = document.querySelectorAll<HTMLElement>('.hot-keyword-btn');
+  hotKeywordBtns.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const keyword = (btn as HTMLElement).dataset.keyword;
+      if (keyword && searchInput) {
+        searchInput.value = keyword;
+        saveSearchToHistory(keyword);
+        filterBooks();
+      }
+    });
   });
 
   // Initialize progress on load
