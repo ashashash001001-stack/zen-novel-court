@@ -43,6 +43,14 @@ const totalChapters = novel.totalChapters || novel.chapters || 0;
 const chaptersList = Array.from({ length: totalChapters }, (_, i) => i + 1);
 const hasPrev = chapterNum > 1;
 const hasNext = chapterNum < chaptersList.length;
+
+// Reading statistics
+const progressPercent = Math.round((chapterNum / totalChapters) * 100);
+
+// We'll calculate word count in client-side JS
+// Passing placeholder that will be replaced at runtime
+const wordCountPlaceholder = '0';
+const readingTimePlaceholder = '0';
 ---
 
 <ReaderLayout title={`${novel.title} - ${chapterTitle}`}>
@@ -66,6 +74,36 @@ const hasNext = chapterNum < chaptersList.length;
           <span> › </span>
           <span>{chapterTitle}</span>
         </span>
+        <!-- Reading Stats -->
+        <div class="reader-stats" id="readerStats">
+          <span class="stat-item" id="statWordCount">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+              <line x1="16" y1="13" x2="8" y2="13"/>
+              <line x1="16" y1="17" x2="8" y2="17"/>
+            </svg>
+            <span class="stat-value" id="wordCountValue">--</span>
+            <span class="stat-unit">字</span>
+          </span>
+          <span class="stat-divider">·</span>
+          <span class="stat-item" id="statReadTime">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span class="stat-value" id="readTimeValue">--</span>
+            <span class="stat-unit">分鐘</span>
+          </span>
+          <span class="stat-divider">·</span>
+          <span class="stat-item" id="statProgress">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+            </svg>
+            <span class="stat-value" id="progressValue">{chapterNum}/{totalChapters}</span>
+            <span class="stat-unit">({progressPercent}%)</span>
+          </span>
+        </div>
       </div>
     </header>
 
@@ -388,6 +426,41 @@ const hasNext = chapterNum < chaptersList.length;
   .reader-topbar-breadcrumb a {
     color: var(--text-muted);
     text-decoration: none;
+  }
+
+  /* Reading Stats in Top Bar */
+  .reader-stats {
+    display: none;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    margin-left: auto;
+    padding-right: var(--space-2);
+  }
+
+  .reader-stats .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .reader-stats .stat-value {
+    font-weight: var(--font-medium);
+    color: var(--text-dark);
+  }
+
+  .reader-stats .stat-unit {
+    color: var(--text-muted);
+  }
+
+  .reader-stats .stat-divider {
+    opacity: 0.4;
+    margin: 0 2px;
+  }
+
+  .reader-stats svg {
+    opacity: 0.6;
   }
 
   /* Bottom Bar */
@@ -843,6 +916,10 @@ const hasNext = chapterNum < chaptersList.length;
       overflow: hidden;
       text-overflow: ellipsis;
       white-space: nowrap;
+    }
+
+    .reader-stats {
+      display: flex;
     }
 
     .reader-topbar-back {
@@ -1481,8 +1558,36 @@ nextChapterBtn?.addEventListener('click', () => {
   const ttsPlayBtn = document.getElementById('ttsPlayBtn');
   ttsPlayBtn?.addEventListener('click', () => (window as any).toggleTTS());
 
+  // ========== Reading Statistics ==========
+  function initReadingStats() {
+    const contentEl = document.getElementById('readerContent');
+    const wordCountEl = document.getElementById('wordCountValue');
+    const readTimeEl = document.getElementById('readTimeValue');
+
+    if (!contentEl || !wordCountEl || !readTimeEl) return;
+
+    // Calculate word count from all paragraphs
+    const paragraphs = contentEl.querySelectorAll('p');
+    let totalChars = 0;
+    paragraphs.forEach(p => {
+      const text = p.textContent || '';
+      // Remove spaces and count Chinese characters + letters + numbers
+      const chars = text.replace(/\s/g, '').length;
+      totalChars += chars;
+    });
+
+    // Display word count
+    wordCountEl.textContent = String(totalChars);
+
+    // Calculate reading time (300 chars/min for Chinese)
+    const readingSpeed = 300; // characters per minute
+    const minutes = Math.ceil(totalChars / readingSpeed);
+    readTimeEl.textContent = String(minutes);
+  }
+
   // ========== Initialize ==========
   loadSettings();
+  initReadingStats();
   restoreReadingProgress();
   updateProgress();
 
