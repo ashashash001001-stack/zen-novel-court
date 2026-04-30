@@ -1587,29 +1587,36 @@ nextChapterBtn?.addEventListener('click', () => {
 
   // ========== Chapter Preload ==========
   const PRELOAD_KEY = 'preloaded-chapters';
+  const MAX_PRELOADS = 3; // Limit to prevent waste
 
   // Get chapter info from data attributes
   const readerPage = document.querySelector('.reader-page');
   const hasNextChapter = readerPage?.getAttribute('data-has-next') === 'true';
-  const totalChaptersCount = parseInt(readerPage?.getAttribute('data-total-chapters') || '0', 10);
 
   function preloadNextChapter() {
     // Only preload if there's a next chapter
     if (!hasNextChapter) return;
 
     try {
-      // Check if already preloaded
-      const preloaded = JSON.parse(localStorage.getItem(PRELOAD_KEY) || '{}');
       const nextChapterUrl = `${basePath}/book/${novelSlug}/${currentChapter + 1}`;
 
+      // Check if already preloaded
+      const preloaded = JSON.parse(localStorage.getItem(PRELOAD_KEY) || '{}');
       if (preloaded[nextChapterUrl]) {
         console.log('✓ Chapter already preloaded:', nextChapterUrl);
         return;
       }
 
-      // Prefetch using link preload
+      // Clean up old preloads (keep only last MAX_PRELOADS)
+      const keys = Object.keys(preloaded);
+      if (keys.length >= MAX_PRELOADS) {
+        const oldestKey = keys[0];
+        delete preloaded[oldestKey];
+      }
+
+      // Use link preload for next chapter
       const link = document.createElement('link');
-      link.rel = 'prefetch';
+      link.rel = 'preload';
       link.href = nextChapterUrl;
       link.as = 'document';
       document.head.appendChild(link);
@@ -1639,7 +1646,7 @@ nextChapterBtn?.addEventListener('click', () => {
     }
   }
 
-  // Also preload after idle for 3 seconds
+  // Also preload after idle for 3 seconds (user is likely reading)
   let idleTimeout: ReturnType<typeof setTimeout>;
   function resetIdleTimer() {
     clearTimeout(idleTimeout);
