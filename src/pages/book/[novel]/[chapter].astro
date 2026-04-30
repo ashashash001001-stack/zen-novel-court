@@ -151,6 +151,12 @@ const readingTimePlaceholder = '0';
             </svg>
             <span>朗讀</span>
           </button>
+          <button class="tool-btn btn-press" id="toolBtnBookmark" aria-label="書籤">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="bookmarkIcon">
+              <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/>
+            </svg>
+            <span>書籤</span>
+          </button>
         </div>
         
         <button class="nav-btn btn-press" id="nextChapterBtn" disabled={!hasNext}>
@@ -593,6 +599,11 @@ const readingTimePlaceholder = '0';
 
   .tool-btn:active {
     transform: scale(0.98);
+  }
+
+  .tool-btn.active {
+    color: var(--accent);
+    border-color: var(--accent);
   }
 
   /* Reader Content */
@@ -1279,6 +1290,7 @@ const readingTimePlaceholder = '0';
   const toolBtnSettings = document.getElementById('toolBtnSettings');
   const toolBtnMore = document.getElementById('toolBtnMore');
   const toolBtnTts = document.getElementById('toolBtnTts');
+  const toolBtnBookmark = document.getElementById('toolBtnBookmark');
   const prevChapterBtn = document.getElementById('prevChapterBtn');
   const nextChapterBtn = document.getElementById('nextChapterBtn');
 
@@ -1289,6 +1301,56 @@ const readingTimePlaceholder = '0';
     initTTS();
     (window as any).openSheet('ttsSheet');
   });
+
+  // ========== Bookmark Functionality ==========
+  const BOOKMARKS_KEY = 'zen-novel-bookmarks';
+
+  function getBookmarks(): number[] {
+    if (!novelSlug) return [];
+    try {
+      const all = JSON.parse(localStorage.getItem(BOOKMARKS_KEY) || '{}');
+      return all[novelSlug] || [];
+    } catch {
+      return [];
+    }
+  }
+
+  function toggleBookmark(): number[] {
+    if (!novelSlug || !currentChapter) return [];
+    try {
+      const all = JSON.parse(localStorage.getItem(BOOKMARKS_KEY) || '{}');
+      let bookmarks = all[novelSlug] || [];
+      const idx = bookmarks.indexOf(currentChapter);
+      if (idx > -1) {
+        bookmarks.splice(idx, 1);
+      } else {
+        bookmarks.push(currentChapter);
+      }
+      all[novelSlug] = bookmarks;
+      localStorage.setItem(BOOKMARKS_KEY, JSON.stringify(all));
+      updateBookmarkUI();
+      return bookmarks;
+    } catch {
+      return [];
+    }
+  }
+
+  function updateBookmarkUI() {
+    const bookmarks = getBookmarks();
+    const isBookmarked = bookmarks.includes(currentChapter);
+    const bookmarkIcon = document.getElementById('bookmarkIcon');
+    if (bookmarkIcon) {
+      bookmarkIcon.setAttribute('fill', isBookmarked ? 'currentColor' : 'none');
+    }
+    toolBtnBookmark?.classList.toggle('active', isBookmarked);
+  }
+
+  toolBtnBookmark?.addEventListener('click', () => {
+    toggleBookmark();
+  });
+
+  // Initialize bookmark state
+  updateBookmarkUI();
 
 // Get base path from window.__configBase__ or extract from URL
 let basePath = (window as any).__configBase__ || '/';
