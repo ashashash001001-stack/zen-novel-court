@@ -161,8 +161,9 @@ const hasNext = chapterNum < chaptersList.length;
         </div>
         <div class="sheet-body">
           <div class="setting-group">
-            <div class="setting-label">外观模式</div>
+            <div class="setting-label">外觀模式</div>
             <div class="setting-row theme-options">
+              <button class="setting-btn theme-btn" id="themeAuto" onclick="setTheme('auto')" title="自動（跟隨系統）">🌐</button>
               <button class="setting-btn theme-btn" id="themeLight" onclick="setTheme('light')" style="background:#FDFBF7">白底</button>
               <button class="setting-btn theme-btn" id="themeSepia" onclick="setTheme('sepia')" style="background:#F5F0E8">護眼</button>
               <button class="setting-btn theme-btn" id="themeGreen" onclick="setTheme('green')" style="background:#E8F0E8">綠色</button>
@@ -1194,32 +1195,60 @@ nextChapterBtn?.addEventListener('click', () => {
   function loadSettings() {
     try {
       const theme = localStorage.getItem('dn_theme');
-      if (theme) (window as any).setTheme(theme);
-      
+
+      // Handle "auto" theme - follow system preference
+      if (theme === 'auto' || !theme) {
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const systemTheme = prefersDark ? 'night' : 'light';
+        (window as any).setTheme(systemTheme);
+        // Store "auto" preference but apply system theme
+        localStorage.setItem('dn_theme', 'auto');
+      } else if (theme) {
+        (window as any).setTheme(theme);
+      }
+
       const fontSize = localStorage.getItem('dn_fontsize');
       if (fontSize) (window as any).setFontSize(fontSize);
-      
+
       const font = localStorage.getItem('dn_font');
       if (font) (window as any).setFont(font);
     } catch (e) {}
   }
 
+  // Listen for system theme changes when in auto mode
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    const theme = localStorage.getItem('dn_theme');
+    if (theme === 'auto' || !theme) {
+      const newTheme = e.matches ? 'night' : 'light';
+      (window as any).setTheme(newTheme);
+    }
+  });
+
   (window as any).setTheme = function(t: string) {
+    // Handle "auto" theme - apply system preference
+    let actualTheme = t;
+    if (t === 'auto') {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+      actualTheme = prefersDark ? 'night' : 'light';
+    }
+
     // Set both data-theme (existing) and data-reader-theme (new)
-    if (t === 'light') {
+    if (actualTheme === 'light') {
       document.documentElement.removeAttribute('data-theme');
       document.documentElement.removeAttribute('data-reader-theme');
     } else {
-      document.documentElement.setAttribute('data-theme', t);
-      document.documentElement.setAttribute('data-reader-theme', t);
+      document.documentElement.setAttribute('data-theme', actualTheme);
+      document.documentElement.setAttribute('data-reader-theme', actualTheme);
     }
     try {
+      // Store 'auto' as preference, but apply actual theme
       localStorage.setItem('dn_theme', t);
       // Also save to new reader-settings format
-      localStorage.setItem('zen-novel-reader-prefs', JSON.stringify({ theme: t }));
+      localStorage.setItem('zen-novel-reader-prefs', JSON.stringify({ theme: actualTheme }));
     } catch (e) {}
 
     // Update active state for all theme buttons
+    document.getElementById('themeAuto')?.classList.toggle('active', t === 'auto');
     document.getElementById('themeLight')?.classList.toggle('active', t === 'light');
     document.getElementById('themeNight')?.classList.toggle('active', t === 'night');
     document.getElementById('themeSepia')?.classList.toggle('active', t === 'sepia');
