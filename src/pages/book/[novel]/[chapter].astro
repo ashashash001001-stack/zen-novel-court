@@ -996,6 +996,46 @@ const hasNext = chapterNum < chaptersList.length;
    const bookIndex = pathParts.indexOf('book');
    let novelSlug = '';
    let currentChapter = 1;
+
+   // ========== Reading Progress Enhancement ==========
+   // Save reading progress (chapter + scroll position)
+   function saveReadingProgress() {
+     if (!novelSlug) return;
+     const progress = {
+       bookId: novelSlug,
+       chapter: currentChapter,
+       scrollY: window.scrollY,
+       timestamp: Date.now()
+     };
+     try {
+       localStorage.setItem('reading-progress', JSON.stringify(progress));
+     } catch (e) {}
+   }
+
+   // Restore reading progress when page loads
+   function restoreReadingProgress() {
+     try {
+       const saved = localStorage.getItem('reading-progress');
+       if (saved) {
+         const progress = JSON.parse(saved);
+         // If same book and chapter, restore scroll position
+         if (progress.bookId === novelSlug && progress.chapter === currentChapter && progress.scrollY > 0) {
+           // Delay to ensure content is loaded
+           setTimeout(() => {
+             window.scrollTo(0, progress.scrollY);
+           }, 100);
+         }
+       }
+     } catch (e) {}
+   }
+
+   // Save progress on scroll (debounced) and before leaving
+   let saveProgressTimeout: ReturnType<typeof setTimeout>;
+   window.addEventListener('scroll', () => {
+     clearTimeout(saveProgressTimeout);
+     saveProgressTimeout = setTimeout(saveReadingProgress, 1000);
+   });
+   window.addEventListener('beforeunload', saveReadingProgress);
    
    if (bookIndex !== -1) {
      const rawSlug = pathParts[bookIndex + 1] || '';
@@ -1443,6 +1483,7 @@ nextChapterBtn?.addEventListener('click', () => {
 
   // ========== Initialize ==========
   loadSettings();
+  restoreReadingProgress();
   updateProgress();
 
   // Add data-tts-idx to paragraphs
