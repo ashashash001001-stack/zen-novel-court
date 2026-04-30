@@ -15,6 +15,7 @@
   "dependencies": {
     "@preact/preset-vite": "^2.10.5",
     "astro": "^6.1.5",
+    "fuse.js": "^7.3.0",
     "jimp": "^1.6.1",
     "opencc-js": "^1.0.5",
     "preact": "^10.29.1",

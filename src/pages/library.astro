@@ -62,14 +62,24 @@ const statusFilters = [
   <!-- Search Header -->
   <div class="search-header">
     <form method="get" action={config.path('/library')} class="search-form">
-      <input
-        type="text"
-        name="q"
-        value={searchQuery}
-        placeholder="搜索小说、作者..."
-        class="search-input"
-        id="searchInput"
-      >
+      <div class="search-form-wrap">
+        <input
+          type="text"
+          name="q"
+          value={searchQuery}
+          placeholder="搜索小说、作者..."
+          class="search-input"
+          id="searchInput"
+          autocomplete="off"
+        >
+        <div class="search-suggestions" id="searchSuggestions">
+          <div class="search-suggestions-header">
+            <span>最近搜尋</span>
+            <span class="search-suggestions-clear" id="clearSearchHistory">清除</span>
+          </div>
+          <div id="searchSuggestionsList"></div>
+        </div>
+      </div>
       <input type="hidden" name="category" value={activeCategory} id="categoryInput">
       <input type="hidden" name="status" value={activeStatus} id="statusInput">
       <button type="submit" class="search-btn">搜索</button>
@@ -540,6 +550,75 @@ const statusFilters = [
       margin: 0 auto;
     }
   }
+
+  /* Search Suggestions Dropdown */
+  .search-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--bg-base);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    z-index: 100;
+    max-height: 300px;
+    overflow-y: auto;
+    display: none;
+  }
+
+  .search-suggestions.active {
+    display: block;
+  }
+
+  .search-suggestions-header {
+    padding: var(--spacing-2) var(--spacing-4);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--color-border-light);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .search-suggestions-clear {
+    cursor: pointer;
+    color: var(--accent);
+    font-size: var(--text-xs);
+  }
+
+  .search-suggestions-clear:hover {
+    text-decoration: underline;
+  }
+
+  .search-suggestion-item {
+    padding: var(--spacing-3) var(--spacing-4);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    transition: background var(--t-fast);
+  }
+
+  .search-suggestion-item:hover {
+    background: var(--bg-hover);
+  }
+
+  .search-suggestion-item svg {
+    width: 14px;
+    height: 14px;
+    color: var(--text-muted);
+  }
+
+  .search-suggestion-item span {
+    font-size: var(--text-sm);
+    color: var(--text-dark);
+  }
+
+  .search-form-wrap {
+    position: relative;
+    flex: 1;
+  }
 </style>
 
 <script>
@@ -579,6 +658,103 @@ const statusFilters = [
   const resultsCount = document.getElementById('resultsCount');
   const noResults = document.getElementById('noResults');
   const searchTermSpan = document.querySelector<HTMLElement>('.search-term');
+  const searchSuggestions = document.getElementById('searchSuggestions');
+  const searchSuggestionsList = document.getElementById('searchSuggestionsList');
+  const clearSearchHistory = document.getElementById('clearSearchHistory');
+
+  // ========== Search History ==========
+  const SEARCH_HISTORY_KEY = 'zen-novel-search-history';
+  const MAX_HISTORY = 10;
+
+  function getSearchHistory(): string[] {
+    try {
+      return JSON.parse(localStorage.getItem(SEARCH_HISTORY_KEY) || '[]');
+    } catch {
+      return [];
+    }
+  }
+
+  function saveSearchToHistory(query: string) {
+    if (!query.trim()) return;
+    try {
+      let history = getSearchHistory();
+      history = history.filter(h => h !== query);
+      history.unshift(query);
+      if (history.length > MAX_HISTORY) history = history.slice(0, MAX_HISTORY);
+      localStorage.setItem(SEARCH_HISTORY_KEY, JSON.stringify(history));
+    } catch {}
+  }
+
+  function doClearSearchHistory() {
+    try {
+      localStorage.removeItem(SEARCH_HISTORY_KEY);
+      renderSearchSuggestions();
+    } catch {}
+  }
+
+  function renderSearchSuggestions() {
+    if (!searchSuggestionsList) return;
+    const history = getSearchHistory();
+    if (history.length === 0) {
+      searchSuggestionsList.innerHTML = '<div class="search-suggestion-item"><span style="color: var(--text-muted); font-size: var(--text-sm);">尚無搜尋紀錄</span></div>';
+      return;
+    }
+    searchSuggestionsList.innerHTML = history.map(q => `
+      <div class="search-suggestion-item" data-query="${q}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        <span>${q}</span>
+      </div>
+    `).join('');
+  }
+
+  function showSearchSuggestions() {
+    renderSearchSuggestions();
+    searchSuggestions?.classList.add('active');
+  }
+
+  function hideSearchSuggestions() {
+    setTimeout(() => {
+      searchSuggestions?.classList.remove('active');
+    }, 200);
+  }
+
+  // Show suggestions on focus
+  searchInput?.addEventListener('focus', () => {
+    const history = getSearchHistory();
+    if (history.length > 0) showSearchSuggestions();
+  });
+
+  // Hide suggestions on blur
+  searchInput?.addEventListener('blur', hideSearchSuggestions);
+
+  // Click on suggestion
+  searchSuggestionsList?.addEventListener('click', (e) => {
+    const item = (e.target as HTMLElement).closest('.search-suggestion-item') as HTMLElement;
+    if (item && searchInput) {
+      const query = item.dataset.query;
+      if (query) {
+        searchInput.value = query;
+        (searchInput.closest('form') as HTMLFormElement).submit();
+      }
+    }
+  });
+
+  // Clear history
+  clearSearchHistory?.addEventListener('click', (e) => {
+    e.stopPropagation();
+    doClearSearchHistory();
+  });
+
+  // Save search on submit
+  const searchForm = document.querySelector('.search-form') as HTMLFormElement;
+  searchForm?.addEventListener('submit', () => {
+    if (searchInput?.value) {
+      saveSearchToHistory(searchInput.value);
+    }
+  });
 
   // Initialize progress on load
   initCardProgress();
