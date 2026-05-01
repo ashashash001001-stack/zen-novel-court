@@ -295,6 +295,29 @@ const { title = "阅读" } = Astro.props;
     --reader-text: #E8E6E0;
   }
 
+  [data-reader-theme="high-contrast"] {
+    --reader-bg: #000000;
+    --reader-text: #FFFFFF;
+    --reader-link: #FFFF00;
+  }
+
+  /* High contrast mode adjustments */
+  [data-reader-theme="high-contrast"] .reader-content a {
+    color: var(--reader-link);
+    text-decoration: underline;
+  }
+
+  [data-reader-theme="high-contrast"] .tool-btn,
+  [data-reader-theme="high-contrast"] .chapter-nav-btn {
+    border: 2px solid #FFFFFF;
+  }
+
+  [data-reader-theme="high-contrast"] .tool-btn.active,
+  [data-reader-theme="high-contrast"] .tool-btn:active {
+    background: #FFFF00;
+    color: #000000;
+  }
+
   * {
     margin: 0;
     padding: 0;

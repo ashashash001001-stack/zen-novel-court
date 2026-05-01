@@ -8,7 +8,7 @@ export interface ReaderPreferences {
   lineHeight: number;      // 1.5-2.5, default: 1.7
   paragraphSpacing: number;// 0-2em, default: 1.5em
   textAlign: 'left' | 'justify'; // default: 'left'
-  theme: 'light' | 'dark' | 'sepia' | 'green'; // default: 'light'
+  theme: 'light' | 'dark' | 'sepia' | 'green' | 'high-contrast'; // default: 'light'
 }
 
 const DEFAULT_PREFERENCES: ReaderPreferences = {

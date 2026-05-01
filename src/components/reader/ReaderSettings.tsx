@@ -20,7 +20,8 @@ const THEMES = [
   { value: 'light', label: '紙張白', color: '#FDFBF7' },
   { value: 'sepia', label: '羊皮紙', color: '#F5F0E8' },
   { value: 'green', label: '護眼綠', color: '#E8F0E8' },
-  { value: 'dark', label: '夜間模式', color: '#1E1E1C' }
+  { value: 'dark', label: '夜間模式', color: '#1E1E1C' },
+  { value: 'high-contrast', label: '高對比', color: '#000000' }
 ];
 
 export default function ReaderSettings({ isOpen, onClose }: Props) {
