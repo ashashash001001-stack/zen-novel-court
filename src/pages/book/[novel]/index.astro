@@ -140,6 +140,31 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
       </div>
     )}
 
+    <!-- TOC Preview -->
+    <div class="toc-preview-section" id="tocPreviewSection">
+      <button class="toc-preview-toggle" id="tocPreviewToggle" aria-expanded="false" aria-controls="tocPreviewList">
+        <span>目錄預覽</span>
+        <svg class="toggle-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <polyline points="6 9 12 15 18 9"></polyline>
+        </svg>
+      </button>
+      <ul class="toc-preview-list" id="tocPreviewList" style="display: none;">
+        {Array.from({ length: Math.min(5, novel.totalChapters || novel.chapters || 0) }, (_, i) => i + 1).map((num) => (
+          <li>
+            <a href={config.path('/book/' + slug + '/' + num)} class="toc-preview-item">
+              <span class="toc-chapter">{num}</span>
+              <span class="toc-title">第 {num} 章</span>
+            </a>
+          </li>
+        ))}
+        {novel.totalChapters > 5 && (
+          <li class="toc-more">
+            <span>... 共 {novel.totalChapters || novel.chapters} 章</span>
+          </li>
+        )}
+      </ul>
+    </div>
+
     <!-- Chapter List -->
     <div class="chapters-section">
       <h3 class="section-title">目錄</h3>
@@ -491,10 +516,90 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
     color: var(--text-muted);
   }
 
+  /* TOC Preview */
+  .toc-preview-section {
+    margin-top: var(--spacing-4);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .toc-preview-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: var(--spacing-4);
+    background: var(--bg-base);
+    border: none;
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: background var(--t-fast);
+  }
+
+  .toc-preview-toggle:hover {
+    background: var(--bg-hover);
+  }
+
+  .toc-preview-toggle .toggle-icon {
+    transition: transform var(--t-fast);
+  }
+
+  .toc-preview-toggle[aria-expanded="true"] .toggle-icon {
+    transform: rotate(180deg);
+  }
+
+  .toc-preview-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background: var(--bg-outer);
+  }
+
+  .toc-preview-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-3);
+    padding: var(--spacing-3) var(--spacing-4);
+    text-decoration: none;
+    color: var(--text-dark);
+    transition: background var(--t-fast);
+  }
+
+  .toc-preview-item:hover {
+    background: rgba(163, 145, 113, 0.08);
+  }
+
+  .toc-preview-item .toc-chapter {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-base);
+    border-radius: var(--radius-sm);
+    font-size: var(--text-xs);
+    color: var(--text-muted);
+    flex-shrink: 0;
+  }
+
+  .toc-preview-item .toc-title {
+    font-size: var(--text-sm);
+  }
+
+  .toc-more {
+    padding: var(--spacing-2) var(--spacing-4);
+    text-align: center;
+    color: var(--text-muted);
+    font-size: var(--text-xs);
+  }
+
   .chapters-section {
     padding: var(--spacing-6);
     background: var(--bg-base);
-    margin-top: var(--spacing-6);
+    margin-top: var(--spacing-2);
     padding-bottom: 100px;
   }
 
@@ -1093,6 +1198,18 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
   commentInput?.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
       commentSubmit?.click();
+    }
+  });
+
+  // ===== TOC Preview Toggle =====
+  const tocPreviewToggle = document.getElementById('tocPreviewToggle');
+  const tocPreviewList = document.getElementById('tocPreviewList');
+
+  tocPreviewToggle?.addEventListener('click', () => {
+    const isExpanded = tocPreviewToggle.getAttribute('aria-expanded') === 'true';
+    tocPreviewToggle.setAttribute('aria-expanded', String(!isExpanded));
+    if (tocPreviewList) {
+      tocPreviewList.style.display = isExpanded ? 'none' : 'block';
     }
   });
 </script>
