@@ -31,7 +31,7 @@ Plan for Phase 2 features and improvements
 - Critical CSS inlining
 
 ## 驗收標準
-- [ ] Simplified Chinese can be toggled
+- [x] Simplified Chinese can be toggled
 - [x] Reading progress can be exported/imported
 - [x] Book detail shows TOC preview
 - [x] Keyboard navigation works in reader

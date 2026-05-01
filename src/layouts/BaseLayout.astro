@@ -124,6 +124,10 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
   </script>
   <!-- Skip to main content link for accessibility -->
   <a href="#main-content" class="skip-link">跳到主要内容</a>
+  <!-- Language Toggle -->
+  <button class="lang-toggle" id="langToggle" aria-label="切换语言" title="切换简繁体">
+    <span class="lang-label">简</span>
+  </button>
 
   <!-- Offline Indicator -->
   <div class="offline-indicator" id="offlineIndicator" role="status" aria-live="polite">
@@ -324,6 +328,66 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
         });
       });
     }
+
+    // ===== Language Toggle =====
+    const langToggle = document.getElementById('langToggle');
+    const langLabel = langToggle?.querySelector('.lang-label');
+    const html = document.documentElement;
+    const LANG_KEY = 'zen-novel-language';
+
+    // Map of traditional -> simplified Chinese
+    const zhMap: Record<string, string> = {
+      '小说阁': '小说阁',
+      '开始阅读': '开始阅读',
+      '继续阅读': '继续阅读',
+      '我的收藏': '我的收藏',
+      '我的书单': '我的书单',
+      '为你推荐': '为你推荐',
+      '我的': '我的',
+      '书库': '书库',
+      '发现': '发现',
+      '设置': '设置',
+      '主题': '主题',
+      '浅色': '浅色',
+      '護眼': '护眼',
+      '夜间': '夜间',
+      '清空收藏': '清空收藏',
+      '清空历史记录': '清空历史记录',
+      '導出閱讀數據': '导出阅读数据',
+      '匯入閱讀數據': '导入阅读数据',
+      '创建书单': '创建书单',
+      '暂无书单': '暂无书单',
+      '暂无评论': '暂无评论',
+      '评论': '评论',
+      '目录': '目录',
+      '目录预览': '目录预览',
+      '相关书籍': '相关书籍',
+      '分享': '分享',
+      '评分': '评分',
+      '简介': '简介'
+    };
+
+    function getStoredLang(): string {
+      return localStorage.getItem(LANG_KEY) || 'traditional';
+    }
+
+    function setLanguage(lang: string): void {
+      localStorage.setItem(LANG_KEY, lang);
+      html.setAttribute('data-lang', lang);
+      if (langLabel) {
+        langLabel.textContent = lang === 'traditional' ? '简' : '繁';
+      }
+      // Also update html lang attribute
+      html.setAttribute('lang', lang === 'simplified' ? 'zh-CN' : 'zh-TW');
+    }
+
+    // Initialize
+    setLanguage(getStoredLang());
+
+    langToggle?.addEventListener('click', () => {
+      const current = getStoredLang();
+      setLanguage(current === 'traditional' ? 'simplified' : 'traditional');
+    });
   </script>
   </body>
 </html>
@@ -530,6 +594,45 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
   }
 
   /* Offline Indicator */
+  /* Language Toggle */
+  .lang-toggle {
+    position: fixed;
+    top: var(--spacing-3);
+    right: var(--spacing-3);
+    z-index: 100;
+    padding: var(--spacing-2) var(--spacing-3);
+    background: var(--bg-card);
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    color: var(--text-dark);
+    cursor: pointer;
+    transition: all var(--t-fast);
+  }
+
+  .lang-toggle:hover {
+    background: var(--accent);
+    color: var(--color-white);
+    border-color: var(--accent);
+  }
+
+  @media (min-width: 768px) {
+    .lang-toggle {
+      top: var(--spacing-4);
+      right: var(--spacing-6);
+    }
+  }
+
+  /* Simplified Chinese mode */
+  :global([data-lang="simplified"]) .tc-only {
+    display: none;
+  }
+
+  :global([data-lang="traditional"]) .sc-only {
+    display: none;
+  }
+
   .offline-indicator {
     display: none;
     position: fixed;
