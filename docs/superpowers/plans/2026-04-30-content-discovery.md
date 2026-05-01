@@ -13,7 +13,7 @@ Implement Content Discovery features
 - [x] Home page shows Continue Reading
 - [x] Book detail shows related books
 - [x] Can create reading lists
-- [ ] Recommendations based on history
+- [x] Recommendations based on history
 
 ## 預期時間
 15 分鐘（PDCA 循環）

@@ -101,6 +101,16 @@ import { config } from '../config';
       </div>
     </div>
 
+    <!-- Recommendations Section -->
+    <div class="my-section" id="recommendationsSection">
+      <div class="section-header">
+        <h2>为你推荐</h2>
+      </div>
+      <div id="recommendations" class="list-container">
+        <!-- Recommendations rendered client-side -->
+      </div>
+    </div>
+
     <!-- Favorites Section -->
     <div class="my-section">
       <div class="section-header">
@@ -962,13 +972,15 @@ import { config } from '../config';
 const rawBasePath = (window as any).__configBase__ || '/';
 const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath;
 
-  const novelsData: Record<string, { title: string; chapters: number }> = {
-    '維港深淵': { title: '維港深淵', chapters: 20 },
-    '佛系廚神': { title: '佛系廚神', chapters: 18 },
-    '一茶一禪-海岸線的寧靜': { title: '一茶一禪', chapters: 50 },
-    '一茶一禪': { title: '一茶一禪', chapters: 50 },
-    '萬界直播系統': { title: '萬界直播系統', chapters: 130 },
-    '万界直播系统': { title: '萬界直播系統', chapters: 130 }
+  const novelsData: Record<string, { title: string; chapters: number; categories?: string[] }> = {
+    '維港深淵': { title: '維港深淵', chapters: 20, categories: ['都市'] },
+    '佛系廚神': { title: '佛系廚神', chapters: 18, categories: ['美食', '都市'] },
+    '一茶一禪-海岸線的寧靜': { title: '一茶一禪', chapters: 50, categories: ['療癒'] },
+    '一茶一禪': { title: '一茶一禪', chapters: 50, categories: ['療癒'] },
+    '萬界直播系統': { title: '萬界直播系統', chapters: 130, categories: ['系統'] },
+    '万界直播系统': { title: '萬界直播系統', chapters: 130, categories: ['系統'] },
+    '維港深淵的引擎聲': { title: '維港深淵的引擎聲', chapters: 20, categories: ['都市'] },
+    '萬象骨扇': { title: '萬象骨扇', chapters: 15, categories: ['其他'] }
   };
 
   function createMiniCover(title: string) {
@@ -1459,6 +1471,86 @@ const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath;
 
   // Initialize reading lists
   renderReadingLists();
+
+  // ===== Recommendations =====
+  function getRecommendations(): string[] {
+    try {
+      // Get reading history
+      const history = JSON.parse(localStorage.getItem('history') || '[]');
+      if (history.length === 0) return [];
+
+      // Get favorites
+      const favorites = JSON.parse(localStorage.getItem('favorites') || '[]').map((f: string) => decodeURIComponent(f));
+
+      // Get categories from read/fav books
+      const readCategories: string[] = [];
+      [...history, ...favorites].forEach((item: any) => {
+        const id = typeof item === 'string' ? decodeURIComponent(item) : decodeURIComponent(item.id);
+        const data = novelsData[id];
+        if (data?.categories) {
+          data.categories.forEach((c: string) => {
+            if (!readCategories.includes(c)) readCategories.push(c);
+          });
+        }
+      });
+
+      if (readCategories.length === 0) return [];
+
+      // Get all available books (not in history or favorites)
+      const allBookIds = Object.keys(novelsData);
+      const recommendations: string[] = [];
+
+      allBookIds.forEach(id => {
+        const data = novelsData[id];
+        const isRead = history.some((h: any) => decodeURIComponent(h.id || h) === id);
+        const isFav = favorites.includes(id);
+
+        if (!isRead && !isFav && data?.categories) {
+          // Check if any category matches
+          const hasMatchingCategory = data.categories.some((c: string) => readCategories.includes(c));
+          if (hasMatchingCategory) {
+            recommendations.push(id);
+          }
+        }
+      });
+
+      // Return up to 4 recommendations
+      return recommendations.slice(0, 4);
+    } catch {
+      return [];
+    }
+  }
+
+  function renderRecommendations(): void {
+    const container = document.getElementById('recommendations');
+    const section = document.getElementById('recommendationsSection');
+    if (!container || !section) return;
+
+    const recommendations = getRecommendations();
+
+    if (recommendations.length === 0) {
+      section.style.display = 'none';
+      return;
+    }
+
+    section.style.display = 'block';
+    container.innerHTML = recommendations.map(id => {
+      const data = novelsData[id] || { title: id, chapters: 0 };
+      return `
+        <div class="history-item">
+          <a href="${BASE_PATH}/book/${id}" class="item-link">
+            ${createMiniCover(data.title)}
+            <div class="item-info">
+              <div class="item-title">${data.title}</div>
+              <div class="item-chapter">${data.chapters} 章</div>
+            </div>
+          </a>
+        </div>`;
+    }).join('');
+  }
+
+  // Initialize recommendations
+  renderRecommendations();
 
   // Theme Toggle
   (function initTheme() {
