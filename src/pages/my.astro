@@ -7,12 +7,36 @@ import { config } from '../config';
   <div class="my-page">
     <!-- Profile Header -->
     <div class="profile-header">
-      <div class="profile-avatar">
+      <div class="profile-avatar" id="profileAvatar">
         <span>讀</span>
       </div>
       <div class="profile-info">
-        <div class="profile-name">Reader</div>
-        <div class="profile-stats" id="profileStats">0 本收藏 · 0 章阅读</div>
+        <div class="profile-name" id="profileName">Reader</div>
+        <button class="edit-name-btn" id="editNameBtn" title="編輯暱稱">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+        </button>
+        <div class="profile-stats" id="profileStats">0 本收藏 · 0 章閱讀</div>
+      </div>
+    </div>
+
+    <!-- Edit Name Modal -->
+    <div class="edit-name-modal" id="editNameModal">
+      <div class="edit-name-overlay"></div>
+      <div class="edit-name-dialog">
+        <div class="edit-name-header">
+          <h3>編輯暱稱</h3>
+          <button class="close-btn" id="closeEditName">×</button>
+        </div>
+        <div class="edit-name-body">
+          <input type="text" id="nameInput" class="name-input" placeholder="輸入暱稱" maxlength="20">
+        </div>
+        <div class="edit-name-footer">
+          <button class="cancel-btn" id="cancelName">取消</button>
+          <button class="save-btn" id="saveName">儲存</button>
+        </div>
       </div>
     </div>
 
@@ -173,6 +197,27 @@ import { config } from '../config';
     font-weight: var(--font-semibold);
     font-family: var(--font-serif);
     color: var(--text-dark);
+    display: inline;
+  }
+
+  .edit-name-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: var(--spacing-1);
+    padding: 4px;
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    vertical-align: middle;
+    transition: all var(--t-fast);
+  }
+
+  .edit-name-btn:hover {
+    color: var(--accent);
+    background: rgba(163, 145, 113, 0.1);
   }
 
   .profile-stats {
@@ -570,6 +615,115 @@ import { config } from '../config';
     opacity: 0.5;
   }
 
+  /* Edit Name Modal */
+  .edit-name-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+  }
+
+  .edit-name-modal.active {
+    display: block;
+  }
+
+  .edit-name-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+  }
+
+  .edit-name-dialog {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 85%;
+    max-width: 320px;
+    background: var(--color-bg-card);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+
+  .edit-name-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-4);
+    border-bottom: 1px solid var(--color-border-light);
+  }
+
+  .edit-name-header h3 {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+  }
+
+  .edit-name-header .close-btn {
+    background: none;
+    border: none;
+    font-size: var(--text-xl);
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+
+  .edit-name-body {
+    padding: var(--spacing-4);
+  }
+
+  .name-input {
+    width: 100%;
+    padding: var(--spacing-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
+    background: var(--bg-outer);
+    color: var(--text-dark);
+  }
+
+  .name-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(207, 185, 151, 0.15);
+  }
+
+  .edit-name-footer {
+    display: flex;
+    gap: var(--spacing-3);
+    padding: var(--spacing-4);
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .edit-name-footer button {
+    flex: 1;
+    padding: var(--spacing-3);
+    border-radius: var(--radius-md);
+    font-size: var(--text-base);
+    cursor: pointer;
+    transition: all var(--t-normal);
+  }
+
+  .edit-name-footer .cancel-btn {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--text-secondary);
+  }
+
+  .edit-name-footer .cancel-btn:hover {
+    background: var(--bg-hover);
+  }
+
+  .edit-name-footer .save-btn {
+    background: var(--accent);
+    border: none;
+    color: white;
+  }
+
+  .edit-name-footer .save-btn:hover {
+    background: var(--accent-hover);
+  }
+
   /* History Item */
   :global(.history-item) {
     display: flex;
@@ -959,6 +1113,79 @@ const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath;
   loadFavorites();
   loadHistory();
   loadQuickResume();
+
+  // ===== Edit Nickname =====
+  const NICKNAME_KEY = 'zen-novel-nickname';
+  const editNameBtn = document.getElementById('editNameBtn');
+  const editNameModal = document.getElementById('editNameModal');
+  const closeEditName = document.getElementById('closeEditName');
+  const cancelName = document.getElementById('cancelName');
+  const saveName = document.getElementById('saveName');
+  const nameInput = document.getElementById('nameInput') as HTMLInputElement | null;
+  const profileName = document.getElementById('profileName');
+  const profileAvatar = document.getElementById('profileAvatar');
+
+  function getNickname(): string {
+    try {
+      return localStorage.getItem(NICKNAME_KEY) || 'Reader';
+    } catch {
+      return 'Reader';
+    }
+  }
+
+  function setNickname(name: string): void {
+    try {
+      localStorage.setItem(NICKNAME_KEY, name);
+    } catch {}
+  }
+
+  function updateNicknameDisplay(): void {
+    const nickname = getNickname();
+    if (profileName) profileName.textContent = nickname;
+    if (profileAvatar) {
+      const avatarSpan = profileAvatar.querySelector('span');
+      if (avatarSpan) avatarSpan.textContent = nickname.charAt(0).toUpperCase();
+    }
+  }
+
+  // Initialize nickname on load
+  updateNicknameDisplay();
+
+  function openEditModal() {
+    if (editNameModal && nameInput) {
+      nameInput.value = getNickname();
+      editNameModal.classList.add('active');
+      setTimeout(() => nameInput?.focus(), 100);
+    }
+  }
+
+  function closeEditModal() {
+    if (editNameModal) {
+      editNameModal.classList.remove('active');
+    }
+  }
+
+  function saveNickname() {
+    const newName = nameInput?.value.trim() || 'Reader';
+    setNickname(newName);
+    updateNicknameDisplay();
+    closeEditModal();
+  }
+
+  editNameBtn?.addEventListener('click', openEditModal);
+  closeEditName?.addEventListener('click', closeEditModal);
+  cancelName?.addEventListener('click', closeEditModal);
+  saveName?.addEventListener('click', saveNickname);
+
+  editNameModal?.querySelector('.edit-name-overlay')?.addEventListener('click', closeEditModal);
+
+  nameInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      saveNickname();
+    } else if (e.key === 'Escape') {
+      closeEditModal();
+    }
+  });
 
   // Theme Toggle
   (function initTheme() {
