@@ -9,10 +9,10 @@ Implement User System - local profiles and reading history
 - Favorite books collection
 
 ## 驗收標準
-- [ ] Can set nickname
-- [ ] Reading history persists
-- [ ] Can favorite/unfavorite books
-- [ ] Continue reading shows recent books
+- [x] Can set nickname
+- [x] Reading history persists
+- [x] Can favorite/unfavorite books
+- [x] Continue reading shows recent books
 
 ## 預期時間
 15 分鐘（PDCA 循環）
