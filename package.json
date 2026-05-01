@@ -10,7 +10,9 @@
     "build": "node scripts/sync-covers.mjs && astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "sync-covers": "node scripts/sync-covers.mjs"
+    "sync-covers": "node scripts/sync-covers.mjs",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "dependencies": {
     "@preact/preset-vite": "^2.10.5",
@@ -25,6 +27,9 @@
     "@astrojs/check": "^0.9.8",
     "@astrojs/sitemap": "^3.7.2",
     "@types/opencc-js": "^1.0.3",
-    "typescript": "^5.9.3"
+    "@vitest/ui": "^4.1.5",
+    "happy-dom": "^20.9.0",
+    "typescript": "^5.9.3",
+    "vitest": "^4.1.5"
   }
 }

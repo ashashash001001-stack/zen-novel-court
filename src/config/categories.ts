@@ -1,6 +1,7 @@
 /**
- * 分类配置 - 单一来源
- * 若需要新增分类或调整外观，只需要修改此文件
+ * 分類配置 - 單一來源
+ * 若需要新增分類或調整外觀，只需要修改此文件
+ * 使用繁體中文 key 與資料庫保持一致
  */
 
 export interface CategoryConfig {
@@ -10,8 +11,8 @@ export interface CategoryConfig {
 }
 
 export const categoryConfig: Record<string, CategoryConfig> = {
-  疗愈: {
-    name: '疗愈',
+  療癒: {
+    name: '療癒',
     icon: '🌿',
     color: 'linear-gradient(135deg, #7d9a7d 0%, #5a7a5a 100%)'
   },
@@ -25,13 +26,13 @@ export const categoryConfig: Record<string, CategoryConfig> = {
     icon: '🏙️',
     color: 'linear-gradient(135deg, #6b7a8f 0%, #4b5a6f 100%)'
   },
-  系统: {
-    name: '系统',
+  系統: {
+    name: '系統',
     icon: '⚡',
     color: 'linear-gradient(135deg, #8b7dab 0%, #6b5d8b 100%)'
   },
-  成长: {
-    name: '成长',
+  成長: {
+    name: '成長',
     icon: '📈',
     color: 'linear-gradient(135deg, #b08b8b 0%, #8a6b6b 100%)'
   },
@@ -42,7 +43,7 @@ export const categoryConfig: Record<string, CategoryConfig> = {
   }
 };
 
-// 未知分类的默认外观
+// 未知分類的默認外觀
 export const defaultCategory: CategoryConfig = {
   name: '其他',
   icon: '📚',
@@ -50,14 +51,14 @@ export const defaultCategory: CategoryConfig = {
 };
 
 /**
- * 获取分类配置，若不存在则返回默认值
+ * 獲取分類配置，若不存在則返回默認值
  */
 export function getCategoryConfig(slug: string): CategoryConfig {
   return categoryConfig[slug] || defaultCategory;
 }
 
 /**
- * 获取所有已配置的分类 slug 列表
+ * 獲取所有已配置的分類 slug 列表
  */
 export function getAllCategorySlugs(): string[] {
   return Object.keys(categoryConfig);

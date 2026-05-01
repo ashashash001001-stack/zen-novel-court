@@ -3,6 +3,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { config } from '../config';
 import { getCollection } from 'astro:content';
 import { categoryConfig, getAllCategorySlugs } from '../config/categories';
+import { getAllTagSlugs, getTagConfig } from '../config/tags';
 import VisualCategory from '../components/VisualCategory.astro';
 import fs from 'fs';
 import path from 'path';
@@ -39,6 +40,17 @@ const categories = [
     name: categoryConfig[slug].name,
     slug,
     icon: categoryConfig[slug].icon
+  }))
+];
+
+// Dynamic tags from config (for filtering)
+const tagSlugs = getAllTagSlugs();
+const tags = [
+  { name: '全部', slug: 'all', icon: '🏷️' },
+  ...tagSlugs.map(slug => ({
+    name: getTagConfig(slug).name,
+    slug,
+    icon: getTagConfig(slug).icon
   }))
 ];
 
@@ -91,12 +103,9 @@ const statusFilters = [
   <div class="hot-keywords">
     <span class="hot-keywords-label">熱門關鍵詞</span>
     <div class="hot-keywords-list">
-      <button class="hot-keyword-btn" data-keyword="禪意">禪意</button>
-      <button class="hot-keyword-btn" data-keyword="美食">美食</button>
-      <button class="hot-keyword-btn" data-keyword="系統">系統</button>
-      <button class="hot-keyword-btn" data-keyword="都市">都市</button>
-      <button class="hot-keyword-btn" data-keyword="奇幻">奇幻</button>
-      <button class="hot-keyword-btn" data-keyword="成長">成長</button>
+      {tags.slice(1, 7).map((tag) => (
+        <button class="hot-keyword-btn" data-keyword={tag.slug}>{tag.name}</button>
+      ))}
     </div>
   </div>
 
@@ -104,15 +113,11 @@ const statusFilters = [
   <div class="tag-filter" id="tagFilter">
     <div class="tag-filter-label">標籤篩選</div>
     <div class="tag-filter-tags">
-      <button class="tag-filter-btn active" data-tag="all">全部</button>
-      <button class="tag-filter-btn" data-tag="禪意">禪意</button>
-      <button class="tag-filter-btn" data-tag="美食">美食</button>
-      <button class="tag-filter-btn" data-tag="素食">素食</button>
-      <button class="tag-filter-btn" data-tag="成長">成長</button>
-      <button class="tag-filter-btn" data-tag="奇幻">奇幻</button>
-      <button class="tag-filter-btn" data-tag="系統">系統</button>
-      <button class="tag-filter-btn" data-tag="都市">都市</button>
-      <button class="tag-filter-btn" data-tag="人生">人生</button>
+      {tags.map((tag) => (
+        <button class={`tag-filter-btn ${tag.slug === 'all' ? 'active' : ''}`} data-tag={tag.slug}>
+          <span>{tag.icon}</span> {tag.name}
+        </button>
+      ))}
     </div>
   </div>
 
@@ -1041,15 +1046,21 @@ const statusFilters = [
   function resetFilters() {
     if (searchInput) searchInput.value = '';
     if (categoryInput) categoryInput.value = 'all';
-    
+
+    // Reset category tabs
     categoryTabs.forEach(t => t.classList.remove('active'));
     categoryTabs[0].classList.add('active');
-    
+
+    // Reset tag filter
+    (window as any).__activeTag = 'all';
+    tagFilterBtns.forEach(b => b.classList.remove('active'));
+    tagFilterBtns[0]?.classList.add('active');
+
     const url = new URL(window.location.href);
     url.searchParams.delete('q');
     url.searchParams.delete('category');
     window.history.pushState({}, '', url);
-    
+
     filterBooks();
   }
   
