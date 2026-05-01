@@ -171,6 +171,23 @@ import { config } from '../config';
           </svg>
           <span>清空歷史記錄</span>
         </button>
+        <button class="settings-item" id="exportData">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          <span>導出閱讀數據</span>
+        </button>
+        <button class="settings-item" id="importData">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <span>匯入閱讀數據</span>
+        </button>
+        <input type="file" id="importFileInput" accept=".json" style="display: none;">
       </div>
     </div>
 
@@ -1199,6 +1216,84 @@ const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath;
       localStorage.removeItem('history');
       loadHistory();
       loadQuickResume();
+    }
+  });
+
+  // ===== Export/Import Data =====
+  const exportDataBtn = document.getElementById('exportData');
+  const importDataBtn = document.getElementById('importData');
+  const importFileInput = document.getElementById('importFileInput') as HTMLInputElement | null;
+
+  function exportAllData(): void {
+    const data = {
+      version: '1.0',
+      exportDate: new Date().toISOString(),
+      favorites: localStorage.getItem('favorites'),
+      history: localStorage.getItem('history'),
+      ratings: localStorage.getItem('zen-novel-ratings'),
+      comments: localStorage.getItem('zen-novel-comments'),
+      readingLists: localStorage.getItem('zen-novel-reading-lists'),
+      readingProgress: localStorage.getItem('reading_progress'),
+      readingStreak: localStorage.getItem('zen-novel-reading-streak'),
+      nickname: localStorage.getItem('zen-novel-nickname'),
+      theme: localStorage.getItem('theme'),
+      searchHistory: localStorage.getItem('zen-novel-search-history')
+    };
+
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `zen-novel-backup-${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    alert('數據導出成功！');
+  }
+
+  function importAllData(file: File): void {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target?.result as string);
+        if (!data.version) {
+          alert('無效的備份文件');
+          return;
+        }
+
+        if (data.favorites) localStorage.setItem('favorites', data.favorites);
+        if (data.history) localStorage.setItem('history', data.history);
+        if (data.ratings) localStorage.setItem('zen-novel-ratings', data.ratings);
+        if (data.comments) localStorage.setItem('zen-novel-comments', data.comments);
+        if (data.readingLists) localStorage.setItem('zen-novel-reading-lists', data.readingLists);
+        if (data.readingProgress) localStorage.setItem('reading_progress', data.readingProgress);
+        if (data.readingStreak) localStorage.setItem('zen-novel-reading-streak', data.readingStreak);
+        if (data.nickname) localStorage.setItem('zen-novel-nickname', data.nickname);
+        if (data.theme) localStorage.setItem('theme', data.theme);
+        if (data.searchHistory) localStorage.setItem('zen-novel-search-history', data.searchHistory);
+
+        alert('數據匯入成功！請刷新頁面。');
+      } catch (err) {
+        alert('匯入失敗，請檢查文件格式');
+      }
+    };
+    reader.readAsText(file);
+  }
+
+  exportDataBtn?.addEventListener('click', exportAllData);
+
+  importDataBtn?.addEventListener('click', () => {
+    importFileInput?.click();
+  });
+
+  importFileInput?.addEventListener('change', (e) => {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (file) {
+      if (confirm('匯入將覆蓋現有數據，確定要繼續嗎？')) {
+        importAllData(file);
+      }
     }
   });
 

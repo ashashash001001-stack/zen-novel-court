@@ -32,7 +32,7 @@ Plan for Phase 2 features and improvements
 
 ## 驗收標準
 - [ ] Simplified Chinese can be toggled
-- [ ] Reading progress can be exported/imported
+- [x] Reading progress can be exported/imported
 - [ ] Book detail shows TOC preview
 - [ ] Keyboard navigation works in reader
 
