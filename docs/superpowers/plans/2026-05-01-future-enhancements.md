@@ -34,7 +34,7 @@ Plan for Phase 2 features and improvements
 - [ ] Simplified Chinese can be toggled
 - [x] Reading progress can be exported/imported
 - [x] Book detail shows TOC preview
-- [ ] Keyboard navigation works in reader
+- [x] Keyboard navigation works in reader
 
 ## 預期時間
 20 分鐘（PDCA 循環） per feature
