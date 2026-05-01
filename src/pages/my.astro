@@ -48,6 +48,24 @@ import { config } from '../config';
       </div>
     </div>
 
+    <!-- Create List Modal -->
+    <div class="edit-name-modal" id="createListModal">
+      <div class="edit-name-overlay"></div>
+      <div class="edit-name-dialog">
+        <div class="edit-name-header">
+          <h3>创建书单</h3>
+          <button class="close-btn" id="closeCreateList">×</button>
+        </div>
+        <div class="edit-name-body">
+          <input type="text" id="listNameInput" class="name-input" placeholder="书单名称" maxlength="20">
+        </div>
+        <div class="edit-name-footer">
+          <button class="cancel-btn" id="cancelCreateList">取消</button>
+          <button class="save-btn" id="saveCreateList">创建</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Quick Resume Section -->
     <div id="quick-resume" class="my-section quick-resume-section" style="display: none;">
       <div class="section-header">
@@ -64,6 +82,22 @@ import { config } from '../config';
           </div>
         </div>
         <a href="#" class="qr-continue-btn" id="qrContinue">继续阅读</a>
+      </div>
+    </div>
+
+    <!-- Reading Lists Section -->
+    <div class="my-section">
+      <div class="section-header">
+        <h2>我的书单</h2>
+        <button class="add-list-btn" id="addListBtn" title="创建书单">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+        </button>
+      </div>
+      <div id="readingLists" class="list-container">
+        <!-- Reading lists rendered client-side -->
       </div>
     </div>
 
@@ -272,12 +306,35 @@ import { config } from '../config';
     margin-bottom: var(--spacing-4);
     border-bottom: 1px solid var(--color-border-subtle);
     padding-bottom: var(--spacing-3);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 
   .section-header h2 {
     font-size: var(--text-base);
     font-weight: var(--font-semibold);
     color: var(--text-dark);
+  }
+
+  .add-list-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background: transparent;
+    border: 1px solid var(--color-border-light);
+    border-radius: var(--radius-md);
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all var(--t-fast);
+  }
+
+  .add-list-btn:hover {
+    background: rgba(163, 145, 113, 0.1);
+    color: var(--accent);
+    border-color: var(--accent);
   }
 
   /* Tablet Layout */
@@ -1278,6 +1335,130 @@ const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath;
       closeEditModal();
     }
   });
+
+  // ===== Reading Lists =====
+  const READING_LISTS_KEY = 'zen-novel-reading-lists';
+  const addListBtn = document.getElementById('addListBtn');
+  const createListModal = document.getElementById('createListModal');
+  const closeCreateList = document.getElementById('closeCreateList');
+  const cancelCreateList = document.getElementById('cancelCreateList');
+  const saveCreateList = document.getElementById('saveCreateList');
+  const listNameInput = document.getElementById('listNameInput') as HTMLInputElement | null;
+
+  function getReadingLists(): Array<{ id: string; name: string; books: string[] }> {
+    try {
+      return JSON.parse(localStorage.getItem(READING_LISTS_KEY) || '[]');
+    } catch {
+      return [];
+    }
+  }
+
+  function saveReadingLists(lists: Array<{ id: string; name: string; books: string[] }>): void {
+    try {
+      localStorage.setItem(READING_LISTS_KEY, JSON.stringify(lists));
+    } catch {}
+  }
+
+  function renderReadingLists(): void {
+    const container = document.getElementById('readingLists');
+    if (!container) return;
+
+    const lists = getReadingLists();
+
+    if (lists.length === 0) {
+      container.innerHTML = `
+        <div class="empty-state">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+          </svg>
+          <p>暂无书单</p>
+          <button class="empty-cta" onclick="document.getElementById('addListBtn').click()">创建书单</button>
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = lists.map(list => `
+      <div class="history-item reading-list-item">
+        <a href="${BASE_PATH}/my?list=${encodeURIComponent(list.id)}" class="item-link">
+          <div class="mini-cover" style="background: var(--color-accent);">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+              <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+              <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+            </svg>
+          </div>
+          <div class="item-info">
+            <div class="item-title">${escapeHtml(list.name)}</div>
+            <div class="item-chapter">${list.books.length} 本书</div>
+          </div>
+        </a>
+        <button class="item-remove" onclick="deleteReadingList('${list.id}'); event.stopPropagation();" title="删除书单">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 6L6 18M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>`).join('');
+  }
+
+  function escapeHtml(text: string): string {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+  }
+
+  (window as any).deleteReadingList = function(id: string) {
+    if (!confirm('确定要删除这个书单吗？')) return;
+    const lists = getReadingLists().filter(l => l.id !== id);
+    saveReadingLists(lists);
+    renderReadingLists();
+  };
+
+  function openCreateListModal() {
+    if (createListModal && listNameInput) {
+      listNameInput.value = '';
+      createListModal.classList.add('active');
+      setTimeout(() => listNameInput?.focus(), 100);
+    }
+  }
+
+  function closeCreateListModal() {
+    if (createListModal) {
+      createListModal.classList.remove('active');
+    }
+  }
+
+  function createList() {
+    const name = listNameInput?.value.trim();
+    if (!name) return;
+
+    const lists = getReadingLists();
+    lists.push({
+      id: Date.now().toString(),
+      name: name.slice(0, 20),
+      books: []
+    });
+    saveReadingLists(lists);
+    closeCreateListModal();
+    renderReadingLists();
+  }
+
+  addListBtn?.addEventListener('click', openCreateListModal);
+  closeCreateList?.addEventListener('click', closeCreateListModal);
+  cancelCreateList?.addEventListener('click', closeCreateListModal);
+  saveCreateList?.addEventListener('click', createList);
+
+  createListModal?.querySelector('.edit-name-overlay')?.addEventListener('click', closeCreateListModal);
+
+  listNameInput?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      createList();
+    } else if (e.key === 'Escape') {
+      closeCreateListModal();
+    }
+  });
+
+  // Initialize reading lists
+  renderReadingLists();
 
   // Theme Toggle
   (function initTheme() {
