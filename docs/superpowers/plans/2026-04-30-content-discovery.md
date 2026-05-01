@@ -10,9 +10,9 @@ Implement Content Discovery features
 - Book recommendations
 
 ## 驗收標準
-- [ ] Home page shows Continue Reading
-- [ ] Book detail shows related books
-- [ ] Can create reading lists
+- [x] Home page shows Continue Reading
+- [x] Book detail shows related books
+- [x] Can create reading lists
 - [ ] Recommendations based on history
 
 ## 預期時間

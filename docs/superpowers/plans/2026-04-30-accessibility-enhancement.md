@@ -10,10 +10,10 @@ Implement Accessibility improvements
 - High contrast theme option
 
 ## 驗收標準
-- [ ] Tab navigation works on all controls
-- [ ] Screen reader can navigate reader
-- [ ] High contrast mode available
-- [ ] Focus indicators visible
+- [x] Tab navigation works on all controls
+- [x] Screen reader can navigate reader
+- [x] High contrast mode available
+- [x] Focus indicators visible
 
 ## 預期時間
 15 分鐘（PDCA 循環）

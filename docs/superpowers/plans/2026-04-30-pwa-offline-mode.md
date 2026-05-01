@@ -15,9 +15,9 @@ Implement Performance - PWA & Offline Mode
 - Offline detection and UI feedback
 
 ## 驗收標準
-- [ ] PWA installable on mobile
-- [ ] Can read cached chapters offline
-- [ ] Offline indicator shows when disconnected
+- [x] PWA installable on mobile
+- [x] Can read cached chapters offline
+- [x] Offline indicator shows when disconnected
 
 ## 預期時間
 15 分鐘（PDCA 循環）
