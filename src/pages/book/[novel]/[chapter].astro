@@ -1155,33 +1155,16 @@ const readingTimePlaceholder = '0';
    }
 
    // Save progress on scroll (debounced) and before leaving
+   // Note: saveReadingProgress already includes scrollY in the progress object
    let saveProgressTimeout: ReturnType<typeof setTimeout>;
-   let saveScrollTimeout: ReturnType<typeof setTimeout>;
    window.addEventListener('scroll', () => {
      clearTimeout(saveProgressTimeout);
      saveProgressTimeout = setTimeout(saveReadingProgress, 1000);
-     // Also save scroll position
-     clearTimeout(saveScrollTimeout);
-     saveScrollTimeout = setTimeout(() => {
-       try {
-         localStorage.setItem('scroll_' + novelSlug + '_' + chapterNum, String(window.scrollY));
-       } catch {}
-     }, 500);
    });
    window.addEventListener('beforeunload', saveReadingProgress);
 
-   // Restore scroll position on page load
-   (function restoreScrollPosition() {
-     try {
-       const saved = localStorage.getItem('scroll_' + novelSlug + '_' + chapterNum);
-       if (saved) {
-         const scrollY = parseInt(saved, 10);
-         if (scrollY > 0) {
-           setTimeout(() => window.scrollTo(0, scrollY), 100);
-         }
-       }
-     } catch {}
-   })();
+   // Restore scroll position on page load (uses existing restoreReadingProgress)
+   restoreReadingProgress();
 
    if (bookIndex !== -1) {
      const rawSlug = pathParts[bookIndex + 1] || '';
