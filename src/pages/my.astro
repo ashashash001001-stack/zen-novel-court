@@ -19,6 +19,14 @@ import { config } from '../config';
           </svg>
         </button>
         <div class="profile-stats" id="profileStats">0 本收藏 · 0 章閱讀</div>
+        <div class="streak-badge" id="streakBadge">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+            <path d="M2 17l10 5 10-5"></path>
+            <path d="M2 12l10 5 10-5"></path>
+          </svg>
+          <span id="streakCount">0</span> 天
+        </div>
       </div>
     </div>
 
@@ -223,6 +231,23 @@ import { config } from '../config';
   .profile-stats {
     font-size: 10px;
     color: var(--text-muted);
+  }
+
+  .streak-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: var(--spacing-1);
+    padding: 2px 8px;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    border-radius: var(--radius-full);
+    font-size: 11px;
+    font-weight: var(--font-medium);
+    color: white;
+  }
+
+  .streak-badge svg {
+    opacity: 0.9;
   }
 
   /* My Sections - Match Library Card Pattern */
@@ -1113,6 +1138,73 @@ const BASE_PATH = rawBasePath === '/' ? '' : rawBasePath;
   loadFavorites();
   loadHistory();
   loadQuickResume();
+
+  // ===== Reading Streak =====
+  const STREAK_KEY = 'zen-novel-reading-streak';
+  const streakCountEl = document.getElementById('streakCount');
+
+  function getStreak(): { count: number; lastReadDate: string | null } {
+    try {
+      const data = JSON.parse(localStorage.getItem(STREAK_KEY) || '{"count":0,"lastReadDate":null}');
+      return data;
+    } catch {
+      return { count: 0, lastReadDate: null };
+    }
+  }
+
+  function updateStreak(): void {
+    const today = new Date().toISOString().split('T')[0];
+    const streak = getStreak();
+
+    if (streak.lastReadDate === today) {
+      // Already read today, no update needed
+      return;
+    }
+
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+    let newCount = 1;
+    if (streak.lastReadDate === yesterdayStr) {
+      // Read yesterday, continue streak
+      newCount = streak.count + 1;
+    }
+    // If last read was before yesterday, reset to 1
+
+    const updatedStreak = {
+      count: newCount,
+      lastReadDate: today
+    };
+
+    try {
+      localStorage.setItem(STREAK_KEY, JSON.stringify(updatedStreak));
+    } catch {}
+
+    if (streakCountEl) {
+      streakCountEl.textContent = String(newCount);
+    }
+  }
+
+  // Check and update streak when page loads
+  updateStreak();
+
+  // Also update streak when reading (on chapter page)
+  const progressData = localStorage.getItem('reading_progress');
+  if (progressData) {
+    try {
+      const progress = JSON.parse(progressData);
+      if (Object.keys(progress).length > 0) {
+        updateStreak();
+      }
+    } catch {}
+  }
+
+  // Initialize streak display
+  const initialStreak = getStreak();
+  if (streakCountEl) {
+    streakCountEl.textContent = String(initialStreak.count);
+  }
 
   // ===== Edit Nickname =====
   const NICKNAME_KEY = 'zen-novel-nickname';
