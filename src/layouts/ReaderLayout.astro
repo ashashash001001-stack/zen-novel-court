@@ -37,6 +37,16 @@ const { title = "阅读" } = Astro.props;
   <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body data-base-path={config.base}>
+  <!-- Offline Indicator -->
+  <div class="offline-indicator" id="offlineIndicator" role="status" aria-live="polite">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+      <path d="M2 12h20M2 12a10 10 0 0 1 20 0M2 12a10 10 0 0 0 20 0"></path>
+      <line x1="1" y1="1" x2="23" y2="23"></line>
+    </svg>
+    <span class="offline-text">離線模式</span>
+    <span class="offline-hint">可閱讀已快取的章節</span>
+  </div>
+
   <div class="reader-container">
     <slot />
   </div>
@@ -165,10 +175,90 @@ const { title = "阅读" } = Astro.props;
       init();
     }
   </script>
+
+  <!-- Offline Detection Script -->
+  <script is:inline>
+    (function() {
+      var indicator = document.getElementById('offlineIndicator');
+
+      function updateOnlineStatus() {
+        if (!indicator) return;
+        if (navigator.onLine) {
+          indicator.classList.remove('visible');
+        } else {
+          indicator.classList.add('visible');
+        }
+      }
+
+      // Initial check
+      updateOnlineStatus();
+
+      // Listen for changes
+      window.addEventListener('online', updateOnlineStatus);
+      window.addEventListener('offline', updateOnlineStatus);
+    })();
+
+    // Register Service Worker
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/sw.js').then(function(registration) {
+          console.log('ServiceWorker registration successful:', registration.scope);
+        }).catch(function(err) {
+          console.log('ServiceWorker registration failed:', err);
+        });
+      });
+    }
+  </script>
 </body>
 </html>
 
 <style is:global>
+  /* Offline Indicator */
+  .offline-indicator {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    color: #78350f;
+    font-size: 14px;
+    font-weight: 500;
+    z-index: 1001;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .offline-indicator.visible {
+    display: flex;
+  }
+
+  .offline-indicator svg {
+    flex-shrink: 0;
+  }
+
+  .offline-text {
+    font-weight: 600;
+  }
+
+  .offline-hint {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-left: 4px;
+  }
+
+  @media (min-width: 640px) {
+    .offline-indicator {
+      padding: 8px 24px;
+    }
+
+    .offline-hint {
+      margin-left: 12px;
+    }
+  }
   @import '../styles/tokens.css';
 
   :root {
