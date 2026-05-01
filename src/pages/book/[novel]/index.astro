@@ -11,16 +11,52 @@ export async function getStaticPaths() {
   // Filter to only meta.json entries
   const novelMetadata = novels.filter(n => n.id.endsWith('/meta') && n.data?.synopsis);
 
-  return novelMetadata.map((novel) => ({
-    params: { novel: novel.id.replace('/meta', '') },
-    props: {
-      novel: novel.data,
-      slug: novel.id.replace('/meta', '')
-    }
-  }));
+  // Build metadata map for all novels
+  const allNovelsMeta = {};
+  novelMetadata.forEach(n => {
+    const s = n.id.replace('/meta', '');
+    allNovelsMeta[s] = {
+      title: n.data.title,
+      author: n.data.author,
+      genre: n.data.genre,
+      chapters: n.data.totalChapters || n.data.chapters || 1,
+      categories: n.data.categories || []
+    };
+  });
+
+  return novelMetadata.map((novel) => {
+    const slug = novel.id.replace('/meta', '');
+    const currentCategories = novel.data.categories || [];
+
+    // Find related books (same category, exclude current)
+    const related = novelMetadata
+      .filter(n => {
+        const nSlug = n.id.replace('/meta', '');
+        if (nSlug === slug) return false;
+        const nCats = n.data.categories || [];
+        return nCats.some(c => currentCategories.includes(c));
+      })
+      .slice(0, 4)
+      .map(n => ({
+        slug: n.id.replace('/meta', ''),
+        title: n.data.title,
+        author: n.data.author,
+        chapters: n.data.totalChapters || n.data.chapters || 1
+      }));
+
+    return {
+      params: { novel: slug },
+      props: {
+        novel: novel.data,
+        slug,
+        relatedBooks: related,
+        allBooksMeta: allNovelsMeta
+      }
+    };
+  });
 }
 
-const { novel, slug } = Astro.props;
+const { novel, slug, relatedBooks = [], allBooksMeta = {} } = Astro.props;
 // Check if cover image exists (prefer .webp for performance)
 const novelDir = path.join('src/content/novels', slug);
 const coverPath = fs.existsSync(path.join(novelDir, 'cover.webp')) ? 'cover.webp' :
@@ -95,6 +131,31 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
       </ul>
     </div>
   </div>
+
+  <!-- Related Books Section -->
+  {relatedBooks.length > 0 && (
+    <div class="related-section">
+     相關書籍
+      <div class="related-grid">
+        {relatedBooks.map((book) => (
+          <a href={config.path('/book/' + book.slug)} class="related-card">
+            <div class="related-cover">
+              <div class="css-book-cover" style="width: 100%; height: 100%;">
+                <div class="cover-content">
+                  <span class="cover-title">{book.title.slice(0, 4)}</span>
+                </div>
+              </div>
+            </div>
+            <div class="related-info">
+              <span class="related-title">{book.title}</span>
+              <span class="related-chapters">{book.chapters} 章</span>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
 
   <!-- Sticky CTA -->
   <div class="sticky-cta">
@@ -387,6 +448,82 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+  }
+
+  /* Related Books Section */
+  .related-section {
+    padding: var(--spacing-6) var(--spacing-4);
+    margin-top: var(--spacing-4);
+    border-top: 1px solid var(--color-border-light);
+  }
+
+  .related-section h3 {
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    margin-bottom: var(--spacing-4);
+    color: var(--text-dark);
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-3);
+  }
+
+  @media (min-width: 640px) {
+    .related-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .related-card {
+    display: block;
+    text-decoration: none;
+    background: var(--bg-card);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    border: 1px solid var(--color-border-light);
+    transition: all var(--t-normal);
+  }
+
+  @media (hover: hover) {
+    .related-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent);
+    }
+  }
+
+  .related-cover {
+    aspect-ratio: 3/4;
+    background: var(--color-primary-300);
+  }
+
+  .related-cover .css-book-cover {
+    border-radius: 0;
+  }
+
+  .related-cover .cover-title {
+    font-size: var(--text-sm);
+  }
+
+  .related-info {
+    padding: var(--spacing-2);
+  }
+
+  .related-title {
+    display: block;
+    font-size: var(--text-xs);
+    font-weight: var(--font-medium);
+    color: var(--text-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .related-chapters {
+    font-size: 10px;
+    color: var(--text-muted);
   }
 
   /* Sticky CTA */
