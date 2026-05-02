@@ -1,14 +1,4 @@
-# Book slugs redirect (no trailing slash)
 # Site deployed at https://zen-novel-court.pages.dev (root path)
-
-# Alias redirects for old/incorrect slugs
-/book/維港深淵 /book/維港深淵的引擎聲/
-/book/一茶一禪-海岸線的寧靜 /book/一茶一禪-海鮮僧的靜心茶路/
-/book/一茶一禪 /book/一茶一禪-海鮮僧的靜心茶路/
-/book/萬界直播系統 /book/万界直播system/
-
-# Fix double-encoded URL issue (e.g., %C3%A8%C2%90%C2%AC -> %E8%90%AC)
-/book/%C3%A8%C2%90%C2%AC%C3%A8%C2%B1%C2%A1%C3%A9%C2%AA%C2%A8%C3%A6%C2%89%C2%87 /book/萬象骨扇/
 
 # Other pages
 /library /library/
