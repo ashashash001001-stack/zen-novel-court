@@ -1,14 +1,13 @@
 # Site deployed at https://zen-novel-court.pages.dev (root path)
 
+# Add trailing slash to all book pages (Astro builds to directories)
+/book/* /book/*/
+
 # Other pages
 /library /library/
 /search /search/
 /shelf /shelf/
 /my /my/
-/category/healing /category/療癒/
-/category/food /category/美食/
-/category/urban /category/都市/
-/category/growth /category/成長/
-/category/other /category/其他/
+/category/* /category/*/
 /legal/privacy /legal/privacy/
 /legal/terms /legal/terms/
