@@ -1,25 +1,27 @@
 # Book slugs redirect (no trailing slash)
-# Use only /zen-novel-court base path since that's where site is deployed
+# Site deployed at https://zen-novel-court.pages.dev (root path)
 
-# Alias redirects
-/zen-novel-court/book/維港深淵 /zen-novel-court/book/維港深淵的引擎聲/
-/zen-novel-court/book/一茶一禪-海岸線的寧靜 /zen-novel-court/book/一茶一禪-海鮮僧的靜心茶路/
-/zen-novel-court/book/一茶一禪 /zen-novel-court/book/一茶一禪-海鮮僧的靜心茶路/
-/zen-novel-court/book/万界直播system /zen-novel-court/book/万界直播system/
-/zen-novel-court/book/萬界直播系統 /zen-novel-court/book/万界直播system/
+# Alias redirects for old/incorrect slugs
+/book/維港深淵 /book/維港深淵的引擎聲/
+/book/一茶一禪-海岸線的寧靜 /book/一茶一禪-海鮮僧的靜心茶路/
+/book/一茶一禪 /book/一茶一禪-海鮮僧的靜心茶路/
+/book/萬界直播系統 /book/万界直播system/
+
+# Fix double-encoded URL issue (e.g., %C3%A8%C2%90%C2%AC -> %E8%90%AC)
+/book/%C3%A8%C2%90%C2%AC%C3%A8%C2%B1%C2%A1%C3%A9%C2%AA%C2%A8%C3%A6%C2%89%C2%87 /book/萬象骨扇/
 
 # Add trailing slash to all book pages (Astro builds to directories)
-/zen-novel-court/book/* /zen-novel-court/book/*/
+/book/* /book/*/
 
 # Other pages
-/zen-novel-court/library /zen-novel-court/library/
-/zen-novel-court/search /zen-novel-court/search/
-/zen-novel-court/shelf /zen-novel-court/shelf/
-/zen-novel-court/my /zen-novel-court/my/
-/zen-novel-court/category/healing /zen-novel-court/category/healing/
-/zen-novel-court/category/food /zen-novel-court/category/food/
-/zen-novel-court/category/urban /zen-novel-court/category/urban/
-/zen-novel-court/category/growth /zen-novel-court/category/growth/
-/zen-novel-court/category/other /zen-novel-court/category/other/
-/zen-novel-court/legal/privacy /zen-novel-court/legal/privacy/
-/zen-novel-court/legal/terms /zen-novel-court/legal/terms/
+/library /library/
+/search /search/
+/shelf /shelf/
+/my /my/
+/category/healing /category/療癒/
+/category/food /category/美食/
+/category/urban /category/都市/
+/category/growth /category/成長/
+/category/other /category/其他/
+/legal/privacy /legal/privacy/
+/legal/terms /legal/terms/
