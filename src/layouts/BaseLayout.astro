@@ -101,17 +101,38 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
   <script is:inline>
     // Expose config.base to client-side scripts
     window.__configBase__ = document.body.dataset.basePath;
-    
+
+    // Redirect URLs without trailing slash to with trailing slash (for book/chapter pages)
+    (function() {
+      const path = window.location.pathname;
+      // Match /book/something or /book/something/something without trailing slash
+      const bookMatch = path.match(/^\/book\/[^/]+(\/[^/]+)?$/);
+      if (bookMatch) {
+        // Check if already has trailing slash
+        if (!path.endsWith('/')) {
+          window.location.href = path + '/';
+          return;
+        }
+      }
+      // Also handle /library, /my, /legal/* without trailing slash
+      if (path === '/library' || path === '/my' || path.startsWith('/legal/')) {
+        if (!path.endsWith('/')) {
+          window.location.href = path + '/';
+          return;
+        }
+      }
+    })();
+
     // Fallback: redirect legacy URLs without base path (for bookmarks/bookmarks)
     (function() {
       const basePath = document.body.dataset.basePath;
       const path = window.location.pathname;
-      
+
       // Only redirect if basePath is NOT root (/) - otherwise no redirect needed
       if (basePath !== '/' && path !== basePath && path !== basePath + '/' && path !== '/') {
         const normalizedBase = basePath.endsWith('/') ? basePath.slice(0, -1) : basePath;
         const targetPath = normalizedBase + path;
-        
+
         const routes = ['/library', '/my', '/book/', '/category/', '/legal/'];
         for (const r of routes) {
           if (path === r || path === r + '/' || path.startsWith(r)) {

@@ -615,7 +615,22 @@ node --version
 
 ### 最近的部署修復經驗
 
-1. **GitHub Pages 圖片載入修復**（2026-04-27）：
+1. **Cloudflare Pages 書籍與章節頁面 404 問題修復**（2026-05-03）：
+   - 問題：Cloudflare Pages 部署後，書籍詳情頁（如 `/book/xxx`）和章節頁面（如 `/book/xxx/1`）返回 404，但 GitHub Pages 正常
+   - 原因：
+     - Cloudflare Pages 部署在根路徑 `/`，而 GitHub Pages 在 `/zen-novel-court`
+     - Astro 生成的靜態 HTML 位於 `/book/xxx/index.html`（需 trailing slash）
+     - 訪問 `/book/xxx` 時 Cloudflare 找不到文件，返回 404
+   - 解決方案：
+     - 在 `public/_redirects` 中添加重定向規則（單段和雙段路徑）：
+       ```
+       /book/:title /book/:title/
+       /book/:title/:chapter /book/:title/:chapter/
+       ```
+     - 同時在 `src/layouts/BaseLayout.astro` 添加客戶端 fallback 重定向邏輯，處理萬用字元規則可能导致的循環問題
+   - 受影響文件：`public/_redirects`, `src/layouts/BaseLayout.astro`
+
+2. **GitHub Pages 圖片載入修復**（2026-04-27）：
    - 問題：圖片在 https://zen-novel-court.pages.dev/ 正常載入，但在 https://ashashash001001-stack.github.io/zen-novel-court/ 無法顯示
    - 原因：圖片路徑（如 `/content/novels/...`）和連結路徑（如 `/book/...`）為硬編碼，缺少 base path 前綴
    - 解決方案：
@@ -624,19 +639,19 @@ node --version
      - 客戶端 JavaScript 使用 `window.__configBase__`（由 BaseLayout 注入）動態處理路徑
    - 受影響文件：`src/config.ts`, `src/pages/index.astro`, `src/pages/library.astro`, `src/pages/category/[category].astro`, `src/pages/book/[novel]/index.astro`, `src/components/FeaturedHero.astro`, `src/components/BentoGrid.astro`, `src/components/ContinueReading.astro`, `src/layouts/BaseLayout.astro`, `src/layouts/ReaderLayout.astro`, `src/pages/404.astro`
 
-2. **雙斜線URL問題修復**（2026-04-22）：
+3. **雙斜線 URL 問題修復**（2026-04-22）：
    - 當 `BASE_PATH=/` 時（Cloudflare Pages根路徑部署），客戶端重定向邏輯會產生協議相對URL（如 `//book/...`）
    - 解決方案：在運行時檢測 `basePath`，當其為 `'/'` 時將其設置為空字符串 `''`
    - 受影響文件：`src/pages/my.astro` 和 `src/pages/book/[novel]/[chapter].astro`
    - 同時將模板鏈接替換為 `config.path()` 以確保構建時路徑解析的一致性
 
-2. **BASE_PATH後備值修復**（2026-04-21）：
+4. **BASE_PATH後備值修復**（2026-04-21）：
    - GitHub Actions 會設置 `BASE_PATH=/zen-novel-court`，但 Cloudflare Pages 不會設置此變量
    - 原後備值 `'/zen-novel-court'` 導致 Cloudflare Pages 部署時路徑錯誤
    - 解決方案：將 `config.ts` 和 `my.astro` 中的後備值從 `'/zen-novel-court'` 更改為 `'/'`
    - 這使得在未設置 `BASE_PATH` 時默認為根路徑，符合 Cloudflare Pages 的預期行為
 
-3. **硬編碼路徑修復**（2026-04-21）：
+5. **硬編碼路徑修復**（2026-04-21）：
    - 在 `library.astro` 中使用硬編碼的 `/book/` 路徑未考慮 `BASE_PATH` 變量
    - 這導致在 GitHub Pages 部署時（其中 `basePath=/zen-novel-court`）出現 404 錯誤
    - 解決方案：引入 `config` 模組並使用 `config.path('/book/' + novel.slug)` 來確保路徑正確解析
