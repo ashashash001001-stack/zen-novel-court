@@ -6,11 +6,8 @@
 /book/万界直播system /book/万界直播system/
 /book/萬界直播系統 /book/万界直播system/
 
-# Then: add trailing slash to all book pages ( Astro builds to directories)
-/book/佛系廚神 /book/佛系廚神/
-/book/一茶一禪-海鮮僧的靜心茶路 /book/一茶一禪-海鮮僧的靜心茶路/
-/book/万界直播系统 /book/万界直播系统/
-/book/維港深淵的引擎聲 /book/維港深淵的引擎聲/
+# Then: add trailing slash to all book pages (Astro builds to directories)
+/book/* /book/*/
 
 # Other
 /library /library/
