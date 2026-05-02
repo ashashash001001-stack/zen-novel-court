@@ -1,7 +1,13 @@
 # Site deployed at https://zen-novel-court.pages.dev (root path)
 
-# Other pages - note: book pages work without explicit redirect since Astro builds directories
+# Add trailing slash to all book pages (Astro builds to directories)
+/book/* /book/*/
+
+# Other pages
 /library /library/
+/search /search/
+/shelf /shelf/
 /my /my/
+/category/* /category/*/
 /legal/privacy /legal/privacy/
 /legal/terms /legal/terms/
