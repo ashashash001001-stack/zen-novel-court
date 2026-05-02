@@ -336,7 +336,7 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
     const LANG_KEY = 'zen-novel-language';
 
     // Map of traditional -> simplified Chinese
-    const zhMap: Record<string, string> = {
+    const zhMap = {
       '小说阁': '小说阁',
       '开始阅读': '开始阅读',
       '继续阅读': '继续阅读',
@@ -367,11 +367,11 @@ const siteURL = import.meta.env.SITE_URL || 'https://ashashash001001-stack.githu
       '简介': '简介'
     };
 
-    function getStoredLang(): string {
+    function getStoredLang() {
       return localStorage.getItem(LANG_KEY) || 'traditional';
     }
 
-    function setLanguage(lang: string): void {
+    function setLanguage(lang) {
       localStorage.setItem(LANG_KEY, lang);
       html.setAttribute('data-lang', lang);
       if (langLabel) {
