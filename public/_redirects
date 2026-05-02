@@ -10,9 +10,6 @@
 # Fix double-encoded URL issue (e.g., %C3%A8%C2%90%C2%AC -> %E8%90%AC)
 /book/%C3%A8%C2%90%C2%AC%C3%A8%C2%B1%C2%A1%C3%A9%C2%AA%C2%A8%C3%A6%C2%89%C2%87 /book/萬象骨扇/
 
-# Add trailing slash to all book pages (Astro builds to directories)
-/book/* /book/*/
-
 # Other pages
 /library /library/
 /search /search/
