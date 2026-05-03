@@ -1,7 +1,4 @@
 # Site deployed at https://zen-novel-court.pages.dev (root path)
 
-# Redirect book pages without trailing slash
-# Single segment: /book/xxx -> /book/xxx/
+# Redirect single-segment book paths without trailing slash
 /book/:title /book/:title/
-# Two segment: /book/xxx/1 -> /book/xxx/1/
-/book/:title/:chapter /book/:title/:chapter/
