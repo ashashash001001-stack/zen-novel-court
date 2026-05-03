@@ -395,10 +395,12 @@ const readingTimePlaceholder = '0';
     left: 0;
     right: 0;
     z-index: 100;
-    background: linear-gradient(to bottom, var(--bg-base) 0%, transparent 100%);
+    /* Solid background fallback + gradient overlay for consistent visibility */
+    background: var(--bg-base);
+    background-image: linear-gradient(to bottom, var(--bg-base) 60%, transparent 100%);
     padding: var(--spacing-2) var(--spacing-3);
-    padding-top: calc(var(--spacing-2) + env(safe-area-inset-top));
-    transition: transform var(--t-normal);
+    padding-top: calc(var(--spacing-2) + env(safe-area-inset-top, 8px));
+    transition: transform var(--t-normal), background var(--t-slow);
   }
 
   .reader-topbar.hidden {
@@ -502,10 +504,12 @@ const readingTimePlaceholder = '0';
     left: 0;
     right: 0;
     z-index: 100;
-    background: linear-gradient(to top, var(--bg-base) 0%, transparent 100%);
+    /* Solid background fallback + gradient overlay for consistent visibility */
+    background: var(--bg-base);
+    background-image: linear-gradient(to top, var(--bg-base) 60%, transparent 100%);
     padding: var(--spacing-2) var(--spacing-3);
-    padding-bottom: calc(var(--spacing-2) + env(safe-area-inset-bottom));
-    transition: transform var(--t-normal);
+    padding-bottom: calc(var(--spacing-3) + env(safe-area-inset-bottom, 8px));
+    transition: transform var(--t-normal), background var(--t-slow);
   }
 
   .reader-bottombar.hidden {
