@@ -622,13 +622,11 @@ node --version
      - Astro 生成的靜態 HTML 位於 `/book/xxx/index.html`（需 trailing slash）
      - 訪問 `/book/xxx` 時 Cloudflare 找不到文件，返回 404
    - 解決方案：
-     - 在 `public/_redirects` 中添加重定向規則（單段和雙段路徑）：
-       ```
-       /book/:title /book/:title/
-       /book/:title/:chapter /book/:title/:chapter/
-       ```
-     - 同時在 `src/layouts/BaseLayout.astro` 添加客戶端 fallback 重定向邏輯，處理萬用字元規則可能导致的循環問題
+     - 在 `public/_redirects` 中添加重定向規則
+     - 在 `src/layouts/BaseLayout.astro` 添加客戶端 fallback 重定向邏輯
+     - **注意**：Cloudflare Pages 的 `_redirects` 對多段路徑變數（如 `:title/:chapter`）支援有限，建議使用 trailing slash 訪問頁面
    - 受影響文件：`public/_redirects`, `src/layouts/BaseLayout.astro`
+   - **當前狀態**：有 trailing slash 的 URL 正常運作（如 `/book/一茶一禪-海鮮僧的靜心茶路/`），無 trailing slash 的 URL 可能需要客戶端重定向
 
 2. **GitHub Pages 圖片載入修復**（2026-04-27）：
    - 問題：圖片在 https://zen-novel-court.pages.dev/ 正常載入，但在 https://ashashash001001-stack.github.io/zen-novel-court/ 無法顯示
