@@ -2,6 +2,7 @@
 import ReaderLayout from '../../../layouts/ReaderLayout.astro';
 import { config } from '../../../config';
 import { getCollection } from 'astro:content';
+import SchemaOrg from '../../../components/SchemaOrg.astro';
 
 interface ChapterModule {
   frontmatter?: {
@@ -63,6 +64,11 @@ const readingTimePlaceholder = '0';
 ---
 
 <ReaderLayout title={`${novel.title} - ${chapterTitle}`}>
+  <SchemaOrg slot="seo" type="Chapter" data={{
+    chapterNumber: chapterNum,
+    bookName: novel.title,
+    url: Astro.url.href
+  }} />
   <div class="reader-page" data-has-next={hasNext ? 'true' : 'false'} data-total-chapters={totalChapters}>
     <!-- Reading Progress Bar -->
     <div class="reader-progress" id="readerProgress">

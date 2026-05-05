@@ -1,0 +1,55 @@
+---
+interface Props {
+  type: 'Book' | 'Chapter';
+  data: {
+    name?: string;
+    description?: string;
+    author?: { name: string } | string;
+    numberOfPages?: number;
+    url?: string;
+    image?: string;
+    chapterNumber?: number;
+    bookName?: string;
+  };
+}
+
+const { type, data } = Astro.props;
+
+const getAuthor = (author: { name: string } | string | undefined) => {
+  if (!author) return undefined;
+  if (typeof author === 'string') {
+    return { "@type": "Person" as const, name: author };
+  }
+  return { "@type": "Person" as const, name: author.name };
+};
+
+const authorObj = getAuthor(data.author);
+
+const schema = type === 'Book' ? {
+  "@context": "https://schema.org",
+  "@type": "Book",
+  "name": data.name,
+  "description": data.description,
+  "author": authorObj,
+  "numberOfPages": data.numberOfPages,
+  "url": data.url,
+  "image": data.image,
+  "workExample": {
+    "@type": "BookEdition",
+    "bookEdition": "電子版",
+    "bookFormat": "https://schema.org/EBook"
+  }
+} : {
+  "@context": "https://schema.org",
+  "@type": "Article",
+  "headline": `第 ${data.chapterNumber} 章`,
+  "articleSection": "小說章節",
+  "isPartOf": {
+    "@type": "Book",
+    "name": data.bookName
+  },
+  "url": data.url
+};
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(schema)} />

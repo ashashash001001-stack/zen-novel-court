@@ -21,6 +21,8 @@ const { title = "阅读" } = Astro.props;
   <link rel="icon" type="image/svg+xml" href={config.path('/favicon.svg')}>
   <link rel="manifest" href={config.path('/manifest.json')}>
   <title>{title}</title>
+  <!-- SEO slot for Schema.org structured data -->
+  <slot name="seo" />
 
   <!-- i18n: Prevent flash of unstyled content -->
   <style is:inline>

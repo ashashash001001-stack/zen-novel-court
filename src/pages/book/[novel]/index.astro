@@ -5,6 +5,7 @@ import { getCollection } from 'astro:content';
 import fs from 'fs';
 import path from 'path';
 import DualImage from '../../../components/DualImage.astro';
+import SchemaOrg from '../../../components/SchemaOrg.astro';
 
 export async function getStaticPaths() {
   const novels = await getCollection('novels');
@@ -66,6 +67,17 @@ const coverUrl = coverPath ? config.path('/content/novels/' + slug + '/' + cover
 ---
 
 <BaseLayout title={`${novel.title} - 小说阁`} activeTab="library">
+  <SchemaOrg
+    type="Book"
+    data={{
+      name: novel.title,
+      description: novel.synopsis,
+      author: novel.author,
+      numberOfPages: novel.totalChapters || novel.chapters,
+      url: Astro.url.href,
+      image: coverUrl
+    }}
+  />
   <div class="book-detail">
     <!-- Hero Section -->
     <div class="detail-hero">
