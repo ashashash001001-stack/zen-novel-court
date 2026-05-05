@@ -3,6 +3,14 @@ import ReaderLayout from '../../../layouts/ReaderLayout.astro';
 import { config } from '../../../config';
 import { getCollection } from 'astro:content';
 
+interface ChapterModule {
+  frontmatter?: {
+    title?: string;
+    part?: string;
+  };
+  default?: () => any;
+}
+
 export async function getStaticPaths() {
   const novels = await getCollection('novels');
   
@@ -18,7 +26,8 @@ export async function getStaticPaths() {
     
     for (let i = 1; i <= chapters; i++) {
       const chapterPath = `../../../content/novels/${slug}/chapters/${i}.md`;
-      const chapterModule = import.meta.glob('../../../content/novels/*/chapters/*.md', { eager: true })[chapterPath] as any;
+      const chapterModules = import.meta.glob<ChapterModule>('../../../content/novels/*/chapters/*.md', { eager: true });
+      const chapterModule = chapterModules[chapterPath];
       
       paths.push({
         params: { novel: slug, chapter: String(i) },
@@ -1108,7 +1117,7 @@ const readingTimePlaceholder = '0';
 </style>
 
 <script>
-  (window as any).__configBase__ = document.body.dataset.basePath;
+  window.__configBase__ = document.body.dataset.basePath;
 
   // Reader State
   const state = {
@@ -1275,12 +1284,12 @@ const readingTimePlaceholder = '0';
   });
 
   // ========== Sheet Functions ==========
-  (window as any).openSheet = function(id: string) {
+  window.openSheet = function(id: string) {
     document.getElementById(id)?.classList.add('active');
     showUI();
   };
 
-  (window as any).closeSheet = function(id: string) {
+  window.closeSheet = function(id: string) {
     document.getElementById(id)?.classList.remove('active');
   };
 
@@ -1302,12 +1311,12 @@ const readingTimePlaceholder = '0';
   const prevChapterBtn = document.getElementById('prevChapterBtn');
   const nextChapterBtn = document.getElementById('nextChapterBtn');
 
-  toolBtnToc?.addEventListener('click', () => (window as any).openSheet('tocSheet'));
-  toolBtnSettings?.addEventListener('click', () => (window as any).openSheet('settingsSheet'));
-  toolBtnMore?.addEventListener('click', () => (window as any).openSheet('moreSheet'));
+  toolBtnToc?.addEventListener('click', () => window.openSheet('tocSheet'));
+  toolBtnSettings?.addEventListener('click', () => window.openSheet('settingsSheet'));
+  toolBtnMore?.addEventListener('click', () => window.openSheet('moreSheet'));
   toolBtnTts?.addEventListener('click', () => {
     initTTS();
-    (window as any).openSheet('ttsSheet');
+    window.openSheet('ttsSheet');
   });
 
   // ========== Bookmark Functionality ==========
@@ -1361,7 +1370,7 @@ const readingTimePlaceholder = '0';
   updateBookmarkUI();
 
 // Get base path from window.__configBase__ or extract from URL
-let basePath = (window as any).__configBase__ || '/';
+let basePath = window.__configBase__ || '/';
 if (!basePath || basePath === '/') {
   // Fallback: extract from URL when __configBase__ is not set
   const parts = window.location.pathname.split('/').filter(p => p);
@@ -1424,27 +1433,27 @@ nextChapterBtn?.addEventListener('click', () => {
       if (theme === 'auto' || !theme) {
         const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
         const systemTheme = prefersDark ? 'night' : 'light';
-        (window as any).setTheme(systemTheme);
+        window.setTheme(systemTheme);
         // Store "auto" preference but apply system theme
         localStorage.setItem('dn_theme', 'auto');
       } else if (theme) {
-        (window as any).setTheme(theme);
+        window.setTheme(theme);
       }
 
       const fontSize = localStorage.getItem('dn_fontsize');
-      if (fontSize) (window as any).setFontSize(fontSize);
+      if (fontSize) window.setFontSize(fontSize);
 
       const font = localStorage.getItem('dn_font');
-      if (font) (window as any).setFont(font);
+      if (font) window.setFont(font);
 
       const lineHeight = localStorage.getItem('dn_lineheight');
-      if (lineHeight) (window as any).setLineHeight(lineHeight);
+      if (lineHeight) window.setLineHeight(lineHeight);
 
       const paraSpacing = localStorage.getItem('dn_paraspacing');
-      if (paraSpacing) (window as any).setParaSpacing(paraSpacing);
+      if (paraSpacing) window.setParaSpacing(paraSpacing);
 
       const textAlign = localStorage.getItem('dn_textalign');
-      if (textAlign) (window as any).setTextAlign(textAlign);
+      if (textAlign) window.setTextAlign(textAlign);
     } catch (e) {}
   }
 
@@ -1453,11 +1462,11 @@ nextChapterBtn?.addEventListener('click', () => {
     const theme = localStorage.getItem('dn_theme');
     if (theme === 'auto' || !theme) {
       const newTheme = e.matches ? 'night' : 'light';
-      (window as any).setTheme(newTheme);
+      window.setTheme(newTheme);
     }
   });
 
-  (window as any).setTheme = function(t: string) {
+  window.setTheme = function(t: string) {
     // Handle "auto" theme - apply system preference
     let actualTheme = t;
     if (t === 'auto') {
@@ -1488,7 +1497,7 @@ nextChapterBtn?.addEventListener('click', () => {
     document.getElementById('themeGreen')?.classList.toggle('active', t === 'green');
   };
 
-  (window as any).setFontSize = function(v: string) {
+  window.setFontSize = function(v: string) {
     if (readerContent) {
       readerContent.style.fontSize = v + 'px';
     }
@@ -1499,7 +1508,7 @@ nextChapterBtn?.addEventListener('click', () => {
     } catch (e) {}
   };
 
-  (window as any).setFont = function(t: string) {
+  window.setFont = function(t: string) {
     if (readerContent) {
       const fontFamilies: Record<string, string> = {
         sans: '"Noto Sans TC", "PingFang TC", "Microsoft JhengHei", system-ui, sans-serif',
@@ -1520,7 +1529,7 @@ nextChapterBtn?.addEventListener('click', () => {
     } catch (e) {}
   };
 
-  (window as any).setLineHeight = function(v: string) {
+  window.setLineHeight = function(v: string) {
     if (readerContent) {
       readerContent.style.lineHeight = v;
     }
@@ -1531,7 +1540,7 @@ nextChapterBtn?.addEventListener('click', () => {
     } catch (e) {}
   };
 
-  (window as any).setParaSpacing = function(v: string) {
+  window.setParaSpacing = function(v: string) {
     if (readerContent) {
       readerContent.style.setProperty('--reading-paragraph-space', v + 'em');
     }
@@ -1542,7 +1551,7 @@ nextChapterBtn?.addEventListener('click', () => {
     } catch (e) {}
   };
 
-  (window as any).setTextAlign = function(align: string) {
+  window.setTextAlign = function(align: string) {
     if (readerContent) {
       readerContent.style.textAlign = align;
     }
@@ -1562,13 +1571,13 @@ nextChapterBtn?.addEventListener('click', () => {
     if (totalPara) totalPara.textContent = String(ttsParagraphs?.length || 0);
   }
 
-  (window as any).toggleTTS = function() {
+  window.toggleTTS = function() {
     if (state.ttsPlaying) {
       speechSynthesis.cancel();
       state.ttsPlaying = false;
       state.ttsCurrentIdx = 0;
-      (window as any).updateTTSIcon();
-      (window as any).updateTTSProgress(0);
+      window.updateTTSIcon();
+      window.updateTTSProgress(0);
     } else {
       if (!ttsParagraphs || ttsParagraphs.length === 0) {
         initTTS();
@@ -1579,14 +1588,14 @@ nextChapterBtn?.addEventListener('click', () => {
     }
   };
 
-  (window as any).updateTTSIcon = function() {
+  window.updateTTSIcon = function() {
     const playIcon = document.getElementById('ttsPlayIcon');
     const pauseIcon = document.getElementById('ttsPauseIcon');
     playIcon?.classList.toggle('hidden', state.ttsPlaying);
     pauseIcon?.classList.toggle('hidden', !state.ttsPlaying);
   };
 
-  (window as any).updateTTSProgress = function(pct: number) {
+  window.updateTTSProgress = function(pct: number) {
     const ttsRange = document.getElementById('ttsRange') as HTMLInputElement;
     const currentPara = document.getElementById('ttsCurrentPara');
     const totalPara = document.getElementById('ttsTotalPara');
@@ -1596,19 +1605,19 @@ nextChapterBtn?.addEventListener('click', () => {
     if (totalPara && ttsParagraphs) totalPara.textContent = String(ttsParagraphs.length);
   };
 
-  (window as any).setTTSRate = function(v: string) {
+  window.setTTSRate = function(v: string) {
     const rateVal = document.getElementById('ttsRateVal');
     if (rateVal) rateVal.textContent = parseFloat(v).toFixed(1) + 'x';
     if (state.ttsUtterance) state.ttsUtterance.rate = parseFloat(v);
   };
 
-  (window as any).setTTSPitch = function(v: string) {
+  window.setTTSPitch = function(v: string) {
     const pitchVal = document.getElementById('ttsPitchVal');
     if (pitchVal) pitchVal.textContent = parseFloat(v).toFixed(1);
     if (state.ttsUtterance) state.ttsUtterance.pitch = parseFloat(v);
   };
 
-  (window as any).seekTTS = function(val: string) {
+  window.seekTTS = function(val: string) {
     if (!ttsParagraphs || ttsParagraphs.length === 0) return;
     
     const pct = parseInt(val) / 100;
@@ -1618,7 +1627,7 @@ nextChapterBtn?.addEventListener('click', () => {
       speakFrom(targetIdx);
     } else {
       state.ttsCurrentIdx = targetIdx;
-      (window as any).updateTTSProgress(pct);
+      window.updateTTSProgress(pct);
       highlightParagraph(targetIdx);
     }
   };
@@ -1629,8 +1638,8 @@ nextChapterBtn?.addEventListener('click', () => {
     if (!ttsParagraphs || idx < 0 || idx >= ttsParagraphs.length) {
       state.ttsPlaying = false;
       state.ttsCurrentIdx = 0;
-      (window as any).updateTTSIcon();
-      (window as any).updateTTSProgress(0);
+      window.updateTTSIcon();
+      window.updateTTSProgress(0);
       clearTTSHighlight();
       return;
     }
@@ -1653,8 +1662,8 @@ nextChapterBtn?.addEventListener('click', () => {
     state.ttsUtterance.onend = () => {
       state.ttsPlaying = false;
       state.ttsCurrentIdx = 0;
-      (window as any).updateTTSIcon();
-      (window as any).updateTTSProgress(0);
+      window.updateTTSIcon();
+      window.updateTTSProgress(0);
       clearTTSHighlight();
       const ttsRange = document.getElementById('ttsRange') as HTMLInputElement;
       if (ttsRange) ttsRange.value = '0';
@@ -1682,7 +1691,7 @@ nextChapterBtn?.addEventListener('click', () => {
         
         if (ttsParagraphs && ttsParagraphs.length > 1) {
           const pct = (done - idx) / (ttsParagraphs.length - 1);
-          (window as any).updateTTSProgress(pct);
+          window.updateTTSProgress(pct);
           const ttsRange = document.getElementById('ttsRange') as HTMLInputElement;
           if (ttsRange) ttsRange.value = String(Math.round(pct * 100));
         }
@@ -1691,8 +1700,8 @@ nextChapterBtn?.addEventListener('click', () => {
     
     speechSynthesis.speak(state.ttsUtterance);
     state.ttsPlaying = true;
-    (window as any).updateTTSIcon();
-    (window as any).updateTTSProgress(0);
+    window.updateTTSIcon();
+    window.updateTTSProgress(0);
     highlightParagraph(idx);
   }
 
@@ -1713,7 +1722,7 @@ nextChapterBtn?.addEventListener('click', () => {
 
   // TTS play button
   const ttsPlayBtn = document.getElementById('ttsPlayBtn');
-  ttsPlayBtn?.addEventListener('click', () => (window as any).toggleTTS());
+  ttsPlayBtn?.addEventListener('click', () => window.toggleTTS());
 
   // ========== Reading Statistics ==========
   function initReadingStats() {
