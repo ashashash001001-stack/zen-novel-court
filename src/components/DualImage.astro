@@ -4,8 +4,8 @@
  * 自動產生模糊背景 + 清晰前景的雙層效果
  *
  * @example
- * <DualImage src={cover} alt={`${title}封面`} />
- * <DualImage src={cover} alt="描述" blur={30} scale={1.2} />
+ * <DualImage src={coverPath} alt={`${title}封面`} />
+ * <DualImage src={coverImage} alt="描述" blur={30} scale={1.2} width={280} height={400} />
  */
 import '../styles/dual-image.css';
 
@@ -16,6 +16,8 @@ interface Props {
   blur?: number;
   scale?: number;
   loading?: 'lazy' | 'eager';
+  width?: number;   // for explicit dimensions to improve CLS
+  height?: number;  // for explicit dimensions to improve CLS
 }
 
 const {
@@ -24,7 +26,9 @@ const {
   class: className,
   blur,
   scale,
-  loading = 'lazy'
+  loading = 'lazy',
+  width,
+  height
 } = Astro.props;
 
 // 動態生成 style 變量
@@ -41,6 +45,8 @@ const style = [
     class="dual-image-bg"
     loading={loading}
     decoding="async"
+    width={width}
+    height={height}
   />
   <img
     src={src}
@@ -48,5 +54,7 @@ const style = [
     class="dual-image-fg"
     loading={loading}
     decoding="async"
+    width={width}
+    height={height}
   />
 </div>

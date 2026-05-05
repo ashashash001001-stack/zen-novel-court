@@ -1,0 +1,66 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  src: string | ImageMetadata;
+  alt: string;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  width?: number;
+  height?: number;
+  widths?: number[];
+  sizes?: string;
+}
+
+const {
+  src,
+  alt,
+  class: className,
+  loading = 'lazy',
+  width,
+  height,
+  widths,
+  sizes
+} = Astro.props;
+
+// Only treat http(s):// as external CDN
+const isExternal = typeof src === 'string' && src.startsWith('http');
+---
+
+{isExternal ? (
+  <img
+    src={src}
+    alt={alt}
+    class={className}
+    loading={loading}
+    decoding="async"
+    width={width}
+    height={height}
+  />
+) : typeof src === 'string' ? (
+  // Legacy: string path (non-http) - use as-is for backward compatibility
+  <img
+    src={src}
+    alt={alt}
+    class={className}
+    loading={loading}
+    decoding="async"
+    width={width}
+    height={height}
+  />
+) : (
+  // Astro ImageMetadata
+  <Image
+    src={src}
+    alt={alt}
+    class={className}
+    loading={loading}
+    width={width}
+    height={height}
+    widths={widths}
+    sizes={sizes}
+    format="webp"
+    quality={80}
+  />
+)}
