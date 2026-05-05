@@ -1,5 +1,9 @@
 # Site deployed at https://zen-novel-court.pages.dev (root path)
 
+# Special case: 萬象骨扇 - Cloudflare Pages has a bug with this book's URL encoding
+# Redirect the broken URL back to the correct one
+/book/%C3%A8%C2%90%C2%AC%C3%A8%C2%B1%C2%A1%C3%A9%C2%AA%C2%A8%C3%A6%C2%89%C2%87 /book/萬象骨扇/
+
 # Redirect book detail pages (single segment)
 /book/:title /book/:title/
 # Redirect chapter pages (two segments)
