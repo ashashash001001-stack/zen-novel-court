@@ -1097,6 +1097,15 @@ const readingTimePlaceholder = '0';
     --accent: #6B8B6B;
   }
 
+  /* Theme: Light (白底) - explicitly set to ensure bottom bar has solid background */
+  :global([data-theme="light"]) {
+    --bg-reading: #FDFBF7;
+    --bg-base: #FFFFFF;
+    --text-dark: #1a1a1a;
+    --text-muted: #666666;
+    --color-border-light: #e5e5e5;
+  }
+
   /* Theme buttons */
   .theme-options {
     display: grid;
@@ -1479,14 +1488,9 @@ nextChapterBtn?.addEventListener('click', () => {
       actualTheme = prefersDark ? 'night' : 'light';
     }
 
-    // Set both data-theme (existing) and data-reader-theme (new)
-    if (actualTheme === 'light') {
-      document.documentElement.removeAttribute('data-theme');
-      document.documentElement.removeAttribute('data-reader-theme');
-    } else {
-      document.documentElement.setAttribute('data-theme', actualTheme);
-      document.documentElement.setAttribute('data-reader-theme', actualTheme);
-    }
+    // Set data-theme for all themes including light (so CSS variables work)
+    document.documentElement.setAttribute('data-theme', actualTheme);
+    document.documentElement.setAttribute('data-reader-theme', actualTheme);
     try {
       // Store 'auto' as preference, but apply actual theme
       localStorage.setItem('dn_theme', t);
